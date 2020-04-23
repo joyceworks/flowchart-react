@@ -1,5 +1,6 @@
 import React from 'react';
 import './index.css';
+import Flowchart from '../../components/Flowchart';
 
 function App() {
   return <>
@@ -14,6 +15,7 @@ function App() {
         <button>Edit(Double-click node)</button>
         <button>Save</button>
       </div>
+      <Flowchart height={500} width={'100%'}/>
     </div>
   </>;
 }
