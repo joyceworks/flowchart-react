@@ -1,0 +1,21 @@
+#toolbar {
+    margin-bottom: 10px;
+}
+
+.title {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.subtitle {
+    margin-bottom: 10px;
+}
+
+#toolbar > button {
+    margin-right: 4px;
+}
+
+.container {
+    width: 800px;
+    margin: auto;
+}
