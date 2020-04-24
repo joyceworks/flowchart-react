@@ -1,9 +1,24 @@
 import React, {useState} from 'react';
 import './index.css';
 
-interface Props {
+export interface IProps {
     width?: string | number;
-    height?: string | number
+    height?: string | number;
+    nodes?: Array<INode>;
+}
+
+export interface INode {
+    id: number;
+    x: number;
+    y: number;
+    type: string;
+    name: string;
+    approvers?: Array<IApprover>;
+}
+
+export interface IApprover {
+    id: number;
+    name: string;
 }
 
 interface ICursorToChartOffset {
@@ -11,7 +26,7 @@ interface ICursorToChartOffset {
     y: number;
 }
 
-function Flowchart(props: Props) {
+export const Flowchart = (props: IProps) => {
     const [cursorToChartOffset, setCursorToChartOffset] = useState<ICursorToChartOffset>({
         x: 0,
         y: 0
@@ -31,4 +46,3 @@ function Flowchart(props: Props) {
     </>;
 }
 
-export default Flowchart;
