@@ -80,27 +80,7 @@ const App = () => {
     }
   ])
 
-  return <div className="container" style={{ height: 500 }}>
-    <h1 className="title">Flowchart React</h1>
-    <h5 className="subtitle">
-      Flowchart & Flowchart designer component for React.js.
-    </h5>
-    <div id="toolbar">
-      <button
-        onClick={() =>
-          alert(JSON.stringify(flowchartRef.current.getData()))
-        }
-      >
-        Save
-      </button>
-    </div>
-    <>
-      <Flowchart
-        defaultNodes={nodes}
-        defaultConnections={connections}
-      />
-    </>
-  </div>
+  return <Flowchart defaultNodes={nodes} defaultConnections={connections} />
 }
 ```
 
