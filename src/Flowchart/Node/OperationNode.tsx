@@ -1,16 +1,21 @@
 import React from "react";
 import { NodeProps } from "./schema";
 
-export default function ({ data, isSelected = false }: NodeProps) {
+const FlowchartOperationNode = function ({
+  data,
+  isSelected = false,
+  render,
+}: NodeProps): JSX.Element {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
   const text =
-    !data.approvers || data.approvers.length === 0
+    render?.(data) ||
+    (!data.approvers || data.approvers.length === 0
       ? "No approver"
       : data.approvers.length > 1
       ? `${data.approvers[0].name + "..."}`
-      : data.approvers[0].name;
+      : data.approvers[0].name);
   return (
-    <React.Fragment>
+    <>
       <rect
         x={data.x}
         y={data.y}
@@ -35,6 +40,8 @@ export default function ({ data, isSelected = false }: NodeProps) {
       <text x={data.x + 60} y={data.y + 25 + 20} textAnchor={"middle"}>
         {text}
       </text>
-    </React.Fragment>
+    </>
   );
-}
+};
+
+export default FlowchartOperationNode;

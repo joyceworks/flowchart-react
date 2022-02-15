@@ -1,11 +1,15 @@
 import React from "react";
 import { NodeProps } from "./schema";
 
-export default function ({ data, isSelected = false }: NodeProps) {
+const FlowchartStartEndNode = function ({
+  data,
+  isSelected = false,
+  render,
+}: NodeProps): JSX.Element {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
-  const text = data.type === "start" ? "Start" : "End";
+  const text = render?.(data) || (data.type === "start" ? "Start" : "End");
   return (
-    <React.Fragment>
+    <>
       <ellipse
         cx={data.x + 60}
         cy={data.y + 30}
@@ -18,6 +22,8 @@ export default function ({ data, isSelected = false }: NodeProps) {
       <text x={data.x + 60} y={data.y + 5 + 30} textAnchor={"middle"}>
         {text}
       </text>
-    </React.Fragment>
+    </>
   );
-}
+};
+
+export default FlowchartStartEndNode;

@@ -1,7 +1,7 @@
-import {lineGenerator, locateConnector, pathing} from "../util";
-import React, {useCallback, useMemo} from "react";
-import {ConnectionData, ConnectorPosition, NodeData} from "../schema";
-import {defaultConnectionColors, selectedConnectionColors} from "./constant";
+import { locateConnector, pathing } from "../util";
+import { useCallback, useMemo } from "react";
+import { ConnectionData, ConnectorPosition, NodeData } from "../schema";
+import { defaultConnectionColors, selectedConnectionColors } from "./constant";
 
 interface ConnectionProps {
   data: ConnectionData;
@@ -11,13 +11,13 @@ interface ConnectionProps {
   onDoubleClick?: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
 }
 
-export default function ({
+const FlowchartConnection = function ({
   data,
   nodes,
   isSelected,
   onMouseDown,
   onDoubleClick,
-}: ConnectionProps) {
+}: ConnectionProps): JSX.Element {
   const getNodeConnectorOffset = useCallback(
     (nodeId: number, connectorPosition: ConnectorPosition) => {
       const node = nodes.filter((item) => item.id === nodeId)[0];
@@ -36,9 +36,9 @@ export default function ({
   }, [isSelected]);
   return (
     <g>
-      {points.map((_point, i) => {
+      {points.map((point, i) => {
         if (i > points.length - 2) {
-          return <React.Fragment/>;
+          return <></>;
         }
 
         const source = points[i];
@@ -47,12 +47,12 @@ export default function ({
         const color = colors[data.type];
         const id = `arrow${color.replace("#", "")}`;
         return (
-          <React.Fragment key={i}>
+          <>
             <path
               stroke={colors[data.type]}
               strokeWidth={1}
               fill={"none"}
-              d={lineGenerator([source, destination])}
+              d={`M ${source[0]} ${source[1]} L ${destination[0]} ${destination[1]}`}
               markerEnd={isLast ? `url(#${id})` : undefined}
             />
             {isLast && (
@@ -78,11 +78,13 @@ export default function ({
               stroke={"transparent"}
               strokeWidth={5}
               fill={"none"}
-              d={lineGenerator([source, destination])}
+              d={`M ${source[0]} ${source[1]} L ${destination[0]} ${destination[1]}`}
             />
-          </React.Fragment>
+          </>
         );
       })}
     </g>
   );
-}
+};
+
+export default FlowchartConnection;

@@ -1,11 +1,12 @@
 import {
   ConnectionData,
   ConnectorPosition,
+  Direction,
   Line,
   NodeData,
   Point,
 } from "./schema";
-import * as d3 from "d3";
+import update from "immutability-helper";
 
 function pathing(
   p1: Point,
@@ -582,21 +583,18 @@ function pathing(
   return points;
 }
 
-function calcDirection(
-  p1: Point,
-  p2: Point
-): "l" | "r" | "u" | "d" | "lu" | "ru" | "ld" | "rd" {
+function calcDirection(p1: Point, p2: Point): Direction {
   // Use approximatelyEquals to fix the problem of css position precision
-  if (p2.x < p1.x && approximatelyEquals(p2.y, p1.y)) {
+  if (p2.x < p1.x && p2.y === p1.y) {
     return "l";
   }
-  if (p2.x > p1.x && approximatelyEquals(p2.y, p1.y)) {
+  if (p2.x > p1.x && p2.y === p1.y) {
     return "r";
   }
-  if (approximatelyEquals(p2.x, p1.x) && p2.y < p1.y) {
+  if (p2.x === p1.x && p2.y < p1.y) {
     return "u";
   }
-  if (approximatelyEquals(p2.x, p1.x) && p2.y > p1.y) {
+  if (p2.x === p1.x && p2.y > p1.y) {
     return "d";
   }
   if (p2.x < p1.x && p2.y < p1.y) {
@@ -631,7 +629,7 @@ function approximatelyEquals(n: number, m: number): boolean {
   return Math.abs(m - n) <= 3;
 }
 
-function getEdgeOfPoints(points: Point[]): { start: Point; end: Point } {
+function calcCorners(points: Point[]): { start: Point; end: Point } {
   const minX = points.reduce((prev, point) => {
     return point.x < prev ? point.x : prev;
   }, Infinity);
@@ -645,6 +643,27 @@ function getEdgeOfPoints(points: Point[]): { start: Point; end: Point } {
     return point.y > prev ? point.y : prev;
   }, 0);
   return { start: { x: minX, y: minY }, end: { x: maxX, y: maxY } };
+}
+
+function center(nodes: NodeData[], width: number, height: number): NodeData[] {
+  const corners = calcCorners([
+    ...nodes,
+    ...nodes.map((node) => ({
+      x: node.x + 120,
+      y: node.y + 60,
+    })),
+  ]);
+
+  const offsetX = (width - corners.end.x - corners.start.x) / 2;
+  const offsetY = (height - corners.end.y - corners.start.y) / 2;
+  return update(nodes, {
+    $apply: (state: NodeData[]) =>
+      state.map((node) => ({
+        ...node,
+        x: roundToNearest10(node.x + offsetX),
+        y: roundToNearest10(node.y + offsetY),
+      })),
+  });
 }
 
 function isIntersected(
@@ -665,6 +684,11 @@ function isIntersected(
 function roundTo20(number: number): number {
   return number < 20 ? 20 : number;
 }
+
+function roundToNearest10(number: number): number {
+  return Math.ceil(number / 10) * 10;
+}
+
 function locateConnector(
   node: NodeData
 ): { left: Point; right: Point; top: Point; bottom: Point } {
@@ -689,11 +713,6 @@ function locateAngle(node: NodeData): [Point, Point, Point, Point] {
     { x: node.x, y: node.y + 60 },
   ];
 }
-
-const lineGenerator: any = d3
-  .line()
-  .x((d) => d[0])
-  .y((d) => d[1]);
 
 function calcIntersectedConnections(
   internalNodes: NodeData[],
@@ -750,20 +769,40 @@ function createConnection(
   };
 }
 
+function render(data: NodeData): string | undefined {
+  if (data.type !== "operation") {
+    return undefined;
+  }
+  if (!data.approvers) {
+    return "无审核人";
+  }
+  let text;
+  for (let i = 0; i < data.approvers.length; i++) {
+    if (i > 0) {
+      text += "等...";
+      break;
+    }
+    text = data.approvers[i].name;
+  }
+  return text;
+}
+
 export {
   isIntersected,
   distanceOfPointToLine,
   distanceOfPoint2Point,
   calcDirection,
-  getEdgeOfPoints,
+  calcCorners,
   between,
   roundTo20,
   pathing,
   approximatelyEquals,
   locateConnector,
   locateAngle,
-  lineGenerator,
   calcIntersectedConnections,
   calcIntersectedNodes,
   createConnection,
+  render,
+  roundToNearest10,
+  center,
 };
