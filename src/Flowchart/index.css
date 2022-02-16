@@ -21,4 +21,16 @@
   -ms-user-select: none;
   user-select: none;
 }
+.circle {
+  fill: white;
+  stroke-width: 1px;
+  stroke: #bbbbbb;
+  cursor: crosshair;
+}
+.circle :hover {
+  opacity: 1;
+}
+.g :hover circle {
+  opacity: 1;
+}
 /*# sourceMappingURL=index.css.map */

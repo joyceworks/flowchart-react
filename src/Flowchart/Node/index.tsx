@@ -1,38 +1,20 @@
-import { ConnectorPosition, NodeData, NodeRender } from "../schema";
-import OperationNode from "./OperationNode";
-import StartEndNode from "./StartEndNode";
-import React, { useMemo } from "react";
-import { locateConnector } from "../util";
-import styled from "styled-components";
-
-const Circle = styled("circle")<{ isConnecting: boolean }>`
-  stroke: #bbbbbb;
-  cursor: crosshair;
-  opacity: ${(props) => (props.isConnecting ? 1 : 0)};
-  fill: white;
-  stroke-width: 1px;
-
-  :hover {
-    opacity: 1;
-  }
-`;
-const G = styled("g")`
-  :hover {
-    circle {
-      opacity: 1;
-    }
-  }
-`;
+import { ConnectorPosition, NodeData, NodeRender } from '../schema'
+import OperationNode from './OperationNode'
+import StartEndNode from './StartEndNode'
+import React, { useMemo } from 'react'
+import { locateConnector } from '../util'
+import G from './G'
+import Circle from './Circle'
 
 interface NodeProps {
-  data: NodeData;
-  isSelected: boolean;
-  isConnecting: boolean;
-  onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
-  onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
-  onConnectorMouseDown: (position: ConnectorPosition) => void;
-  render?: NodeRender;
-  readonly?: boolean;
+  data: NodeData
+  isSelected: boolean
+  isConnecting: boolean
+  onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void
+  onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void
+  onConnectorMouseDown: (position: ConnectorPosition) => void
+  render?: NodeRender
+  readonly?: boolean
 }
 
 const FlowchartNode = function ({
@@ -43,13 +25,13 @@ const FlowchartNode = function ({
   onMouseDown,
   onConnectorMouseDown,
   render,
-  readonly,
+  readonly
 }: NodeProps) {
-  const position = useMemo(() => locateConnector(data), [data]);
+  const position = useMemo(() => locateConnector(data), [data])
   return (
     <>
       <G onDoubleClick={onDoubleClick} onMouseDown={onMouseDown}>
-        {data.type !== "start" && data.type !== "end" ? (
+        {data.type !== 'start' && data.type !== 'end' ? (
           <OperationNode data={data} isSelected={isSelected} render={render} />
         ) : (
           <StartEndNode data={data} isSelected={isSelected} render={render} />
@@ -64,15 +46,15 @@ const FlowchartNode = function ({
                 cy={position[key as ConnectorPosition].y}
                 r={4}
                 onMouseDown={(event) => {
-                  event.stopPropagation();
-                  onConnectorMouseDown(key as ConnectorPosition);
+                  event.stopPropagation()
+                  onConnectorMouseDown(key as ConnectorPosition)
                 }}
               />
-            );
+            )
           })}
       </G>
     </>
-  );
-};
+  )
+}
 
-export default FlowchartNode;
+export default FlowchartNode

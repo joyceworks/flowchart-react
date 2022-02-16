@@ -23,7 +23,6 @@ export default {
     })
   ],
   output: {
-    // file: 'dist/bundle.js',
     dir: "dist",
     format: 'esm',
     plugins: [

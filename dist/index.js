@@ -1,8 +1,13 @@
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 import { useMemo, useCallback, forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { jsxs, Fragment, jsx } from 'react/jsx-runtime';
-import styled from 'styled-components';
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -42,18 +47,6 @@ function __spreadArray(to, from, pack) {
     }
   }
   return to.concat(ar || Array.prototype.slice.call(from));
-}
-
-function __makeTemplateObject(cooked, raw) {
-  if (Object.defineProperty) {
-    Object.defineProperty(cooked, "raw", {
-      value: raw
-    });
-  } else {
-    cooked.raw = raw;
-  }
-
-  return cooked;
 }
 
 function getDefaultExportFromCjs(x) {
@@ -1373,10 +1366,23 @@ var FlowchartStartEndNode = function FlowchartStartEndNode(_a) {
   });
 };
 
-var Circle = styled("circle")(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n  stroke: #bbbbbb;\n  cursor: crosshair;\n  opacity: ", ";\n  fill: white;\n  stroke-width: 1px;\n\n  :hover {\n    opacity: 1;\n  }\n"], ["\n  stroke: #bbbbbb;\n  cursor: crosshair;\n  opacity: ", ";\n  fill: white;\n  stroke-width: 1px;\n\n  :hover {\n    opacity: 1;\n  }\n"])), function (props) {
-  return props.isConnecting ? 1 : 0;
-});
-var G = styled("g")(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  :hover {\n    circle {\n      opacity: 1;\n    }\n  }\n"], ["\n  :hover {\n    circle {\n      opacity: 1;\n    }\n  }\n"])));
+function G(props) {
+  return /*#__PURE__*/jsx("g", _objectSpread({
+    className: 'g'
+  }, props));
+}
+
+function Circle(props) {
+  var style = useMemo(function () {
+    return {
+      opacity: props.isConnecting ? 1 : 0
+    };
+  }, []);
+  return /*#__PURE__*/jsx("circle", _objectSpread({
+    className: 'circle',
+    style: Object.assign(style, props.style)
+  }, props));
+}
 
 var FlowchartNode = function FlowchartNode(_a) {
   var data = _a.data,
@@ -1394,7 +1400,7 @@ var FlowchartNode = function FlowchartNode(_a) {
     children: /*#__PURE__*/jsxs(G, {
       onDoubleClick: onDoubleClick,
       onMouseDown: onMouseDown,
-      children: [data.type !== "start" && data.type !== "end" ? /*#__PURE__*/jsx(FlowchartOperationNode, {
+      children: [data.type !== 'start' && data.type !== 'end' ? /*#__PURE__*/jsx(FlowchartOperationNode, {
         data: data,
         isSelected: isSelected,
         render: render
@@ -1418,7 +1424,6 @@ var FlowchartNode = function FlowchartNode(_a) {
   });
 };
 
-var templateObject_1, templateObject_2;
 var defaultConnectionColors = {
   pass: "#52c41a",
   reject: "red"
@@ -1520,7 +1525,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = ".flowchart-zoom {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n}\n.flowchart-container {\n  position: relative;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.flowchart-svg text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}";
+var css_248z = ".flowchart-zoom {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n}\n.flowchart-container {\n  position: relative;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.flowchart-svg text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #bbbbbb;\n  cursor: crosshair;\n}\n.circle :hover {\n  opacity: 1;\n}\n.g :hover circle {\n  opacity: 1;\n}";
 styleInject(css_248z);
 var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   var defaultNodes = _a.defaultNodes,
