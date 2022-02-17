@@ -6,7 +6,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-import { useMemo, useCallback, forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import { useMemo, useCallback, forwardRef, useRef, useState, useImperativeHandle } from 'react';
 import { jsxs, Fragment, jsx } from 'react/jsx-runtime';
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1532,61 +1532,47 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       defaultConnections = _a.defaultConnections,
       _b = _a.readonly,
       readonly = _b === void 0 ? false : _b,
-      onEditNode = _a.onEditNode,
-      onCreateNode = _a.onCreateNode,
-      onEditConnection = _a.onEditConnection,
-      onCreateConnection = _a.onCreateConnection,
+      onEditNode = _a.onEditNode;
+  _a.onCreateNode;
+  var onEditConnection = _a.onEditConnection;
+  _a.onCreateConnection;
+  var onChange = _a.onChange,
       style = _a.style,
       _c = _a.render,
       render$1 = _c === void 0 ? render : _c;
   var svgRef = useRef(null);
 
-  var _d = useState(defaultNodes),
-      internalNodes = _d[0],
-      setInternalNodes = _d[1];
+  var _d = useState([]),
+      selectedNodeIds = _d[0],
+      setSelectedNodeIds = _d[1];
 
-  var _e = useState(defaultConnections),
-      internalConnections = _e[0],
-      setInternalConnections = _e[1];
+  var _e = useState([]),
+      selectedConnectionIds = _e[0],
+      setSelectedConnectionIds = _e[1];
 
-  useEffect(function () {
-    setInternalConnections(defaultConnections);
-    setInternalNodes(defaultNodes);
-  }, [defaultConnections, defaultNodes]);
+  var _f = useState(),
+      dragSelectionInfo = _f[0],
+      setDragSelectionInfo = _f[1];
 
-  var _f = useState([]),
-      selectedNodeIds = _f[0],
-      setSelectedNodeIds = _f[1];
-
-  var _g = useState([]),
-      selectedConnections = _g[0],
-      setSelectedConnections = _g[1];
+  var _g = useState(),
+      dragConnectionInfo = _g[0],
+      setDragConnectionInfo = _g[1];
 
   var _h = useState(),
-      dragSelectionInfo = _h[0],
-      setDragSelectionInfo = _h[1];
+      dragMovingInfo = _h[0],
+      setDragMovingInfo = _h[1];
 
-  var _j = useState(),
-      dragConnectionInfo = _j[0],
-      setDragConnectionInfo = _j[1];
-
-  var _k = useState(),
-      dragMovingInfo = _k[0],
-      setDragMovingInfo = _k[1];
-
-  var _l = useState(1),
-      zoom = _l[0],
-      setZoom = _l[1];
+  var _j = useState(1),
+      zoom = _j[0],
+      setZoom = _j[1];
 
   var internalCenter = useCallback(function () {
     if (!svgRef.current) {
       return;
     }
 
-    setInternalNodes(function (prevState) {
-      return center(prevState, svgRef.current.clientWidth, svgRef.current.clientHeight);
-    });
-  }, []);
+    onChange === null || onChange === void 0 ? void 0 : onChange(center(defaultNodes, svgRef.current.clientWidth, svgRef.current.clientHeight), defaultConnections);
+  }, [defaultConnections, defaultNodes, onChange]);
   var zoomIn = useCallback(function () {
     setZoom(function (prevState) {
       var number = Number((prevState - 0.1).toFixed(1));
@@ -1600,12 +1586,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, []);
 
-  var _m = useState({
+  var _k = useState({
     x: 0,
     y: 0
   }),
-      offsetOfCursorToSVG = _m[0],
-      setOffsetOfCursorToSVG = _m[1];
+      offsetOfCursorToSVG = _k[0],
+      setOffsetOfCursorToSVG = _k[1];
 
   var handleWheel = useCallback(function (event) {
     event.stopPropagation();
@@ -1634,14 +1620,14 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     };
     var nodeData;
 
-    if (!internalNodes.find(function (item) {
+    if (!defaultNodes.find(function (item) {
       return item.type === "start";
     })) {
       nodeData = _assign({
         type: "start",
         name: "Start"
       }, point);
-    } else if (!internalNodes.find(function (item) {
+    } else if (!defaultNodes.find(function (item) {
       return item.type === "end";
     })) {
       nodeData = _assign({
@@ -1655,8 +1641,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       });
     }
 
-    return onCreateNode === null || onCreateNode === void 0 ? void 0 : onCreateNode(nodeData, setInternalNodes);
-  }, [internalNodes, onCreateNode, readonly, zoom]);
+    return onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], defaultNodes, true), [nodeData], false), defaultConnections);
+  }, [defaultConnections, defaultNodes, onChange, readonly, zoom]);
   var handleSVGMouseDown = useCallback(function (event) {
     if (event.ctrlKey || event.metaKey || event.target.tagName !== "svg") {
       // ignore propagation
@@ -1676,59 +1662,55 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       end: point
     });
     setSelectedNodeIds([]);
-    setSelectedConnections([]);
+    setSelectedConnectionIds([]);
   }, [zoom]);
   var moveTo = useCallback(function (id, x, y) {
-    var index = internalNodes.findIndex(function (internalNode) {
+    var _a;
+
+    var index = defaultNodes.findIndex(function (internalNode) {
       return internalNode.id === id;
     });
-    setInternalNodes(function (prevState) {
-      var _a;
-
-      return update(prevState, (_a = {}, _a[index] = {
-        x: {
-          $set: x
-        },
-        y: {
-          $set: y
-        }
-      }, _a));
-    });
-  }, [internalNodes]);
+    onChange === null || onChange === void 0 ? void 0 : onChange(update(defaultNodes, (_a = {}, _a[index] = {
+      x: {
+        $set: x
+      },
+      y: {
+        $set: y
+      }
+    }, _a)), defaultConnections);
+  }, [defaultConnections, defaultNodes, onChange]);
   var move = useCallback(function (nodeIds, x, y) {
+    var _a;
+
     if (readonly) {
       return;
     }
 
     var indexes = nodeIds.map(function (currentNode) {
-      return internalNodes.findIndex(function (internalNode) {
+      return defaultNodes.findIndex(function (internalNode) {
         return internalNode.id === currentNode;
       });
     });
-    setInternalNodes(function (prevState) {
-      var _a;
+    var tempState = defaultNodes;
 
-      var tempState = prevState;
-
-      for (var _i = 0, indexes_1 = indexes; _i < indexes_1.length; _i++) {
-        var index = indexes_1[_i];
-        tempState = update(tempState, (_a = {}, _a[index] = {
-          x: {
-            $apply: function $apply(prev) {
-              return prev + x;
-            }
-          },
-          y: {
-            $apply: function $apply(prev) {
-              return prev + y;
-            }
+    for (var _i = 0, indexes_1 = indexes; _i < indexes_1.length; _i++) {
+      var index = indexes_1[_i];
+      tempState = update(tempState, (_a = {}, _a[index] = {
+        x: {
+          $apply: function $apply(prev) {
+            return prev + x;
           }
-        }, _a));
-      }
+        },
+        y: {
+          $apply: function $apply(prev) {
+            return prev + y;
+          }
+        }
+      }, _a));
+    }
 
-      return tempState;
-    });
-  }, [internalNodes, readonly]);
+    onChange === null || onChange === void 0 ? void 0 : onChange(tempState, defaultConnections);
+  }, [defaultConnections, defaultNodes, onChange, readonly]);
   var handleSVGMouseMove = useCallback(function (event) {
     var newOffsetOfCursorToSVG = {
       x: event.nativeEvent.offsetX / zoom,
@@ -1744,10 +1726,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         };
       });
       var edge = calcCorners([dragSelectionInfo.start, newOffsetOfCursorToSVG]);
-      setSelectedNodeIds(calcIntersectedNodes(internalNodes, edge).map(function (item) {
+      setSelectedNodeIds(calcIntersectedNodes(defaultNodes, edge).map(function (item) {
         return item.id;
       }));
-      setSelectedConnections(calcIntersectedConnections(internalNodes, internalConnections, edge));
+      setSelectedConnectionIds(calcIntersectedConnections(defaultNodes, defaultConnections, edge).map(function (item) {
+        return item.id;
+      }));
     } else if (dragMovingInfo) {
       for (var i = 0; i < dragMovingInfo.targetIds.length; i++) {
         var t = dragMovingInfo.targetIds[i];
@@ -1761,49 +1745,44 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         });
       });
     }
-  }, [zoom, dragSelectionInfo, dragMovingInfo, internalNodes, internalConnections, moveTo]);
+  }, [zoom, dragSelectionInfo, dragMovingInfo, defaultNodes, defaultConnections, moveTo]);
   var moveSelected = useCallback(function (x, y) {
     move(selectedNodeIds, x, y);
   }, [move, selectedNodeIds]);
   var remove = useCallback(function () {
-    if (readonly) return; // Delete connections
+    if (readonly) return; // Splice arguments of selected connections
 
-    setInternalConnections(function (prevState) {
-      // Splice arguments of selected connections
-      var list1 = selectedConnections.map(function (currentConn) {
-        return [prevState.findIndex(function (interConn) {
-          return interConn.id === currentConn.id;
-        }), 1];
-      }); // Splice arguments of connections of selected nodes
+    var list1 = selectedConnectionIds.map(function (currentConn) {
+      return [defaultConnections.findIndex(function (interConn) {
+        return interConn.id === currentConn;
+      }), 1];
+    }); // Splice arguments of connections of selected nodes
 
-      var list2 = selectedNodeIds.map(function (currNode) {
-        return internalConnections.filter(function (interConn) {
-          return interConn.source.id === currNode || interConn.destination.id === currNode;
-        });
-      }).flat().map(function (currentConn) {
-        return [prevState.findIndex(function (interConn) {
-          return interConn.id === currentConn.id;
-        }), 1];
+    var list2 = selectedNodeIds.map(function (currNode) {
+      return defaultConnections.filter(function (interConn) {
+        return interConn.source.id === currNode || interConn.destination.id === currNode;
       });
-      return update(prevState, {
-        $splice: __spreadArray(__spreadArray([], list1, true), list2, true).sort(function (a, b) {
-          return b[0] - a[0];
-        })
-      });
-    }); // Delete nodes
-
-    setInternalNodes(function (prevState) {
-      return update(prevState, {
-        $splice: selectedNodeIds.map(function (currNode) {
-          return [prevState.findIndex(function (interNode) {
-            return interNode.id === currNode;
-          }), 1];
-        }).sort(function (a, b) {
-          return b[0] - a[0];
-        })
-      });
+    }).flat().map(function (currentConn) {
+      return [defaultConnections.findIndex(function (interConn) {
+        return interConn.id === currentConn.id;
+      }), 1];
     });
-  }, [selectedConnections, selectedNodeIds, internalConnections, readonly]);
+    var restConnections = update(defaultConnections, {
+      $splice: __spreadArray(__spreadArray([], list1, true), list2, true).sort(function (a, b) {
+        return b[0] - a[0];
+      })
+    });
+    var restNodes = update(defaultNodes, {
+      $splice: selectedNodeIds.map(function (currNode) {
+        return [defaultNodes.findIndex(function (interNode) {
+          return interNode.id === currNode;
+        }), 1];
+      }).sort(function (a, b) {
+        return b[0] - a[0];
+      })
+    });
+    onChange === null || onChange === void 0 ? void 0 : onChange(restNodes, restConnections);
+  }, [readonly, selectedConnectionIds, selectedNodeIds, defaultConnections, defaultNodes, onChange]);
   var handleSVGKeyDown = useCallback(function (event) {
     switch (event.keyCode) {
       case 37:
@@ -1824,17 +1803,17 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
       case 27:
         setSelectedNodeIds([]);
-        setSelectedConnections([]);
+        setSelectedConnectionIds([]);
         break;
 
       case 65:
         if ((event.ctrlKey || event.metaKey) && document.activeElement === document.getElementById("chart")) {
           setSelectedNodeIds([]);
-          setSelectedConnections([]);
-          setSelectedNodeIds(internalNodes.map(function (item) {
+          setSelectedConnectionIds([]);
+          setSelectedNodeIds(defaultNodes.map(function (item) {
             return item.id;
           }));
-          setSelectedConnections(__spreadArray([], selectedConnections, true));
+          setSelectedConnectionIds(__spreadArray([], selectedConnectionIds, true));
         }
 
         break;
@@ -1844,43 +1823,41 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         remove();
         break;
     }
-  }, [selectedConnections, internalNodes, moveSelected, remove]);
+  }, [moveSelected, remove, defaultNodes, selectedConnectionIds]);
   var handleSVGMouseUp = useCallback(function () {
     setDragSelectionInfo(undefined);
     setDragConnectionInfo(undefined);
     setDragMovingInfo(undefined); // Align dragging node
 
     if (dragMovingInfo) {
-      setInternalNodes(function (prevState) {
-        var result = prevState;
+      var result = defaultNodes;
 
-        var _loop_1 = function _loop_1(t) {
-          var _b;
+      var _loop_1 = function _loop_1(t) {
+        var _c;
 
-          result = update(result, (_b = {}, _b[result.findIndex(function (item) {
-            return item.id === t;
-          })] = {
-            x: {
-              $apply: function $apply(prevState) {
-                return Math.round(Math.round(prevState) / 10) * 10;
-              }
-            },
-            y: {
-              $apply: function $apply(prevState) {
-                return Math.round(Math.round(prevState) / 10) * 10;
-              }
+        result = update(result, (_c = {}, _c[result.findIndex(function (item) {
+          return item.id === t;
+        })] = {
+          x: {
+            $apply: function $apply(prevState) {
+              return Math.round(Math.round(prevState) / 10) * 10;
             }
-          }, _b));
-        };
+          },
+          y: {
+            $apply: function $apply(prevState) {
+              return Math.round(Math.round(prevState) / 10) * 10;
+            }
+          }
+        }, _c));
+      };
 
-        for (var _i = 0, _a = dragMovingInfo.targetIds; _i < _a.length; _i++) {
-          var t = _a[_i];
+      for (var _i = 0, _a = dragMovingInfo.targetIds; _i < _a.length; _i++) {
+        var t = _a[_i];
 
-          _loop_1(t);
-        }
+        _loop_1(t);
+      }
 
-        return result;
-      });
+      onChange === null || onChange === void 0 ? void 0 : onChange(result, defaultConnections);
     } // Connect nodes
 
 
@@ -1891,8 +1868,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     var node = null;
     var position = null;
 
-    for (var _i = 0, internalNodes_1 = internalNodes; _i < internalNodes_1.length; _i++) {
-      var internalNode = internalNodes_1[_i];
+    for (var _b = 0, defaultNodes_1 = defaultNodes; _b < defaultNodes_1.length; _b++) {
+      var internalNode = defaultNodes_1[_b];
       var locations = locateConnector(internalNode);
 
       for (var prop in locations) {
@@ -1915,16 +1892,16 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
 
     var newConnection = createConnection(dragConnectionInfo.source.id, dragConnectionInfo.sourcePosition, node.id, position);
-    onCreateConnection === null || onCreateConnection === void 0 ? void 0 : onCreateConnection(newConnection, setInternalConnections);
-  }, [dragConnectionInfo, offsetOfCursorToSVG, dragMovingInfo, internalNodes, onCreateConnection]);
+    onChange === null || onChange === void 0 ? void 0 : onChange(defaultNodes, __spreadArray(__spreadArray([], defaultConnections, true), [newConnection], false));
+  }, [dragMovingInfo, dragConnectionInfo, onChange, defaultNodes, defaultConnections, offsetOfCursorToSVG]);
   var points = useMemo(function () {
     var points = undefined;
 
     if (dragConnectionInfo) {
       var endPosition = null;
 
-      for (var _i = 0, internalNodes_2 = internalNodes; _i < internalNodes_2.length; _i++) {
-        var internalNode = internalNodes_2[_i];
+      for (var _i = 0, defaultNodes_2 = defaultNodes; _i < defaultNodes_2.length; _i++) {
+        var internalNode = defaultNodes_2[_i];
         var locations = locateConnector(internalNode);
 
         for (var prop in locations) {
@@ -1940,13 +1917,13 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
 
     return points;
-  }, [dragConnectionInfo, internalNodes, offsetOfCursorToSVG]);
+  }, [defaultNodes, dragConnectionInfo, offsetOfCursorToSVG]);
   var guidelines = useMemo(function () {
     var guidelines = [];
 
     if (dragMovingInfo) {
       var _loop_2 = function _loop_2(source) {
-        var sourceAnglePoints = locateAngle(internalNodes.find(function (item) {
+        var sourceAnglePoints = locateAngle(defaultNodes.find(function (item) {
           return item.id === source;
         }));
 
@@ -2013,7 +1990,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
               }
           }
 
-          for (var _b = 0, _c = internalNodes.filter(function (internalNode) {
+          for (var _b = 0, _c = defaultNodes.filter(function (internalNode) {
             return internalNode.id !== source;
           }); _b < _c.length; _b++) {
             var destination = _c[_b];
@@ -2045,13 +2022,13 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
 
     return guidelines;
-  }, [dragMovingInfo, internalNodes]);
+  }, [defaultNodes, dragMovingInfo]);
   useImperativeHandle(ref, function () {
     return {
       getData: function getData() {
         return {
-          nodes: internalNodes,
-          connections: internalConnections
+          nodes: defaultNodes,
+          connections: defaultConnections
         };
       }
     };
@@ -2065,7 +2042,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     };
   }, [zoom]);
   var nodeElements = useMemo(function () {
-    return internalNodes === null || internalNodes === void 0 ? void 0 : internalNodes.map(function (node) {
+    return defaultNodes === null || defaultNodes === void 0 ? void 0 : defaultNodes.map(function (node) {
       return /*#__PURE__*/jsx(FlowchartNode, {
         readonly: readonly,
         render: render$1,
@@ -2081,7 +2058,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             return;
           }
 
-          onEditNode === null || onEditNode === void 0 ? void 0 : onEditNode(node, setInternalNodes);
+          onEditNode === null || onEditNode === void 0 ? void 0 : onEditNode(node);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
@@ -2106,7 +2083,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
               setSelectedNodeIds(tempCurrentNodes);
             }
 
-            setSelectedConnections([]);
+            setSelectedConnectionIds([]);
 
             if (readonly) {
               return;
@@ -2115,7 +2092,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             setDragMovingInfo({
               targetIds: tempCurrentNodes,
               deltas: tempCurrentNodes.map(function (tempCurrentNode) {
-                var find = internalNodes.find(function (item) {
+                var find = defaultNodes.find(function (item) {
                   return item.id === tempCurrentNode;
                 });
                 return {
@@ -2138,39 +2115,39 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         }
       }, node.id);
     });
-  }, [dragConnectionInfo, internalNodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, onEditNode, readonly, render$1, selectedNodeIds]);
+  }, [dragConnectionInfo, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, onEditNode, readonly, render$1, selectedNodeIds, defaultNodes]);
   var connectionElements = useMemo(function () {
-    return internalConnections === null || internalConnections === void 0 ? void 0 : internalConnections.map(function (conn) {
+    return defaultConnections === null || defaultConnections === void 0 ? void 0 : defaultConnections.map(function (conn) {
       return /*#__PURE__*/jsx(FlowchartConnection, {
-        isSelected: selectedConnections.some(function (item) {
-          return conn.id === item.id;
+        isSelected: selectedConnectionIds.some(function (item) {
+          return conn.id === item;
         }),
         onDoubleClick: function onDoubleClick() {
-          return onEditConnection === null || onEditConnection === void 0 ? void 0 : onEditConnection(conn, setInternalConnections);
+          return onEditConnection === null || onEditConnection === void 0 ? void 0 : onEditConnection(conn);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
-            var findIndex = selectedConnections.findIndex(function (item) {
-              return item.id === conn.id;
+            var findIndex = selectedConnectionIds.findIndex(function (item) {
+              return item === conn.id;
             });
 
             if (findIndex === -1) {
-              setSelectedConnections(__spreadArray(__spreadArray([], selectedConnections, true), [conn], false));
+              setSelectedConnectionIds(__spreadArray(__spreadArray([], selectedConnectionIds, true), [conn.id], false));
             } else {
-              setSelectedConnections(update(selectedConnections, {
+              setSelectedConnectionIds(update(selectedConnectionIds, {
                 $splice: [[findIndex, 1]]
               }));
             }
           } else {
             setSelectedNodeIds([]);
-            setSelectedConnections([conn]);
+            setSelectedConnectionIds([conn.id]);
           }
         },
         data: conn,
-        nodes: internalNodes
+        nodes: defaultNodes
       }, conn.id);
     });
-  }, [internalConnections, internalNodes, onEditConnection, selectedConnections]);
+  }, [defaultConnections, selectedConnectionIds, defaultNodes, onEditConnection]);
   var guidelineElements = useMemo(function () {
     return dragMovingInfo && dragMovingInfo.moved && guidelines.map(function (guideline, index) {
       return /*#__PURE__*/jsx("g", {

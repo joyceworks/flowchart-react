@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties } from 'react';
 export interface NodeData {
     id: number;
     name: string;
@@ -14,7 +14,7 @@ export interface NodeData {
 }
 export interface ConnectionData {
     id: number;
-    type: "pass" | "reject";
+    type: 'pass' | 'reject';
     source: {
         id: number;
         position: ConnectorPosition;
@@ -33,18 +33,19 @@ export interface SelectionInfo {
     start: Point;
     end: Point;
 }
-export declare type ConnectorPosition = "left" | "right" | "top" | "bottom";
-export declare type NodeType = "start" | "end" | "operation";
+export declare type ConnectorPosition = 'left' | 'right' | 'top' | 'bottom';
+export declare type NodeType = 'start' | 'end' | 'operation';
 export declare type NodeRender = (data: NodeData) => string | undefined | null;
 export interface FlowchartProps {
     render?: NodeRender;
     style?: CSSProperties;
     defaultNodes: NodeData[];
     defaultConnections: ConnectionData[];
-    onEditNode?: (data: NodeData, setNodes: React.Dispatch<React.SetStateAction<NodeData[]>>) => void;
-    onCreateNode?: (data: NodeData, setNodes: React.Dispatch<React.SetStateAction<NodeData[]>>) => void;
-    onEditConnection?: (data: ConnectionData, setConnections: React.Dispatch<React.SetStateAction<ConnectionData[]>>) => void;
-    onCreateConnection?: (data: ConnectionData, setConnections: React.Dispatch<React.SetStateAction<ConnectionData[]>>) => void;
+    onEditNode?: (data: NodeData) => void;
+    onChange?: (nodes: NodeData[], connections: ConnectionData[]) => void;
+    onCreateNode?: (data: NodeData) => void;
+    onEditConnection?: (data: ConnectionData) => void;
+    onCreateConnection?: (data: ConnectionData) => void;
     onLoad?: () => void;
     readonly?: boolean;
 }
@@ -66,4 +67,4 @@ export interface IFlowchart {
         connections: ConnectionData[];
     };
 }
-export declare type Direction = "l" | "r" | "u" | "d" | "lu" | "ru" | "ld" | "rd";
+export declare type Direction = 'l' | 'r' | 'u' | 'd' | 'lu' | 'ru' | 'ld' | 'rd';

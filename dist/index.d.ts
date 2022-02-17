@@ -1,5 +1,5 @@
-/// <reference types="react" />
+import React from "react";
 import { FlowchartProps, IFlowchart } from "./schema";
 import "./index.css";
-declare const Flowchart: import("react").ForwardRefExoticComponent<FlowchartProps & import("react").RefAttributes<IFlowchart>>;
+declare const Flowchart: React.ForwardRefExoticComponent<FlowchartProps & React.RefAttributes<IFlowchart>>;
 export default Flowchart;

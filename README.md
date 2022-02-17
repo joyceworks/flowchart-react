@@ -8,6 +8,8 @@
 
 ```bash
 npm install --save flowchart-react
+# or
+yarn add flowchart-react
 ```
 
 ## Usage
@@ -83,8 +85,6 @@ const App = () => {
   return <Flowchart defaultNodes={nodes} defaultConnections={connections} />
 }
 ```
-
-See more at [example/src/App.tsx](https://github.com/joyceworks/flowchart-react/blob/master/example/src/App.tsx).
 
 ## License
 
