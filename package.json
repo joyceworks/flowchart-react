@@ -1,6 +1,6 @@
 {
   "name": "flowchart-react",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "main": "./dist",
   "license": "MIT",
   "scripts": {
@@ -21,7 +21,6 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/immutability-helper": "^2.6.3",
     "@types/react": "^17.0.39",
-    "@types/styled-components": "^5.1.22",
     "acorn-jsx": "^5.3.2",
     "postcss": "^8.4.6",
     "prettier": "^2.5.1",
