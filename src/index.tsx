@@ -42,13 +42,11 @@ import "./index.css";
 const Flowchart = forwardRef(
   (
     {
-      defaultNodes,
-      defaultConnections,
+      nodes,
+      connections,
       readonly = false,
       onEditNode,
-      onCreateNode,
       onEditConnection,
-      onCreateConnection,
       onChange,
       style,
       render = defaultRender,
@@ -72,13 +70,13 @@ const Flowchart = forwardRef(
 
       onChange?.(
         center(
-          defaultNodes,
+          nodes,
           svgRef.current!.clientWidth,
           svgRef.current!.clientHeight
         ),
-        defaultConnections
+        connections
       );
-    }, [defaultConnections, defaultNodes, onChange]);
+    }, [connections, nodes, onChange]);
     const zoomIn = useCallback(() => {
       setZoom((prevState) => {
         const number = Number((prevState - 0.1).toFixed(1));
@@ -125,13 +123,13 @@ const Flowchart = forwardRef(
           id: +new Date(),
         };
         let nodeData: NodeData;
-        if (!defaultNodes.find((item) => item.type === "start")) {
+        if (!nodes.find((item) => item.type === "start")) {
           nodeData = {
             type: "start",
             name: "Start",
             ...point,
           };
-        } else if (!defaultNodes.find((item) => item.type === "end")) {
+        } else if (!nodes.find((item) => item.type === "end")) {
           nodeData = {
             type: "end",
             name: "End",
@@ -144,9 +142,9 @@ const Flowchart = forwardRef(
             type: "operation",
           };
         }
-        return onChange?.([...defaultNodes, nodeData], defaultConnections);
+        return onChange?.([...nodes, nodeData], connections);
       },
-      [defaultConnections, defaultNodes, onChange, readonly, zoom]
+      [connections, nodes, onChange, readonly, zoom]
     );
     const handleSVGMouseDown = useCallback(
       (event) => {
@@ -174,11 +172,9 @@ const Flowchart = forwardRef(
     );
     const moveTo = useCallback(
       (id: number, x: number, y: number) => {
-        const index = defaultNodes.findIndex(
-          (internalNode) => internalNode.id === id
-        );
+        const index = nodes.findIndex((internalNode) => internalNode.id === id);
         onChange?.(
-          update(defaultNodes, {
+          update(nodes, {
             [index]: {
               x: {
                 $set: x,
@@ -188,10 +184,10 @@ const Flowchart = forwardRef(
               },
             },
           }),
-          defaultConnections
+          connections
         );
       },
-      [defaultConnections, defaultNodes, onChange]
+      [connections, nodes, onChange]
     );
     const move = useCallback(
       (nodeIds: number[], x: number, y: number) => {
@@ -200,12 +196,10 @@ const Flowchart = forwardRef(
         }
 
         const indexes = nodeIds.map((currentNode) =>
-          defaultNodes.findIndex(
-            (internalNode) => internalNode.id === currentNode
-          )
+          nodes.findIndex((internalNode) => internalNode.id === currentNode)
         );
 
-        let tempState = defaultNodes;
+        let tempState = nodes;
         for (const index of indexes) {
           tempState = update(tempState, {
             [index]: {
@@ -218,9 +212,9 @@ const Flowchart = forwardRef(
             },
           });
         }
-        onChange?.(tempState, defaultConnections);
+        onChange?.(tempState, connections);
       },
-      [defaultConnections, defaultNodes, onChange, readonly]
+      [connections, nodes, onChange, readonly]
     );
     const handleSVGMouseMove = useCallback(
       (event) => {
@@ -242,14 +236,12 @@ const Flowchart = forwardRef(
             newOffsetOfCursorToSVG,
           ]);
           setSelectedNodeIds(
-            calcIntersectedNodes(defaultNodes, edge).map((item) => item.id)
+            calcIntersectedNodes(nodes, edge).map((item) => item.id)
           );
           setSelectedConnectionIds(
-            calcIntersectedConnections(
-              defaultNodes,
-              defaultConnections,
-              edge
-            ).map((item) => item.id)
+            calcIntersectedConnections(nodes, connections, edge).map(
+              (item) => item.id
+            )
           );
         } else if (dragMovingInfo) {
           for (let i = 0; i < dragMovingInfo.targetIds.length; i++) {
@@ -264,14 +256,7 @@ const Flowchart = forwardRef(
           setDragMovingInfo((prevState) => ({ ...prevState!, moved: true }));
         }
       },
-      [
-        zoom,
-        dragSelectionInfo,
-        dragMovingInfo,
-        defaultNodes,
-        defaultConnections,
-        moveTo,
-      ]
+      [zoom, dragSelectionInfo, dragMovingInfo, nodes, connections, moveTo]
     );
     const moveSelected = useCallback(
       (x, y) => {
@@ -285,16 +270,14 @@ const Flowchart = forwardRef(
       // Splice arguments of selected connections
       const list1: [number, number][] = selectedConnectionIds.map(
         (currentConn) => [
-          defaultConnections.findIndex(
-            (interConn) => interConn.id === currentConn
-          ),
+          connections.findIndex((interConn) => interConn.id === currentConn),
           1,
         ]
       );
       // Splice arguments of connections of selected nodes
       const list2: [number, number][] = selectedNodeIds
         .map((currNode) =>
-          defaultConnections.filter(
+          connections.filter(
             (interConn) =>
               interConn.source.id === currNode ||
               interConn.destination.id === currNode
@@ -302,19 +285,17 @@ const Flowchart = forwardRef(
         )
         .flat()
         .map((currentConn) => [
-          defaultConnections.findIndex(
-            (interConn) => interConn.id === currentConn.id
-          ),
+          connections.findIndex((interConn) => interConn.id === currentConn.id),
           1,
         ]);
-      const restConnections = update(defaultConnections, {
+      const restConnections = update(connections, {
         $splice: [...list1, ...list2].sort((a, b) => b[0] - a[0]),
       });
 
-      const restNodes = update(defaultNodes, {
+      const restNodes = update(nodes, {
         $splice: selectedNodeIds
           .map((currNode) => [
-            defaultNodes.findIndex((interNode) => interNode.id === currNode),
+            nodes.findIndex((interNode) => interNode.id === currNode),
             1,
           ])
           .sort((a, b) => b[0] - a[0]) as [number, number][],
@@ -325,8 +306,8 @@ const Flowchart = forwardRef(
       readonly,
       selectedConnectionIds,
       selectedNodeIds,
-      defaultConnections,
-      defaultNodes,
+      connections,
+      nodes,
       onChange,
     ]);
     const handleSVGKeyDown = useCallback(
@@ -355,7 +336,7 @@ const Flowchart = forwardRef(
             ) {
               setSelectedNodeIds([]);
               setSelectedConnectionIds([]);
-              setSelectedNodeIds(defaultNodes.map((item) => item.id));
+              setSelectedNodeIds(nodes.map((item) => item.id));
               setSelectedConnectionIds([...selectedConnectionIds]);
             }
             break;
@@ -367,7 +348,7 @@ const Flowchart = forwardRef(
             break;
         }
       },
-      [moveSelected, remove, defaultNodes, selectedConnectionIds]
+      [moveSelected, remove, nodes, selectedConnectionIds]
     );
     const handleSVGMouseUp = useCallback(() => {
       setDragSelectionInfo(undefined);
@@ -376,7 +357,7 @@ const Flowchart = forwardRef(
 
       // Align dragging node
       if (dragMovingInfo) {
-        let result: NodeData[] = defaultNodes;
+        let result: NodeData[] = nodes;
         for (const t of dragMovingInfo.targetIds) {
           result = update(result, {
             [result.findIndex((item) => item.id === t)]: {
@@ -391,7 +372,7 @@ const Flowchart = forwardRef(
             },
           });
         }
-        onChange?.(result, defaultConnections);
+        onChange?.(result, connections);
       }
 
       // Connect nodes
@@ -400,7 +381,7 @@ const Flowchart = forwardRef(
       }
       let node: NodeData | null = null;
       let position: ConnectorPosition | null = null;
-      for (const internalNode of defaultNodes) {
+      for (const internalNode of nodes) {
         const locations = locateConnector(internalNode);
         for (const prop in locations) {
           const entry = locations[prop as ConnectorPosition];
@@ -423,13 +404,13 @@ const Flowchart = forwardRef(
         node.id,
         position
       );
-      onChange?.(defaultNodes, [...defaultConnections, newConnection]);
+      onChange?.(nodes, [...connections, newConnection]);
     }, [
       dragMovingInfo,
       dragConnectionInfo,
       onChange,
-      defaultNodes,
-      defaultConnections,
+      nodes,
+      connections,
       offsetOfCursorToSVG,
     ]);
 
@@ -437,7 +418,7 @@ const Flowchart = forwardRef(
       let points: [number, number][] | undefined = undefined;
       if (dragConnectionInfo) {
         let endPosition: ConnectorPosition | null = null;
-        for (const internalNode of defaultNodes) {
+        for (const internalNode of nodes) {
           const locations = locateConnector(internalNode);
           for (const prop in locations) {
             const entry = locations[prop as ConnectorPosition];
@@ -457,14 +438,14 @@ const Flowchart = forwardRef(
         );
       }
       return points;
-    }, [defaultNodes, dragConnectionInfo, offsetOfCursorToSVG]);
+    }, [nodes, dragConnectionInfo, offsetOfCursorToSVG]);
 
     const guidelines = useMemo(() => {
       const guidelines: Line[] = [];
       if (dragMovingInfo) {
         for (const source of dragMovingInfo.targetIds) {
           const sourceAnglePoints = locateAngle(
-            defaultNodes.find((item) => item.id === source)!
+            nodes.find((item) => item.id === source)!
           );
           for (let i = 0; i < sourceAnglePoints.length; i++) {
             const sourceAnglePoint = {
@@ -510,7 +491,7 @@ const Flowchart = forwardRef(
               }
             }
 
-            for (const destination of defaultNodes.filter(
+            for (const destination of nodes.filter(
               (internalNode) => internalNode.id !== source
             )) {
               let line: Line | null = null;
@@ -541,13 +522,13 @@ const Flowchart = forwardRef(
         }
       }
       return guidelines;
-    }, [defaultNodes, dragMovingInfo]);
+    }, [nodes, dragMovingInfo]);
 
     useImperativeHandle(ref, () => ({
       getData() {
         return {
-          nodes: defaultNodes,
-          connections: defaultConnections,
+          nodes: nodes,
+          connections: connections,
         };
       },
     }));
@@ -567,7 +548,7 @@ const Flowchart = forwardRef(
     );
 
     const nodeElements = useMemo(() => {
-      return defaultNodes?.map((node) => (
+      return nodes?.map((node) => (
         <FlowchartNode
           readonly={readonly}
           render={render}
@@ -611,7 +592,7 @@ const Flowchart = forwardRef(
               setDragMovingInfo({
                 targetIds: tempCurrentNodes,
                 deltas: tempCurrentNodes.map((tempCurrentNode) => {
-                  const find = defaultNodes.find(
+                  const find = nodes.find(
                     (item) => item.id === tempCurrentNode
                   )!;
                   return {
@@ -642,12 +623,12 @@ const Flowchart = forwardRef(
       readonly,
       render,
       selectedNodeIds,
-      defaultNodes,
+      nodes,
     ]);
 
     const connectionElements = useMemo(
       () =>
-        defaultConnections?.map((conn) => {
+        connections?.map((conn) => {
           return (
             <FlowchartConnection
               key={conn.id}
@@ -678,16 +659,11 @@ const Flowchart = forwardRef(
                 }
               }}
               data={conn}
-              nodes={defaultNodes}
+              nodes={nodes}
             />
           );
         }),
-      [
-        defaultConnections,
-        selectedConnectionIds,
-        defaultNodes,
-        onEditConnection,
-      ]
+      [connections, selectedConnectionIds, nodes, onEditConnection]
     );
 
     const guidelineElements = useMemo(

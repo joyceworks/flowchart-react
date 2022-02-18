@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties } from "react";
 export interface NodeData {
     id: number;
     name: string;
@@ -14,7 +14,7 @@ export interface NodeData {
 }
 export interface ConnectionData {
     id: number;
-    type: 'pass' | 'reject';
+    type: "pass" | "reject";
     source: {
         id: number;
         position: ConnectorPosition;
@@ -33,14 +33,14 @@ export interface SelectionInfo {
     start: Point;
     end: Point;
 }
-export declare type ConnectorPosition = 'left' | 'right' | 'top' | 'bottom';
-export declare type NodeType = 'start' | 'end' | 'operation';
+export declare type ConnectorPosition = "left" | "right" | "top" | "bottom";
+export declare type NodeType = "start" | "end" | "operation";
 export declare type NodeRender = (data: NodeData) => string | undefined | null;
 export interface FlowchartProps {
     render?: NodeRender;
     style?: CSSProperties;
-    defaultNodes: NodeData[];
-    defaultConnections: ConnectionData[];
+    nodes: NodeData[];
+    connections: ConnectionData[];
     onEditNode?: (data: NodeData) => void;
     onChange?: (nodes: NodeData[], connections: ConnectionData[]) => void;
     onCreateNode?: (data: NodeData) => void;
@@ -67,4 +67,4 @@ export interface IFlowchart {
         connections: ConnectionData[];
     };
 }
-export declare type Direction = 'l' | 'r' | 'u' | 'd' | 'lu' | 'ru' | 'ld' | 'rd';
+export declare type Direction = "l" | "r" | "u" | "d" | "lu" | "ru" | "ld" | "rd";
