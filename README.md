@@ -18,7 +18,6 @@ yarn add flowchart-react
 import React, { Component } from 'react'
 
 import Flowchart from 'flowchart-react'
-import 'flowchart-react/dist/index.css'
 
 const App = () => {
   const [nodes] = useState<NodeData[]>([
