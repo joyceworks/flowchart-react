@@ -1,4 +1,4 @@
-# flowchart-react
+# Flowchart React
 
 > Flowchart &amp; Flowchart designer for React.js
 
