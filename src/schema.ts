@@ -47,10 +47,7 @@ export interface FlowchartProps {
   connections: ConnectionData[];
   onEditNode?: (data: NodeData) => void;
   onChange?: (nodes: NodeData[], connections: ConnectionData[]) => void;
-  onCreateNode?: (data: NodeData) => void;
   onEditConnection?: (data: ConnectionData) => void;
-  onCreateConnection?: (data: ConnectionData) => void;
-  onLoad?: () => void;
   readonly?: boolean;
 }
 

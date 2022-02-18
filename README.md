@@ -82,7 +82,15 @@ const App = () => {
     }
   ])
 
-  return <Flowchart defaultNodes={nodes} defaultConnections={connections} />
+  return <Flowchart
+    onChange={(nodes, connections) => {
+      setNodes(nodes);
+      setConns(connections);
+    }}
+    style={{ width: 640, height: 480 }}
+    nodes={nodes}
+    connections={conns}
+  />
 }
 ```
 
