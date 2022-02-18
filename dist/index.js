@@ -1662,21 +1662,21 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     setSelectedNodeIds([]);
     setSelectedConnectionIds([]);
   }, [zoom]);
-  var moveTo = useCallback(function (id, x, y) {
+  var moveTo = useCallback(function (nodes, id, x, y) {
     var _a;
 
     var index = nodes.findIndex(function (internalNode) {
       return internalNode.id === id;
     });
-    onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
+    return update(nodes, (_a = {}, _a[index] = {
       x: {
         $set: x
       },
       y: {
         $set: y
       }
-    }, _a)), connections);
-  }, [connections, nodes, onChange]);
+    }, _a));
+  }, []);
   var move = useCallback(function (nodeIds, x, y) {
     var _a;
 
@@ -1731,19 +1731,22 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         return item.id;
       }));
     } else if (dragMovingInfo) {
+      var currentNodes = nodes;
+
       for (var i = 0; i < dragMovingInfo.targetIds.length; i++) {
         var t = dragMovingInfo.targetIds[i];
         var delta = dragMovingInfo.deltas[i];
-        moveTo(t, newOffsetOfCursorToSVG.x - delta.x, newOffsetOfCursorToSVG.y - delta.y);
+        currentNodes = moveTo(currentNodes, t, newOffsetOfCursorToSVG.x - delta.x, newOffsetOfCursorToSVG.y - delta.y);
       }
 
+      onChange === null || onChange === void 0 ? void 0 : onChange(currentNodes, connections);
       setDragMovingInfo(function (prevState) {
         return _assign(_assign({}, prevState), {
           moved: true
         });
       });
     }
-  }, [zoom, dragSelectionInfo, dragMovingInfo, nodes, connections, moveTo]);
+  }, [zoom, dragSelectionInfo, dragMovingInfo, nodes, connections, onChange, moveTo]);
   var moveSelected = useCallback(function (x, y) {
     move(selectedNodeIds, x, y);
   }, [move, selectedNodeIds]);

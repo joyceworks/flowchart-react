@@ -171,23 +171,20 @@ const Flowchart = forwardRef(
       [zoom]
     );
     const moveTo = useCallback(
-      (id: number, x: number, y: number) => {
+      (nodes: NodeData[], id: number, x: number, y: number): NodeData[] => {
         const index = nodes.findIndex((internalNode) => internalNode.id === id);
-        onChange?.(
-          update(nodes, {
-            [index]: {
-              x: {
-                $set: x,
-              },
-              y: {
-                $set: y,
-              },
+        return update(nodes, {
+          [index]: {
+            x: {
+              $set: x,
             },
-          }),
-          connections
-        );
+            y: {
+              $set: y,
+            },
+          },
+        });
       },
-      [connections, nodes, onChange]
+      []
     );
     const move = useCallback(
       (nodeIds: number[], x: number, y: number) => {
@@ -244,19 +241,30 @@ const Flowchart = forwardRef(
             )
           );
         } else if (dragMovingInfo) {
+          let currentNodes: NodeData[] = nodes;
           for (let i = 0; i < dragMovingInfo.targetIds.length; i++) {
             const t = dragMovingInfo.targetIds[i];
             const delta = dragMovingInfo.deltas[i];
-            moveTo(
+            currentNodes = moveTo(
+              currentNodes,
               t,
               newOffsetOfCursorToSVG.x - delta.x,
               newOffsetOfCursorToSVG.y - delta.y
             );
           }
+          onChange?.(currentNodes, connections);
           setDragMovingInfo((prevState) => ({ ...prevState!, moved: true }));
         }
       },
-      [zoom, dragSelectionInfo, dragMovingInfo, nodes, connections, moveTo]
+      [
+        zoom,
+        dragSelectionInfo,
+        dragMovingInfo,
+        nodes,
+        connections,
+        onChange,
+        moveTo,
+      ]
     );
     const moveSelected = useCallback(
       (x, y) => {
