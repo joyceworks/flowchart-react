@@ -95,4 +95,4 @@ const App = () => {
 
 ## License
 
-MIT © [iamppz](https://github.com/iamppz)
+MIT © [Joyceworks](https://github.com/joyceworks)
