@@ -93,6 +93,10 @@ const App = () => {
 }
 ```
 
+## Demo
+
+[https://github.com/joyceworks/flowchart-react-demo](https://github.com/joyceworks/flowchart-react-demo)
+
 ## License
 
 MIT © [Joyceworks](https://github.com/joyceworks)
