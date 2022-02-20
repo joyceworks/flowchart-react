@@ -1377,9 +1377,9 @@ function Circle(props) {
     return {
       opacity: props.isConnecting ? 1 : 0
     };
-  }, []);
+  }, [props.isConnecting]);
   return /*#__PURE__*/jsx("circle", _objectSpread({
-    className: 'circle',
+    className: "circle",
     style: Object.assign(style, props.style)
   }, props));
 }
@@ -1532,9 +1532,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       connections = _a.connections,
       _b = _a.readonly,
       readonly = _b === void 0 ? false : _b,
-      onEditNode = _a.onEditNode,
-      onEditConnection = _a.onEditConnection,
+      onNodeDoubleClick = _a.onNodeDoubleClick,
+      onConnectionDoubleClick = _a.onConnectionDoubleClick,
+      onDoubleClick = _a.onDoubleClick,
       onChange = _a.onChange,
+      onMouseUp = _a.onMouseUp,
       style = _a.style,
       _c = _a.render,
       render$1 = _c === void 0 ? render : _c;
@@ -1607,40 +1609,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
   }, [zoom]);
   var handleSVGDoubleClick = useCallback(function (event) {
-    if (readonly) {
-      return;
-    }
-
-    var point = {
-      x: event.nativeEvent.offsetX / zoom,
-      y: event.nativeEvent.offsetY / zoom,
-      id: +new Date()
-    };
-    var nodeData;
-
-    if (!nodes.find(function (item) {
-      return item.type === "start";
-    })) {
-      nodeData = _assign({
-        type: "start",
-        name: "Start"
-      }, point);
-    } else if (!nodes.find(function (item) {
-      return item.type === "end";
-    })) {
-      nodeData = _assign({
-        type: "end",
-        name: "End"
-      }, point);
-    } else {
-      nodeData = _assign(_assign({}, point), {
-        name: "New",
-        type: "operation"
-      });
-    }
-
-    return onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [nodeData], false), connections);
-  }, [connections, nodes, onChange, readonly, zoom]);
+    onDoubleClick === null || onDoubleClick === void 0 ? void 0 : onDoubleClick(event, zoom);
+  }, [onDoubleClick, zoom]);
   var handleSVGMouseDown = useCallback(function (event) {
     if (event.ctrlKey || event.metaKey || event.target.tagName !== "svg") {
       // ignore propagation
@@ -1825,7 +1795,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         break;
     }
   }, [moveSelected, remove, nodes, selectedConnectionIds]);
-  var handleSVGMouseUp = useCallback(function () {
+  var handleSVGMouseUp = useCallback(function (event) {
     setDragSelectionInfo(undefined);
     setDragConnectionInfo(undefined);
     setDragMovingInfo(undefined); // Align dragging node
@@ -1894,7 +1864,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
     var newConnection = createConnection(dragConnectionInfo.source.id, dragConnectionInfo.sourcePosition, node.id, position);
     onChange === null || onChange === void 0 ? void 0 : onChange(nodes, __spreadArray(__spreadArray([], connections, true), [newConnection], false));
-  }, [dragMovingInfo, dragConnectionInfo, onChange, nodes, connections, offsetOfCursorToSVG]);
+    onMouseUp === null || onMouseUp === void 0 ? void 0 : onMouseUp(event, zoom);
+  }, [dragMovingInfo, dragConnectionInfo, onChange, nodes, connections, onMouseUp, zoom, offsetOfCursorToSVG]);
   var points = useMemo(function () {
     var points = undefined;
 
@@ -2059,7 +2030,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             return;
           }
 
-          onEditNode === null || onEditNode === void 0 ? void 0 : onEditNode(node);
+          onNodeDoubleClick === null || onNodeDoubleClick === void 0 ? void 0 : onNodeDoubleClick(node);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
@@ -2116,7 +2087,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         }
       }, node.id);
     });
-  }, [dragConnectionInfo, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, onEditNode, readonly, render$1, selectedNodeIds, nodes]);
+  }, [nodes, readonly, render$1, selectedNodeIds, dragConnectionInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
   var connectionElements = useMemo(function () {
     return connections === null || connections === void 0 ? void 0 : connections.map(function (conn) {
       return /*#__PURE__*/jsx(FlowchartConnection, {
@@ -2124,7 +2095,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           return conn.id === item;
         }),
         onDoubleClick: function onDoubleClick() {
-          return onEditConnection === null || onEditConnection === void 0 ? void 0 : onEditConnection(conn);
+          return onConnectionDoubleClick === null || onConnectionDoubleClick === void 0 ? void 0 : onConnectionDoubleClick(conn);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
@@ -2148,7 +2119,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         nodes: nodes
       }, conn.id);
     });
-  }, [connections, selectedConnectionIds, nodes, onEditConnection]);
+  }, [connections, selectedConnectionIds, nodes, onConnectionDoubleClick]);
   var guidelineElements = useMemo(function () {
     return dragMovingInfo && dragMovingInfo.moved && guidelines.map(function (guideline, index) {
       return /*#__PURE__*/jsx("g", {

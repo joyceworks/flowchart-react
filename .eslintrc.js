@@ -22,5 +22,6 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
     "no-eval": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
   },
 };

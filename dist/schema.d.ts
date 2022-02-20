@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import React, { CSSProperties } from "react";
 export interface NodeData {
     id: number;
     name: string;
@@ -11,6 +11,9 @@ export interface NodeData {
     }[];
     x: number;
     y: number;
+    payload?: {
+        [key: string]: unknown;
+    };
 }
 export interface ConnectionData {
     id: number;
@@ -41,9 +44,11 @@ export interface FlowchartProps {
     style?: CSSProperties;
     nodes: NodeData[];
     connections: ConnectionData[];
-    onEditNode?: (data: NodeData) => void;
+    onNodeDoubleClick?: (data: NodeData) => void;
     onChange?: (nodes: NodeData[], connections: ConnectionData[]) => void;
-    onEditConnection?: (data: ConnectionData) => void;
+    onConnectionDoubleClick?: (data: ConnectionData) => void;
+    onDoubleClick?: ((event: React.MouseEvent<SVGSVGElement>, zoom: number) => void) | undefined;
+    onMouseUp?: ((event: React.MouseEvent<SVGSVGElement>, zoom: number) => void) | undefined;
     readonly?: boolean;
 }
 export interface DragMovingInfo {

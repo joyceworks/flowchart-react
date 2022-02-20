@@ -45,9 +45,11 @@ const Flowchart = forwardRef(
       nodes,
       connections,
       readonly = false,
-      onEditNode,
-      onEditConnection,
+      onNodeDoubleClick,
+      onConnectionDoubleClick,
+      onDoubleClick,
       onChange,
+      onMouseUp,
       style,
       render = defaultRender,
     }: FlowchartProps,
@@ -114,37 +116,9 @@ const Flowchart = forwardRef(
     );
     const handleSVGDoubleClick = useCallback(
       (event) => {
-        if (readonly) {
-          return;
-        }
-        const point = {
-          x: event.nativeEvent.offsetX / zoom,
-          y: event.nativeEvent.offsetY / zoom,
-          id: +new Date(),
-        };
-        let nodeData: NodeData;
-        if (!nodes.find((item) => item.type === "start")) {
-          nodeData = {
-            type: "start",
-            name: "Start",
-            ...point,
-          };
-        } else if (!nodes.find((item) => item.type === "end")) {
-          nodeData = {
-            type: "end",
-            name: "End",
-            ...point,
-          };
-        } else {
-          nodeData = {
-            ...point,
-            name: "New",
-            type: "operation",
-          };
-        }
-        return onChange?.([...nodes, nodeData], connections);
+        onDoubleClick?.(event, zoom);
       },
-      [connections, nodes, onChange, readonly, zoom]
+      [onDoubleClick, zoom]
     );
     const handleSVGMouseDown = useCallback(
       (event) => {
@@ -358,69 +332,76 @@ const Flowchart = forwardRef(
       },
       [moveSelected, remove, nodes, selectedConnectionIds]
     );
-    const handleSVGMouseUp = useCallback(() => {
-      setDragSelectionInfo(undefined);
-      setDragConnectionInfo(undefined);
-      setDragMovingInfo(undefined);
+    const handleSVGMouseUp = useCallback(
+      (event: React.MouseEvent<SVGSVGElement>) => {
+        setDragSelectionInfo(undefined);
+        setDragConnectionInfo(undefined);
+        setDragMovingInfo(undefined);
 
-      // Align dragging node
-      if (dragMovingInfo) {
-        let result: NodeData[] = nodes;
-        for (const t of dragMovingInfo.targetIds) {
-          result = update(result, {
-            [result.findIndex((item) => item.id === t)]: {
-              x: {
-                $apply: (prevState) =>
-                  Math.round(Math.round(prevState) / 10) * 10,
+        // Align dragging node
+        if (dragMovingInfo) {
+          let result: NodeData[] = nodes;
+          for (const t of dragMovingInfo.targetIds) {
+            result = update(result, {
+              [result.findIndex((item) => item.id === t)]: {
+                x: {
+                  $apply: (prevState) =>
+                    Math.round(Math.round(prevState) / 10) * 10,
+                },
+                y: {
+                  $apply: (prevState) =>
+                    Math.round(Math.round(prevState) / 10) * 10,
+                },
               },
-              y: {
-                $apply: (prevState) =>
-                  Math.round(Math.round(prevState) / 10) * 10,
-              },
-            },
-          });
+            });
+          }
+          onChange?.(result, connections);
         }
-        onChange?.(result, connections);
-      }
 
-      // Connect nodes
-      if (!dragConnectionInfo) {
-        return;
-      }
-      let node: NodeData | null = null;
-      let position: ConnectorPosition | null = null;
-      for (const internalNode of nodes) {
-        const locations = locateConnector(internalNode);
-        for (const prop in locations) {
-          const entry = locations[prop as ConnectorPosition];
-          if (distanceOfPoint2Point(entry, offsetOfCursorToSVG) < 6) {
-            node = internalNode;
-            position = prop as ConnectorPosition;
+        // Connect nodes
+        if (!dragConnectionInfo) {
+          return;
+        }
+        let node: NodeData | null = null;
+        let position: ConnectorPosition | null = null;
+        for (const internalNode of nodes) {
+          const locations = locateConnector(internalNode);
+          for (const prop in locations) {
+            const entry = locations[prop as ConnectorPosition];
+            if (distanceOfPoint2Point(entry, offsetOfCursorToSVG) < 6) {
+              node = internalNode;
+              position = prop as ConnectorPosition;
+            }
           }
         }
-      }
-      if (!node || !position) {
-        return;
-      }
-      if (dragConnectionInfo.source.id === node.id) {
-        // Node can not connect to itself
-        return;
-      }
-      const newConnection = createConnection(
-        dragConnectionInfo.source.id,
-        dragConnectionInfo.sourcePosition,
-        node.id,
-        position
-      );
-      onChange?.(nodes, [...connections, newConnection]);
-    }, [
-      dragMovingInfo,
-      dragConnectionInfo,
-      onChange,
-      nodes,
-      connections,
-      offsetOfCursorToSVG,
-    ]);
+        if (!node || !position) {
+          return;
+        }
+        if (dragConnectionInfo.source.id === node.id) {
+          // Node can not connect to itself
+          return;
+        }
+        const newConnection = createConnection(
+          dragConnectionInfo.source.id,
+          dragConnectionInfo.sourcePosition,
+          node.id,
+          position
+        );
+        onChange?.(nodes, [...connections, newConnection]);
+
+        onMouseUp?.(event, zoom);
+      },
+      [
+        dragMovingInfo,
+        dragConnectionInfo,
+        onChange,
+        nodes,
+        connections,
+        onMouseUp,
+        zoom,
+        offsetOfCursorToSVG,
+      ]
+    );
 
     const points = useMemo(() => {
       let points: [number, number][] | undefined = undefined;
@@ -569,7 +550,7 @@ const Flowchart = forwardRef(
             if (readonly) {
               return;
             }
-            onEditNode?.(node);
+            onNodeDoubleClick?.(node);
           }}
           onMouseDown={(event) => {
             if (event.ctrlKey || event.metaKey) {
@@ -624,14 +605,14 @@ const Flowchart = forwardRef(
         />
       ));
     }, [
-      dragConnectionInfo,
-      offsetOfCursorToSVG.x,
-      offsetOfCursorToSVG.y,
-      onEditNode,
+      nodes,
       readonly,
       render,
       selectedNodeIds,
-      nodes,
+      dragConnectionInfo,
+      onNodeDoubleClick,
+      offsetOfCursorToSVG.x,
+      offsetOfCursorToSVG.y,
     ]);
 
     const connectionElements = useMemo(
@@ -643,7 +624,7 @@ const Flowchart = forwardRef(
               isSelected={selectedConnectionIds.some(
                 (item) => conn.id === item
               )}
-              onDoubleClick={() => onEditConnection?.(conn)}
+              onDoubleClick={() => onConnectionDoubleClick?.(conn)}
               onMouseDown={(event) => {
                 if (event.ctrlKey || event.metaKey) {
                   const findIndex = selectedConnectionIds.findIndex(
@@ -671,7 +652,7 @@ const Flowchart = forwardRef(
             />
           );
         }),
-      [connections, selectedConnectionIds, nodes, onEditConnection]
+      [connections, selectedConnectionIds, nodes, onConnectionDoubleClick]
     );
 
     const guidelineElements = useMemo(
@@ -711,7 +692,7 @@ const Flowchart = forwardRef(
               fill="currentColor"
               aria-hidden="true"
             >
-              <path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path>
+              <path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z" />
             </svg>
           </button>
           <span
@@ -733,10 +714,10 @@ const Flowchart = forwardRef(
               aria-hidden="true"
             >
               <defs>
-                <style></style>
+                <style />
               </defs>
-              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
+              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
             </svg>
           </button>
           {!readonly && (
@@ -753,7 +734,7 @@ const Flowchart = forwardRef(
                 fill="currentColor"
                 aria-hidden="true"
               >
-                <path d="M264 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm496 424c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496zm144 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path>
+                <path d="M264 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm496 424c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496zm144 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z" />
               </svg>
             </button>
           )}

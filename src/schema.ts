@@ -9,6 +9,7 @@ export interface NodeData {
   approvers?: { id: number; name: string }[];
   x: number;
   y: number;
+  payload?: { [key: string]: unknown };
 }
 
 export interface ConnectionData {
@@ -45,9 +46,15 @@ export interface FlowchartProps {
   style?: CSSProperties;
   nodes: NodeData[];
   connections: ConnectionData[];
-  onEditNode?: (data: NodeData) => void;
+  onNodeDoubleClick?: (data: NodeData) => void;
   onChange?: (nodes: NodeData[], connections: ConnectionData[]) => void;
-  onEditConnection?: (data: ConnectionData) => void;
+  onConnectionDoubleClick?: (data: ConnectionData) => void;
+  onDoubleClick?:
+    | ((event: React.MouseEvent<SVGSVGElement>, zoom: number) => void)
+    | undefined;
+  onMouseUp?:
+    | ((event: React.MouseEvent<SVGSVGElement>, zoom: number) => void)
+    | undefined;
   readonly?: boolean;
 }
 
