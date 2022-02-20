@@ -22,7 +22,7 @@ import React, { Component } from 'react'
 import Flowchart from 'flowchart-react'
 
 const App = () => {
-  const [nodes] = useState<NodeData[]>([
+  const [nodes, setNodes] = useState<NodeData[]>([
     {
       type: 'start',
       name: 'Start',
@@ -56,7 +56,7 @@ const App = () => {
       approvers: []
     }
   ])
-  const [connections] = useState<ConnectionData[]>([
+  const [connections, setConnections] = useState<ConnectionData[]>([
     {
       source: { id: 1604410569920, position: 'right' },
       destination: { id: 1604410575428, position: 'left' },
