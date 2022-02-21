@@ -25,61 +25,59 @@ const App = () => {
   const [nodes, setNodes] = useState<NodeData[]>([
     {
       type: 'start',
-      name: 'Start',
+      title: 'Start',
       x: 150,
       y: 190,
       id: 1604410569920,
-      approvers: []
     },
     {
       type: 'end',
-      name: 'End',
+      title: 'End',
       x: 500,
       y: 190,
       id: 1604410572363,
-      approvers: []
     },
     {
       x: 330,
       y: 190,
       id: 1604410575428,
-      name: 'New',
+      title: 'New',
       type: 'operation',
-      approvers: [{ name: 'Joyce', id: '1' }]
+      content: 'Joyce'
     },
     {
       x: 330,
       y: 300,
       id: 1604410591865,
-      name: 'New',
+      title: 'New',
       type: 'operation',
-      approvers: []
+      content: 'No approver'
     }
   ])
-  const [connections, setConnections] = useState<ConnectionData[]>([
+  const [conns, setConns] = useState<ConnectionData[]>([
     {
       source: { id: 1604410569920, position: 'right' },
       destination: { id: 1604410575428, position: 'left' },
       id: 1604410587907,
-      type: 'pass'
+      type: 'success'
     },
     {
       source: { id: 1604410575428, position: 'right' },
       destination: { id: 1604410572363, position: 'left' },
       id: 1604410590524,
-      type: 'pass'
+      type: 'success'
     },
     {
       source: { id: 1604410569920, position: 'bottom' },
       destination: { id: 1604410591865, position: 'left' },
       id: 1604410596866,
-      type: 'pass'
+      type: 'success'
     },
     {
       source: { id: 1604410591865, position: 'right' },
       destination: { id: 1604410572363, position: 'bottom' },
       id: 1604410599205,
-      type: 'pass'
+      type: 'success'
     }
   ])
 
@@ -88,7 +86,7 @@ const App = () => {
       setNodes(nodes);
       setConns(connections);
     }}
-    style={{ width: 640, height: 480 }}
+    style={{ width: 800, height: 600 }}
     nodes={nodes}
     connections={conns}
   />
@@ -98,6 +96,91 @@ const App = () => {
 ## Demo
 
 [https://github.com/joyceworks/flowchart-react-demo](https://github.com/joyceworks/flowchart-react-demo)
+
+## API
+
+### Props
+
+#### nodes
+
+Array of nodes.
+
+##### NodeData
+
+| Props   | Description   | Type                        | Default |
+|---------|---------------|:----------------------------|---------|
+| id      | Identity      | number                      |         |
+| title   | Title of node | string                      |         |
+| type    | Type of node  | `start`, `end`, `operation` |         |
+| x       | X axis        | number                      |         |
+| y       | Y axis        | number                      |         |
+| payload | Custom data   | `{[key: string]: unknown}`  |         |
+
+#### connections
+
+Connections between nodes.
+
+| Props       | Description      | Type                                                       | Default |
+|-------------|------------------|:-----------------------------------------------------------|---------|
+| id          | Identity         | number                                                     |         |
+| source      | Source info      | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         |
+| destination | Destination info | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         |
+
+##### ConnectionData
+
+#### readonly
+
+Prop to disabled drag, connect and delete action.
+
+#### style
+
+Style of background svg.
+
+#### render
+
+Function to customize node content.
+
+```typescript
+function customRender (node) {
+  if (node.type !== "operation") {
+    return undefined;
+  }
+  if (!data.payload.approvers) {
+    return "No approver";
+  }
+  let text;
+  for (let i = 0; i < data.payload.approvers.length; i++) {
+    if (i > 0) {
+      text += "...";
+      break;
+    }
+    text = data.payload.approvers[i].name;
+  }
+  return text;
+}
+```
+
+### Events
+
+#### onChange
+
+Triggered when a node is deleted, moved, disconnected or connected.
+
+#### onNodeDoubleClick
+
+Triggered when a node is double-clicked.
+
+#### onDoubleClick
+
+Triggered when the background svg is double-clicked.
+
+#### onConnectionDoubleClick
+
+Triggered when a connection is double-clicked.
+
+#### onMouseUp
+
+Triggered when the mouse is up on the background svg.
 
 ## License
 

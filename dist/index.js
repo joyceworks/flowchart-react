@@ -1277,31 +1277,12 @@ function createConnection(sourceId, sourcePosition, destinationId, destinationPo
       position: destinationPosition
     },
     id: +new Date(),
-    type: "pass"
+    type: "success"
   };
 }
 
 function render(data) {
-  if (data.type !== "operation") {
-    return undefined;
-  }
-
-  if (!data.approvers) {
-    return "无审核人";
-  }
-
-  var text;
-
-  for (var i = 0; i < data.approvers.length; i++) {
-    if (i > 0) {
-      text += "等...";
-      break;
-    }
-
-    text = data.approvers[i].name;
-  }
-
-  return text;
+  return data.content;
 }
 
 var FlowchartOperationNode = function FlowchartOperationNode(_a) {
@@ -1310,23 +1291,25 @@ var FlowchartOperationNode = function FlowchartOperationNode(_a) {
       isSelected = _b === void 0 ? false : _b,
       render = _a.render;
   var borderColor = isSelected ? "#666666" : "#bbbbbb";
-  var text = (render === null || render === void 0 ? void 0 : render(data)) || (!data.approvers || data.approvers.length === 0 ? "No approver" : data.approvers.length > 1 ? "".concat(data.approvers[0].name + "...") : data.approvers[0].name);
+  var text = (render === null || render === void 0 ? void 0 : render(data)) || data.content;
   return /*#__PURE__*/jsxs(Fragment, {
-    children: [/*#__PURE__*/jsx("rect", {
-      x: data.x,
-      y: data.y,
-      height: 20,
-      fill: "#f1f3f4",
-      strokeWidth: 1,
-      width: 120,
-      stroke: borderColor
-    }), /*#__PURE__*/jsx("text", {
-      x: data.x + 4,
-      y: data.y + 15,
-      children: data.name
+    children: [text && /*#__PURE__*/jsxs(Fragment, {
+      children: [/*#__PURE__*/jsx("rect", {
+        x: data.x,
+        y: data.y,
+        height: 20,
+        fill: "#f1f3f4",
+        strokeWidth: 1,
+        width: 120,
+        stroke: borderColor
+      }), /*#__PURE__*/jsx("text", {
+        x: data.x + 4,
+        y: data.y + 15,
+        children: data.title
+      })]
     }), /*#__PURE__*/jsx("rect", {
       width: 120,
-      height: 40,
+      height: text ? 40 : 60,
       fill: "white",
       x: data.x,
       y: data.y + 20,
@@ -1336,7 +1319,7 @@ var FlowchartOperationNode = function FlowchartOperationNode(_a) {
       x: data.x + 60,
       y: data.y + 25 + 20,
       textAnchor: "middle",
-      children: text
+      children: text || data.title
     })]
   });
 };
@@ -1425,12 +1408,12 @@ var FlowchartNode = function FlowchartNode(_a) {
 };
 
 var defaultConnectionColors = {
-  pass: "#52c41a",
-  reject: "red"
+  success: "#52c41a",
+  fail: "red"
 };
 var selectedConnectionColors = {
-  pass: "#12640a",
-  reject: "darkred"
+  success: "#12640a",
+  fail: "darkred"
 };
 
 var FlowchartConnection = function FlowchartConnection(_a) {
@@ -2236,11 +2219,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           var source = points[i];
           var destination = points[i + 1];
           var isLast = i === points.length - 2;
-          var color = defaultConnectionColors.pass;
+          var color = defaultConnectionColors.success;
           var id = "arrow".concat(color.replace("#", ""));
           return /*#__PURE__*/jsxs(Fragment, {
             children: [/*#__PURE__*/jsx("path", {
-              stroke: defaultConnectionColors.pass,
+              stroke: defaultConnectionColors.success,
               strokeWidth: 1,
               fill: "none",
               d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1]),

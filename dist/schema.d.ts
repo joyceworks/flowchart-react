@@ -1,23 +1,18 @@
 import React, { CSSProperties } from "react";
 export interface NodeData {
     id: number;
-    name: string;
+    title: string;
     type: NodeType;
-    approveMethod?: number;
-    editableFields?: string;
-    approvers?: {
-        id: number;
-        name: string;
-    }[];
     x: number;
     y: number;
     payload?: {
         [key: string]: unknown;
     };
+    content?: string;
 }
 export interface ConnectionData {
     id: number;
-    type: "pass" | "reject";
+    type: "success" | "fail";
     source: {
         id: number;
         position: ConnectorPosition;

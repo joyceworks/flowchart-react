@@ -775,12 +775,12 @@ const Flowchart = forwardRef(
                 const source = points![i];
                 const destination = points![i + 1];
                 const isLast = i === points!.length - 2;
-                const color = defaultConnectionColors.pass;
+                const color = defaultConnectionColors.success;
                 const id = `arrow${color.replace("#", "")}`;
                 return (
                   <>
                     <path
-                      stroke={defaultConnectionColors.pass}
+                      stroke={defaultConnectionColors.success}
                       strokeWidth={1}
                       fill={"none"}
                       d={`M ${source[0]} ${source[1]} L ${destination[0]} ${destination[1]}`}

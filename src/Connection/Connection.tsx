@@ -1,5 +1,5 @@
 import { locateConnector, pathing } from "../util";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { ConnectionData, ConnectorPosition, NodeData } from "../schema";
 import { defaultConnectionColors, selectedConnectionColors } from "./constant";
 
@@ -31,7 +31,7 @@ const FlowchartConnection = function ({
     data.source.position,
     data.destination.position
   );
-  const colors = useMemo((): { pass: string; reject: string } => {
+  const colors = useMemo((): { success: string; fail: string } => {
     return isSelected ? selectedConnectionColors : defaultConnectionColors;
   }, [isSelected]);
   return (

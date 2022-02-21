@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from "react";
 import { ConnectionData, NodeData } from "../schema";
 interface ConnectionProps {
     data: ConnectionData;

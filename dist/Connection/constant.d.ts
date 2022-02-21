@@ -1,9 +1,9 @@
 declare const defaultConnectionColors: {
-    pass: string;
-    reject: string;
+    success: string;
+    fail: string;
 };
 declare const selectedConnectionColors: {
-    pass: string;
-    reject: string;
+    success: string;
+    fail: string;
 };
 export { defaultConnectionColors, selectedConnectionColors };

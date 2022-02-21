@@ -7,30 +7,28 @@ const FlowchartOperationNode = function ({
   render,
 }: NodeProps): JSX.Element {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
-  const text =
-    render?.(data) ||
-    (!data.approvers || data.approvers.length === 0
-      ? "No approver"
-      : data.approvers.length > 1
-      ? `${data.approvers[0].name + "..."}`
-      : data.approvers[0].name);
+  const text = render?.(data) || data.content;
   return (
     <>
+      {text && (
+        <>
+          <rect
+            x={data.x}
+            y={data.y}
+            height={20}
+            fill={"#f1f3f4"}
+            strokeWidth={1}
+            width={120}
+            stroke={borderColor}
+          />
+          <text x={data.x + 4} y={data.y + 15}>
+            {data.title}
+          </text>
+        </>
+      )}
       <rect
-        x={data.x}
-        y={data.y}
-        height={20}
-        fill={"#f1f3f4"}
-        strokeWidth={1}
         width={120}
-        stroke={borderColor}
-      />
-      <text x={data.x + 4} y={data.y + 15}>
-        {data.name}
-      </text>
-      <rect
-        width={120}
-        height={40}
+        height={text ? 40 : 60}
         fill={"white"}
         x={data.x}
         y={data.y + 20}
@@ -38,7 +36,7 @@ const FlowchartOperationNode = function ({
         stroke={borderColor}
       />
       <text x={data.x + 60} y={data.y + 25 + 20} textAnchor={"middle"}>
-        {text}
+        {text || data.title}
       </text>
     </>
   );

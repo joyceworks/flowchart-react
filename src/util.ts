@@ -689,9 +689,12 @@ function roundToNearest10(number: number): number {
   return Math.ceil(number / 10) * 10;
 }
 
-function locateConnector(
-  node: NodeData
-): { left: Point; right: Point; top: Point; bottom: Point } {
+function locateConnector(node: NodeData): {
+  left: Point;
+  right: Point;
+  top: Point;
+  bottom: Point;
+} {
   const halfWidth = 60;
   const halfHeight = 30;
   const top = { x: node.x + halfWidth, y: node.y };
@@ -765,26 +768,12 @@ function createConnection(
     source: { id: sourceId, position: sourcePosition },
     destination: { id: destinationId, position: destinationPosition },
     id: +new Date(),
-    type: "pass",
+    type: "success",
   };
 }
 
 function render(data: NodeData): string | undefined {
-  if (data.type !== "operation") {
-    return undefined;
-  }
-  if (!data.approvers) {
-    return "无审核人";
-  }
-  let text;
-  for (let i = 0; i < data.approvers.length; i++) {
-    if (i > 0) {
-      text += "等...";
-      break;
-    }
-    text = data.approvers[i].name;
-  }
-  return text;
+  return data.content;
 }
 
 export {

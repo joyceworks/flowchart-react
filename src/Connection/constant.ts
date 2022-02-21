@@ -1,10 +1,10 @@
 const defaultConnectionColors = {
-  pass: "#52c41a",
-  reject: "red",
+  success: "#52c41a",
+  fail: "red",
 };
 
 const selectedConnectionColors = {
-  pass: "#12640a",
-  reject: "darkred",
+  success: "#12640a",
+  fail: "darkred",
 };
 export { defaultConnectionColors, selectedConnectionColors };
