@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/flowchart-react.svg)](https://www.npmjs.com/package/flowchart-react) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-<img width="800" alt="image" src="https://user-images.githubusercontent.com/5696485/154805805-b8967cea-a4ff-45e1-acf2-524ae1150dd3.png">
+<img width="801" alt="image" src="https://user-images.githubusercontent.com/5696485/155135822-93cc3901-6a61-42da-a9be-ee495398cdf5.png">
 
 ## Install
 
