@@ -101,42 +101,44 @@ const App = () => {
 
 ### Props
 
-#### nodes
+#### nodes: `NodeData[]`
 
 Array of nodes.
 
 ##### NodeData
 
-| Props   | Description   | Type                        | Default |
-|---------|---------------|:----------------------------|---------|
-| id      | Identity      | number                      |         |
-| title   | Title of node | string                      |         |
-| type    | Type of node  | `start`, `end`, `operation` |         |
-| x       | X axis        | number                      |         |
-| y       | Y axis        | number                      |         |
-| payload | Custom data   | `{[key: string]: unknown}`  |         |
+| Props   | Description     | Type                        | Default | Required |
+|---------|-----------------|:----------------------------|---------|----------|
+| id      | Identity        | number                      |         | true     |
+| title   | Title of node   | string                      |         | true     |
+| content | Content of node | string                      |         | false    |
+| type    | Type of node    | `start`, `end`, `operation` |         | true     |
+| x       | X axis          | number                      |         | true     |
+| y       | Y axis          | number                      |         | true     |
+| payload | Custom data     | `{[key: string]: unknown}`  |         | false    |
 
-#### connections
+#### connections: `ConnectionData[]`
 
 Connections between nodes.
 
-| Props       | Description      | Type                                                       | Default |
-|-------------|------------------|:-----------------------------------------------------------|---------|
-| id          | Identity         | number                                                     |         |
-| source      | Source info      | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         |
-| destination | Destination info | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         |
-
 ##### ConnectionData
 
-#### readonly
+| Props       | Description        | Type                                                       | Default | Required |
+|-------------|--------------------|:-----------------------------------------------------------|---------|----------|
+| id          | Identity           | number                                                     |         | true     |
+| type        | Type of connection | `success`, `fail`                                          |         | false    |
+| source      | Source info        | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
+| destination | Destination info   | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
+
+#### readonly: `boolean`
 
 Prop to disabled drag, connect and delete action.
 
-#### style
+#### style: `React.CSSProperties`
 
 Style of background svg.
 
-#### render
+#### render: `(node: NodeData) => string`
 
 Function to customize node content.
 
@@ -162,23 +164,54 @@ function customRender (node) {
 
 ### Events
 
-#### onChange
+#### onChange: `(nodes: NodeData[], connections: ConnectionData[]) => void`
 
 Triggered when a node is deleted, moved, disconnected or connected.
 
-#### onNodeDoubleClick
+#### onNodeDoubleClick: `(node: NodeData) => void`
 
 Triggered when a node is double-clicked.
 
-#### onDoubleClick
+#### onDoubleClick: `(event: React.MouseEvent<SVGGElement, MouseEvent>, zoom: number) => void`
 
 Triggered when the background svg is double-clicked.
 
-#### onConnectionDoubleClick
+```typescript
+function handleDoubleClick(event: React.MouseEvent<SVGGElement, MouseEvent>, zoom: number): void {
+  const point = {
+    x: event.nativeEvent.offsetX / zoom,
+    y: event.nativeEvent.offsetY / zoom,
+    id: +new Date(),
+  };
+  let nodeData: NodeData;
+  if (!nodes.find((item) => item.type === "start")) {
+    nodeData = {
+      type: "start",
+      title: "Start",
+      ...point,
+    };
+  } else if (!nodes.find((item) => item.type === "end")) {
+    nodeData = {
+      type: "end",
+      title: "End",
+      ...point,
+    };
+  } else {
+    nodeData = {
+      ...point,
+      title: "New",
+      type: "operation",
+    };
+  }
+  setNodes((prevState) => [...prevState, nodeData]);
+}
+```
+
+#### onConnectionDoubleClick: `(connection: ConnectionData) => void`
 
 Triggered when a connection is double-clicked.
 
-#### onMouseUp
+#### onMouseUp: `(event: React.MouseEvent<SVGSVGElement>, zoom: number) => void`
 
 Triggered when the mouse is up on the background svg.
 
