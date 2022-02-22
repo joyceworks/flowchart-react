@@ -32,7 +32,6 @@ import {
   locateAngle,
   locateConnector,
   pathing,
-  render as defaultRender,
 } from "./util";
 import FlowchartNode from "./Node";
 import FlowchartConnection from "./Connection/Connection";
@@ -51,7 +50,6 @@ const Flowchart = forwardRef(
       onChange,
       onMouseUp,
       style,
-      render = defaultRender,
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -540,7 +538,6 @@ const Flowchart = forwardRef(
       return nodes?.map((node) => (
         <FlowchartNode
           readonly={readonly}
-          render={render}
           key={node.id}
           isSelected={selectedNodeIds.some((item) => item === node.id)}
           isConnecting={dragConnectionInfo !== undefined}
@@ -607,7 +604,6 @@ const Flowchart = forwardRef(
     }, [
       nodes,
       readonly,
-      render,
       selectedNodeIds,
       dragConnectionInfo,
       onNodeDoubleClick,

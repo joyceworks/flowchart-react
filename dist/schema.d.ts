@@ -1,14 +1,13 @@
 import React, { CSSProperties } from "react";
 export interface NodeData {
     id: number;
-    title: string;
+    title: string | (() => string);
     type: NodeType;
     x: number;
     y: number;
     payload?: {
         [key: string]: unknown;
     };
-    content?: string;
 }
 export interface ConnectionData {
     id: number;
@@ -33,9 +32,7 @@ export interface SelectionInfo {
 }
 export declare type ConnectorPosition = "left" | "right" | "top" | "bottom";
 export declare type NodeType = "start" | "end" | "operation";
-export declare type NodeRender = (data: NodeData) => string | undefined | null;
 export interface FlowchartProps {
-    render?: NodeRender;
     style?: CSSProperties;
     nodes: NodeData[];
     connections: ConnectionData[];

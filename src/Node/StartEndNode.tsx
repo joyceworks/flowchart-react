@@ -4,10 +4,9 @@ import { NodeProps } from "./schema";
 const FlowchartStartEndNode = function ({
   data,
   isSelected = false,
-  render,
 }: NodeProps): JSX.Element {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
-  const text = render?.(data) || (data.type === "start" ? "Start" : "End");
+  const text = (typeof data.title === "function" && data.title()) || data.title;
   return (
     <>
       <ellipse
@@ -19,7 +18,7 @@ const FlowchartStartEndNode = function ({
         strokeWidth={1}
         stroke={borderColor}
       />
-      <text x={data.x + 60} y={data.y + 5 + 30} textAnchor={"middle"}>
+      <text x={data.x + 60} y={data.y + 35} textAnchor={"middle"}>
         {text}
       </text>
     </>

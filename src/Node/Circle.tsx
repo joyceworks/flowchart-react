@@ -1,4 +1,4 @@
-import React, { CSSProperties, useMemo, useState } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 export default function Circle(
   props: {

@@ -772,10 +772,6 @@ function createConnection(
   };
 }
 
-function render(data: NodeData): string | undefined {
-  return data.content;
-}
-
 export {
   isIntersected,
   distanceOfPointToLine,
@@ -791,7 +787,6 @@ export {
   calcIntersectedConnections,
   calcIntersectedNodes,
   createConnection,
-  render,
   roundToNearest10,
   center,
 };

@@ -36,5 +36,4 @@ declare function calcIntersectedNodes(internalNodes: NodeData[], edge: {
     end: Point;
 }): NodeData[];
 declare function createConnection(sourceId: number, sourcePosition: ConnectorPosition, destinationId: number, destinationPosition: ConnectorPosition): ConnectionData;
-declare function render(data: NodeData): string | undefined;
-export { isIntersected, distanceOfPointToLine, distanceOfPoint2Point, calcDirection, calcCorners, between, roundTo20, pathing, approximatelyEquals, locateConnector, locateAngle, calcIntersectedConnections, calcIntersectedNodes, createConnection, render, roundToNearest10, center, };
+export { isIntersected, distanceOfPointToLine, distanceOfPoint2Point, calcDirection, calcCorners, between, roundTo20, pathing, approximatelyEquals, locateConnector, locateAngle, calcIntersectedConnections, calcIntersectedNodes, createConnection, roundToNearest10, center, };

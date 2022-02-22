@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 
 export interface NodeData {
   id: number;
-  title: string;
+  title: string | (() => string);
   type: NodeType;
   // approveMethod?: number;
   // editableFields?: string;
@@ -10,7 +10,6 @@ export interface NodeData {
   x: number;
   y: number;
   payload?: { [key: string]: unknown };
-  content?: string;
 }
 
 export interface ConnectionData {
@@ -40,10 +39,8 @@ export interface SelectionInfo {
 
 export type ConnectorPosition = "left" | "right" | "top" | "bottom";
 export type NodeType = "start" | "end" | "operation";
-export type NodeRender = (data: NodeData) => string | undefined | null;
 
 export interface FlowchartProps {
-  render?: NodeRender;
   style?: CSSProperties;
   nodes: NodeData[];
   connections: ConnectionData[];

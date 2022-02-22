@@ -1,20 +1,19 @@
-import { ConnectorPosition, NodeData, NodeRender } from '../schema'
-import OperationNode from './OperationNode'
-import StartEndNode from './StartEndNode'
-import React, { useMemo } from 'react'
-import { locateConnector } from '../util'
-import G from './G'
-import Circle from './Circle'
+import { ConnectorPosition, NodeData } from "../schema";
+import OperationNode from "./OperationNode";
+import StartEndNode from "./StartEndNode";
+import React, { useMemo } from "react";
+import { locateConnector } from "../util";
+import G from "./G";
+import Circle from "./Circle";
 
 interface NodeProps {
-  data: NodeData
-  isSelected: boolean
-  isConnecting: boolean
-  onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void
-  onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void
-  onConnectorMouseDown: (position: ConnectorPosition) => void
-  render?: NodeRender
-  readonly?: boolean
+  data: NodeData;
+  isSelected: boolean;
+  isConnecting: boolean;
+  onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
+  onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
+  onConnectorMouseDown: (position: ConnectorPosition) => void;
+  readonly?: boolean;
 }
 
 const FlowchartNode = function ({
@@ -24,17 +23,16 @@ const FlowchartNode = function ({
   onDoubleClick,
   onMouseDown,
   onConnectorMouseDown,
-  render,
-  readonly
+  readonly,
 }: NodeProps) {
-  const position = useMemo(() => locateConnector(data), [data])
+  const position = useMemo(() => locateConnector(data), [data]);
   return (
     <>
       <G onDoubleClick={onDoubleClick} onMouseDown={onMouseDown}>
-        {data.type !== 'start' && data.type !== 'end' ? (
-          <OperationNode data={data} isSelected={isSelected} render={render} />
+        {data.type !== "start" && data.type !== "end" ? (
+          <OperationNode data={data} isSelected={isSelected} />
         ) : (
-          <StartEndNode data={data} isSelected={isSelected} render={render} />
+          <StartEndNode data={data} isSelected={isSelected} />
         )}
         {!readonly &&
           Object.keys(position).map((key) => {
@@ -46,15 +44,15 @@ const FlowchartNode = function ({
                 cy={position[key as ConnectorPosition].y}
                 r={4}
                 onMouseDown={(event) => {
-                  event.stopPropagation()
-                  onConnectorMouseDown(key as ConnectorPosition)
+                  event.stopPropagation();
+                  onConnectorMouseDown(key as ConnectorPosition);
                 }}
               />
-            )
+            );
           })}
       </G>
     </>
-  )
-}
+  );
+};
 
-export default FlowchartNode
+export default FlowchartNode;

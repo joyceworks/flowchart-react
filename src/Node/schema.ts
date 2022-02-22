@@ -1,7 +1,6 @@
-import { NodeData, NodeRender } from "../schema";
+import { NodeData } from "../schema";
 
 export interface NodeProps {
   data: NodeData;
   isSelected?: boolean;
-  render?: NodeRender;
 }
