@@ -4,6 +4,8 @@
 
 [![NPM](https://img.shields.io/npm/v/flowchart-react.svg)](https://www.npmjs.com/package/flowchart-react) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+English | [中文](https://www.joyceworks.com/2022/02/26/flowchart-react-readme-cn/)
+
 <img width="801" alt="image" src="https://user-images.githubusercontent.com/5696485/155135822-93cc3901-6a61-42da-a9be-ee495398cdf5.png">
 
 ## Install
