@@ -147,15 +147,19 @@ Style of background svg.
 
 #### onChange: `(nodes: NodeData[], connections: ConnectionData[]) => void`
 
-Triggered when a node is deleted, moved, disconnected or connected.
+Triggered when a node is deleted(click a node and press `delete`), moved, disconnected(click a connection and press `delete`) or connected.
 
 #### onNodeDoubleClick: `(node: NodeData) => void`
 
 Triggered when a node is double-clicked.
 
+> Tip: Double-click to edit.
+
 #### onDoubleClick: `(event: React.MouseEvent<SVGGElement, MouseEvent>, zoom: number) => void`
 
 Triggered when the background svg is double-clicked.
+
+> Tip: Double-click to create a node.
 
 ```typescript
 function handleDoubleClick(event: React.MouseEvent<SVGGElement, MouseEvent>, zoom: number): void {
@@ -192,9 +196,13 @@ function handleDoubleClick(event: React.MouseEvent<SVGGElement, MouseEvent>, zoo
 
 Triggered when a connection is double-clicked.
 
+> Tip: Double-click to edit connection.
+
 #### onMouseUp: `(event: React.MouseEvent<SVGSVGElement>, zoom: number) => void`
 
 Triggered when the mouse is up on the background svg.
+
+> Tip: Drop something to here to implement node creation.
 
 ## License
 
