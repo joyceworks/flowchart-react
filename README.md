@@ -1,6 +1,6 @@
 # Flowchart React
 
-> Flowchart &amp; Flowchart designer for React.js
+> Lightweight flowchart &amp; flowchart designer for React.js
 
 [![NPM](https://img.shields.io/npm/v/flowchart-react.svg)](https://www.npmjs.com/package/flowchart-react) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
