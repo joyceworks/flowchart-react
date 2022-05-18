@@ -10,6 +10,8 @@ export interface NodeData {
   x: number;
   y: number;
   payload?: { [key: string]: unknown };
+  width?: number;
+  height?: number;
 }
 
 export interface ConnectionData {

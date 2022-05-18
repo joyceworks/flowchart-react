@@ -122,6 +122,8 @@ Array of nodes.
 | x       | X axis        | number                               |         | true     |
 | y       | Y axis        | number                               |         | true     |
 | payload | Custom data   | `{[key: string]: unknown}`           |         | false    |
+| width   | Node width    | number                               | 120     | false    |
+| height  | Node height   | number                               | 60      | false    |
 
 #### connections: `ConnectionData[]`
 

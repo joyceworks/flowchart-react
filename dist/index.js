@@ -1149,8 +1149,8 @@ function calcCorners(points) {
 function center(nodes, width, height) {
   var corners = calcCorners(__spreadArray(__spreadArray([], nodes, true), nodes.map(function (node) {
     return {
-      x: node.x + 120,
-      y: node.y + 60
+      x: node.x + (node.width || 120),
+      y: node.y + (node.height || 60)
     };
   }), true));
   var offsetX = (width - corners.end.x - corners.start.x) / 2;
@@ -1176,8 +1176,10 @@ function roundToNearest10(number) {
 }
 
 function locateConnector(node) {
-  var halfWidth = 60;
-  var halfHeight = 30;
+  var height = node.height || 60;
+  var width = node.width || 120;
+  var halfWidth = width / 2;
+  var halfHeight = height / 2;
   var top = {
     x: node.x + halfWidth,
     y: node.y
@@ -1188,10 +1190,10 @@ function locateConnector(node) {
   };
   var bottom = {
     x: node.x + halfWidth,
-    y: node.y + 60
+    y: node.y + height
   };
   var right = {
-    x: node.x + 120,
+    x: node.x + width,
     y: node.y + halfHeight
   };
   return {
@@ -1208,18 +1210,20 @@ function locateConnector(node) {
 
 
 function locateAngle(node) {
+  var width = node.width || 120;
+  var height = node.height || 60;
   return [{
     x: node.x,
     y: node.y
   }, {
-    x: node.x + 120,
+    x: node.x + width,
     y: node.y
   }, {
-    x: node.x + 120,
-    y: node.y + 60
+    x: node.x + width,
+    y: node.y + height
   }, {
     x: node.x,
-    y: node.y + 60
+    y: node.y + height
   }];
 }
 
@@ -1287,18 +1291,20 @@ var FlowchartOperationNode = function FlowchartOperationNode(_a) {
       isSelected = _b === void 0 ? false : _b;
   var borderColor = isSelected ? "#666666" : "#bbbbbb";
   var text = typeof data.title === "function" && data.title() || data.title;
+  var halfWidth = (data.width || 120) / 2;
+  var halfHeight = (data.height || 60) / 2;
   return /*#__PURE__*/jsxs(Fragment, {
     children: [/*#__PURE__*/jsx("rect", {
-      width: 120,
-      height: 60,
+      width: data.width || 120,
+      height: data.height || 60,
       fill: "white",
       x: data.x,
       y: data.y,
       strokeWidth: 1,
       stroke: borderColor
     }), /*#__PURE__*/jsx("text", {
-      x: data.x + 60,
-      y: data.y + 35,
+      x: data.x + halfWidth,
+      y: data.y + halfHeight + 5,
       textAnchor: "middle",
       children: text
     })]
@@ -1311,18 +1317,20 @@ var FlowchartStartEndNode = function FlowchartStartEndNode(_a) {
       isSelected = _b === void 0 ? false : _b;
   var borderColor = isSelected ? "#666666" : "#bbbbbb";
   var text = typeof data.title === "function" && data.title() || data.title;
+  var halfWidth = (data.width || 120) / 2;
+  var halfHeight = (data.height || 60) / 2;
   return /*#__PURE__*/jsxs(Fragment, {
     children: [/*#__PURE__*/jsx("ellipse", {
-      cx: data.x + 60,
-      cy: data.y + 30,
-      rx: 60,
-      ry: 30,
+      cx: data.x + halfWidth,
+      cy: data.y + halfHeight,
+      rx: halfWidth,
+      ry: halfHeight,
       fill: "white",
       strokeWidth: 1,
       stroke: borderColor
     }), /*#__PURE__*/jsx("text", {
-      x: data.x + 60,
-      y: data.y + 35,
+      x: data.x + halfWidth,
+      y: data.y + halfHeight + 5,
       textAnchor: "middle",
       children: text
     })]

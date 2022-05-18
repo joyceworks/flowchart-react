@@ -649,8 +649,8 @@ function center(nodes: NodeData[], width: number, height: number): NodeData[] {
   const corners = calcCorners([
     ...nodes,
     ...nodes.map((node) => ({
-      x: node.x + 120,
-      y: node.y + 60,
+      x: node.x + (node.width || 120),
+      y: node.y + (node.height || 60),
     })),
   ]);
 
@@ -695,12 +695,14 @@ function locateConnector(node: NodeData): {
   top: Point;
   bottom: Point;
 } {
-  const halfWidth = 60;
-  const halfHeight = 30;
+  const height = node.height || 60;
+  const width = node.width || 120;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
   const top = { x: node.x + halfWidth, y: node.y };
   const left = { x: node.x, y: node.y + halfHeight };
-  const bottom = { x: node.x + halfWidth, y: node.y + 60 };
-  const right = { x: node.x + 120, y: node.y + halfHeight };
+  const bottom = { x: node.x + halfWidth, y: node.y + height };
+  const right = { x: node.x + width, y: node.y + halfHeight };
   return { left, right, top, bottom };
 }
 
@@ -709,11 +711,13 @@ function locateConnector(node: NodeData): {
  * @param node
  */
 function locateAngle(node: NodeData): [Point, Point, Point, Point] {
+  const width = node.width || 120;
+  const height = node.height || 60;
   return [
     { x: node.x, y: node.y },
-    { x: node.x + 120, y: node.y },
-    { x: node.x + 120, y: node.y + 60 },
-    { x: node.x, y: node.y + 60 },
+    { x: node.x + width, y: node.y },
+    { x: node.x + width, y: node.y + height },
+    { x: node.x, y: node.y + height },
   ];
 }
 

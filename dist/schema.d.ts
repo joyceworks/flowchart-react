@@ -8,6 +8,8 @@ export interface NodeData {
     payload?: {
         [key: string]: unknown;
     };
+    width?: number;
+    height?: number;
 }
 export interface ConnectionData {
     id: number;
