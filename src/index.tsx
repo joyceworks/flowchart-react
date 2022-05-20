@@ -616,6 +616,7 @@ const Flowchart = forwardRef(
 
     // TODO: disable right click
     // TODO: resize
+    // TODO: tailwindcss
 
     return (
       <>

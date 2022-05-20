@@ -137,13 +137,21 @@ Connections between nodes.
 | source      | Source info        | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
 | destination | Destination info   | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
 
-#### readonly: `boolean`
+#### readonly: `boolean | undefined`
 
 Prop to disabled drag, connect and delete action.
 
 #### style: `React.CSSProperties`
 
 Style of background svg.
+
+#### defaultNodeSize: `{width: number, height: number} | undefined`
+
+Default: `{ width: 120, height: 60 }`.
+
+#### showToolbar: `boolean | undefined`
+
+`false` to hide toolbar.
 
 ### Events
 

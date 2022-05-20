@@ -2290,6 +2290,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }));
   }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]); // TODO: disable right click
   // TODO: resize
+  // TODO: tailwindcss
 
   return /*#__PURE__*/jsx(Fragment, {
     children: /*#__PURE__*/jsxs("div", {
