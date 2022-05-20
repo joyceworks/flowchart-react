@@ -1736,6 +1736,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   } : _c,
       showToolbar = _a.showToolbar;
   var svgRef = useRef(null);
+  var containerRef = useRef(null);
 
   var _d = useState([]),
       selectedNodeIds = _d[0],
@@ -2267,10 +2268,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, [connections, selectedConnIds, nodes, onConnDoubleClick]);
   var handleToolbarMouseDown = useCallback(function (type, event) {
+    var rect = containerRef.current.getBoundingClientRect();
     setCreatingInfo({
       type: type,
-      x: event.clientX - defaultNodeSize.width * zoom / 2,
-      y: event.clientY - defaultNodeSize.height * zoom / 2
+      x: event.clientX - rect.x - defaultNodeSize.width * zoom / 2,
+      y: event.clientY - rect.y - defaultNodeSize.height * zoom / 2
     });
   }, [defaultNodeSize.height, defaultNodeSize.width, zoom]);
   var handleContainerMouseUp = useCallback(function () {
@@ -2281,9 +2283,10 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       return;
     }
 
+    var rect = containerRef.current.getBoundingClientRect();
     setCreatingInfo(_assign(_assign({}, creatingInfo), {
-      x: event.clientX - defaultNodeSize.width * zoom / 2,
-      y: event.clientY - defaultNodeSize.height * zoom / 2
+      x: event.clientX - rect.x - defaultNodeSize.width * zoom / 2,
+      y: event.clientY - rect.y - defaultNodeSize.height * zoom / 2
     }));
   }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]); // TODO: disable right click
   // TODO: resize
@@ -2291,6 +2294,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   return /*#__PURE__*/jsx(Fragment, {
     children: /*#__PURE__*/jsxs("div", {
       style: style,
+      ref: containerRef,
       className: "flowchart-container",
       onMouseUp: handleContainerMouseUp,
       onMouseMove: handleContainerMouseMove,

@@ -66,6 +66,7 @@ const Flowchart = forwardRef(
     ref: Ref<IFlowchart>
   ) => {
     const svgRef = useRef<SVGSVGElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<number[]>([]);
     const [selectedConnIds, setSelectedConnIds] = useState<number[]>([]);
     const [selectingInfo, setSelectingInfo] = useState<SelectingInfo>();
@@ -583,10 +584,11 @@ const Flowchart = forwardRef(
 
     const handleToolbarMouseDown = useCallback(
       (type: NodeType, event: React.MouseEvent<HTMLDivElement>) => {
+        const rect = containerRef.current!.getBoundingClientRect();
         setCreatingInfo({
           type,
-          x: event.clientX - (defaultNodeSize.width * zoom) / 2,
-          y: event.clientY - (defaultNodeSize.height * zoom) / 2,
+          x: event.clientX - rect.x - (defaultNodeSize.width * zoom) / 2,
+          y: event.clientY - rect.y - (defaultNodeSize.height * zoom) / 2,
         });
       },
       [defaultNodeSize.height, defaultNodeSize.width, zoom]
@@ -602,10 +604,11 @@ const Flowchart = forwardRef(
           return;
         }
 
+        const rect = containerRef.current!.getBoundingClientRect();
         setCreatingInfo({
           ...creatingInfo,
-          x: event.clientX - (defaultNodeSize.width * zoom) / 2,
-          y: event.clientY - (defaultNodeSize.height * zoom) / 2,
+          x: event.clientX - rect.x - (defaultNodeSize.width * zoom) / 2,
+          y: event.clientY - rect.y - (defaultNodeSize.height * zoom) / 2,
         });
       },
       [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]
@@ -618,6 +621,7 @@ const Flowchart = forwardRef(
       <>
         <div
           style={style}
+          ref={containerRef}
           className={"flowchart-container"}
           onMouseUp={handleContainerMouseUp}
           onMouseMove={handleContainerMouseMove}
