@@ -1,4 +1,4 @@
 /// <reference types="react" />
 import { NodeProps } from "./schema";
-declare const FlowchartStartEndNode: ({ data, isSelected, }: NodeProps) => JSX.Element;
-export default FlowchartStartEndNode;
+declare const StartEndNode: ({ data, isSelected, }: NodeProps) => JSX.Element;
+export default StartEndNode;

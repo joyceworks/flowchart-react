@@ -6,13 +6,6 @@
 
 .flowchart-container {
   position: relative;
-}
-
-.flowchart-svg {
-  height: 100%;
-  width: 100%;
-  border: 1px solid #dfdfdf;
-  background-color: #f3f3f3;
 
   text {
     moz-user-select: -moz-none;
@@ -25,19 +18,52 @@
   }
 }
 
+.flowchart-content {
+  height: 100%;
+  width: 100%;
+  display: inline-flex;
+}
+
+.flowchart-toolbar {
+  width: 48px;
+  height: 100%;
+  border-left: 1px solid #dfdfdf;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.flowchart-toolbar-item {
+  width: 48px;
+  height: 24px;
+}
+
+.flowchart-creation-item {
+  pointer-events: none;
+  position: absolute;
+}
+
+.flowchart-svg {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #dfdfdf;
+  background-color: #f3f3f3;
+}
+
 .circle {
   fill: white;
   stroke-width: 1px;
   stroke: #bbbbbb;
   cursor: crosshair;
-  :hover {
+  opacity: 0;
+
+  &:hover {
     opacity: 1;
   }
 }
 
 .g {
-  :hover {
-    circle {
+  &:hover {
+    .circle {
       opacity: 1;
     }
   }

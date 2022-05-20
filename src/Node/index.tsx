@@ -16,7 +16,7 @@ interface NodeProps {
   readonly?: boolean;
 }
 
-const FlowchartNode = function ({
+const Node = function ({
   data,
   isSelected,
   isConnecting,
@@ -55,4 +55,4 @@ const FlowchartNode = function ({
   );
 };
 
-export default FlowchartNode;
+export default Node;
