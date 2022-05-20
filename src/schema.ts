@@ -59,7 +59,8 @@ export interface FlowchartProps {
   defaultNodeSize?: {
     width: number;
     height: number;
-  }
+  },
+  showToolbar?: boolean;
 }
 
 export interface DragMovingInfo {

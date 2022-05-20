@@ -14,8 +14,7 @@ declare function isIntersected(p: Point, rect: {
     start: Point;
     end: Point;
 }): boolean;
-declare function roundTo20(number: number): number;
-declare function roundToNearest10(number: number): number;
+declare function roundTo10(number: number): number;
 declare function locateConnector(node: NodeData): {
     left: Point;
     right: Point;
@@ -37,4 +36,4 @@ declare function calcIntersectedNodes(internalNodes: NodeData[], edge: {
 }): NodeData[];
 declare function createConnection(sourceId: number, sourcePosition: ConnectorPosition, destinationId: number, destinationPosition: ConnectorPosition): ConnectionData;
 export declare function calcGuidelines(node: Pick<NodeData, "width" | "height" | "x" | "y" | "id">, nodes: NodeData[]): Line[];
-export { isIntersected, distanceOfP2L, distanceOfP2P, calcDirection, calcCorners, between, roundTo20, pathing, approximatelyEquals, locateConnector, locateAngle, calcIntersectedConnections, calcIntersectedNodes, createConnection, roundToNearest10, center, };
+export { isIntersected, distanceOfP2L, distanceOfP2P, calcDirection, calcCorners, between, pathing, approximatelyEquals, locateConnector, locateAngle, calcIntersectedConnections, calcIntersectedNodes, createConnection, roundTo10, center, };

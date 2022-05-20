@@ -660,8 +660,8 @@ function center(nodes: NodeData[], width: number, height: number): NodeData[] {
     $apply: (state: NodeData[]) =>
       state.map((node) => ({
         ...node,
-        x: roundToNearest10(node.x + offsetX),
-        y: roundToNearest10(node.y + offsetY),
+        x: roundTo10(node.x + offsetX),
+        y: roundTo10(node.y + offsetY),
       })),
   });
 }
@@ -681,11 +681,7 @@ function isIntersected(
   );
 }
 
-function roundTo20(number: number): number {
-  return number < 20 ? 20 : number;
-}
-
-function roundToNearest10(number: number): number {
+function roundTo10(number: number): number {
   return Math.ceil(number / 10) * 10;
 }
 
@@ -783,11 +779,11 @@ export function calcGuidelines(
   nodes: NodeData[]
 ): Line[] {
   const guidelines: Line[] = [];
-  const sourceAnglePoints = locateAngle(node);
-  for (let i = 0; i < sourceAnglePoints.length; i++) {
+  const points = locateAngle(node);
+  for (let i = 0; i < points.length; i++) {
     const srcAnglePoint = {
-      x: Math.round(Math.round(sourceAnglePoints[i].x) / 10) * 10,
-      y: Math.round(Math.round(sourceAnglePoints[i].y) / 10) * 10,
+      x: roundTo10(points[i].x),
+      y: roundTo10(points[i].y),
     };
 
     let lines: Line[];
@@ -863,7 +859,6 @@ export {
   calcDirection,
   calcCorners,
   between,
-  roundTo20,
   pathing,
   approximatelyEquals,
   locateConnector,
@@ -871,6 +866,6 @@ export {
   calcIntersectedConnections,
   calcIntersectedNodes,
   createConnection,
-  roundToNearest10,
+  roundTo10,
   center,
 };

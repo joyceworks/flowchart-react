@@ -31,6 +31,7 @@ import {
   distanceOfP2P,
   locateConnector,
   pathing,
+  roundTo10,
 } from "./util";
 import Node from "./Node";
 import { Connection } from "./Connection";
@@ -60,6 +61,7 @@ const Flowchart = forwardRef(
       onMouseUp,
       style,
       defaultNodeSize = { width: 120, height: 60 },
+      showToolbar,
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -316,8 +318,8 @@ const Flowchart = forwardRef(
           for (const t of movingInfo.targetIds) {
             result = update(result, {
               [result.findIndex((item) => item.id === t)]: {
-                x: { $apply: (prev) => Math.round(Math.round(prev) / 10) * 10 },
-                y: { $apply: (prev) => Math.round(Math.round(prev) / 10) * 10 },
+                x: { $apply: roundTo10 },
+                y: { $apply: roundTo10 },
               },
             });
           }
@@ -356,30 +358,26 @@ const Flowchart = forwardRef(
         }
 
         if (creatingInfo) {
+          const nativeEvent = event.nativeEvent;
           const point = {
-            x: (event.nativeEvent.offsetX - defaultNodeSize.width / 2) / zoom,
-            y: (event.nativeEvent.offsetY - defaultNodeSize.height / 2) / zoom,
+            x:
+              roundTo10(nativeEvent.offsetX - defaultNodeSize.width / 2) / zoom,
+            y:
+              roundTo10(nativeEvent.offsetY - defaultNodeSize.height / 2) /
+              zoom,
             id: +new Date(),
             title: "New Item",
           };
-          let newNode: NodeData;
           if (creatingInfo.type === "start") {
-            newNode = {
-              type: "start",
-              ...point,
-            };
+            onChange?.([...nodes, { type: "start", ...point }], connections);
           } else if (creatingInfo.type === "end") {
-            newNode = {
-              type: "end",
-              ...point,
-            };
+            onChange?.([...nodes, { type: "end", ...point }], connections);
           } else {
-            newNode = {
-              type: "operation",
-              ...point,
-            };
+            onChange?.(
+              [...nodes, { type: "operation", ...point }],
+              connections
+            );
           }
-          onChange?.([...nodes, newNode], connections);
         }
       },
       [
@@ -656,7 +654,7 @@ const Flowchart = forwardRef(
             )}
           </div>
           <div className={"flowchart-content"}>
-            {readonly ? (
+            {readonly || showToolbar === false ? (
               <></>
             ) : (
               <div className={"flowchart-toolbar"}>

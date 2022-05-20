@@ -1159,8 +1159,8 @@ function center(nodes, width, height) {
     $apply: function $apply(state) {
       return state.map(function (node) {
         return _assign(_assign({}, node), {
-          x: roundToNearest10(node.x + offsetX),
-          y: roundToNearest10(node.y + offsetY)
+          x: roundTo10(node.x + offsetX),
+          y: roundTo10(node.y + offsetY)
         });
       });
     }
@@ -1171,7 +1171,7 @@ function isIntersected(p, rect) {
   return p.x > rect.start.x && p.x < rect.end.x && p.y > rect.start.y && p.y < rect.end.y;
 }
 
-function roundToNearest10(number) {
+function roundTo10(number) {
   return Math.ceil(number / 10) * 10;
 }
 
@@ -1287,12 +1287,12 @@ function createConnection(sourceId, sourcePosition, destinationId, destinationPo
 
 function calcGuidelines(node, nodes) {
   var guidelines = [];
-  var sourceAnglePoints = locateAngle(node);
+  var points = locateAngle(node);
 
-  for (var i = 0; i < sourceAnglePoints.length; i++) {
+  for (var i = 0; i < points.length; i++) {
     var srcAnglePoint = {
-      x: Math.round(Math.round(sourceAnglePoints[i].x) / 10) * 10,
-      y: Math.round(Math.round(sourceAnglePoints[i].y) / 10) * 10
+      x: roundTo10(points[i].x),
+      y: roundTo10(points[i].y)
     };
     var lines = void 0;
     var directions = void 0;
@@ -1498,7 +1498,7 @@ var selectedConnectionColors = {
   fail: "darkred"
 };
 
-var FlowchartConnection = function FlowchartConnection(_a) {
+function Connection(_a) {
   var data = _a.data,
       nodes = _a.nodes,
       isSelected = _a.isSelected,
@@ -1559,7 +1559,7 @@ var FlowchartConnection = function FlowchartConnection(_a) {
       });
     })
   });
-};
+}
 
 function styleInject(css, ref) {
   if (ref === void 0) ref = {};
@@ -1733,7 +1733,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       defaultNodeSize = _c === void 0 ? {
     width: 120,
     height: 60
-  } : _c;
+  } : _c,
+      showToolbar = _a.showToolbar;
   var svgRef = useRef(null);
 
   var _d = useState([]),
@@ -2008,14 +2009,10 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           return item.id === t;
         })] = {
           x: {
-            $apply: function $apply(prev) {
-              return Math.round(Math.round(prev) / 10) * 10;
-            }
+            $apply: roundTo10
           },
           y: {
-            $apply: function $apply(prev) {
-              return Math.round(Math.round(prev) / 10) * 10;
-            }
+            $apply: roundTo10
           }
         }, _c));
       };
@@ -2063,29 +2060,27 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
 
     if (creatingInfo) {
+      var nativeEvent = event.nativeEvent;
       var point = {
-        x: (event.nativeEvent.offsetX - defaultNodeSize.width / 2) / zoom,
-        y: (event.nativeEvent.offsetY - defaultNodeSize.height / 2) / zoom,
+        x: roundTo10(nativeEvent.offsetX - defaultNodeSize.width / 2) / zoom,
+        y: roundTo10(nativeEvent.offsetY - defaultNodeSize.height / 2) / zoom,
         id: +new Date(),
         title: "New Item"
       };
-      var newNode_1;
 
       if (creatingInfo.type === "start") {
-        newNode_1 = _assign({
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
           type: "start"
-        }, point);
+        }, point)], false), connections);
       } else if (creatingInfo.type === "end") {
-        newNode_1 = _assign({
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
           type: "end"
-        }, point);
+        }, point)], false), connections);
       } else {
-        newNode_1 = _assign({
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
           type: "operation"
-        }, point);
+        }, point)], false), connections);
       }
-
-      onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [newNode_1], false), connections);
     }
   }, [movingInfo, connectingInfo, creatingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
   /**
@@ -2237,7 +2232,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   }, [nodes, defaultNodeSize.width, defaultNodeSize.height, readonly, selectedNodeIds, connectingInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
   var connectionElements = useMemo(function () {
     return connections === null || connections === void 0 ? void 0 : connections.map(function (conn) {
-      return /*#__PURE__*/jsx(FlowchartConnection, {
+      return /*#__PURE__*/jsx(Connection, {
         isSelected: selectedConnIds.some(function (item) {
           return conn.id === item;
         }),
@@ -2332,7 +2327,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         })]
       }), /*#__PURE__*/jsxs("div", {
         className: "flowchart-content",
-        children: [readonly ? /*#__PURE__*/jsx(Fragment, {}) : /*#__PURE__*/jsxs("div", {
+        children: [readonly || showToolbar === false ? /*#__PURE__*/jsx(Fragment, {}) : /*#__PURE__*/jsxs("div", {
           className: "flowchart-toolbar",
           children: [/*#__PURE__*/jsx("div", {
             onMouseDown: function onMouseDown(event) {
