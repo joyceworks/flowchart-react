@@ -9,5 +9,5 @@ interface NodeProps {
     onConnectorMouseDown: (position: ConnectorPosition) => void;
     readonly?: boolean;
 }
-declare const FlowchartNode: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, readonly, }: NodeProps) => JSX.Element;
-export default FlowchartNode;
+declare const Node: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, readonly, }: NodeProps) => JSX.Element;
+export default Node;

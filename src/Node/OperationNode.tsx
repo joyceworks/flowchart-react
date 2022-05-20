@@ -1,7 +1,7 @@
 import React from "react";
 import { NodeProps } from "./schema";
 
-const FlowchartOperationNode = function ({
+const OperationNode = function ({
   data,
   isSelected = false,
 }: NodeProps): JSX.Element {
@@ -27,4 +27,4 @@ const FlowchartOperationNode = function ({
   );
 };
 
-export default FlowchartOperationNode;
+export default OperationNode;

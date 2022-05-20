@@ -34,7 +34,7 @@ export interface Point {
 
 export type Line = [Point, Point];
 
-export interface SelectionInfo {
+export interface SelectingInfo {
   start: Point;
   end: Point;
 }
@@ -56,6 +56,11 @@ export interface FlowchartProps {
     | ((event: React.MouseEvent<SVGSVGElement>, zoom: number) => void)
     | undefined;
   readonly?: boolean;
+  defaultNodeSize?: {
+    width: number;
+    height: number;
+  },
+  showToolbar?: boolean;
 }
 
 export interface DragMovingInfo {
@@ -67,7 +72,13 @@ export interface DragMovingInfo {
   moved?: true;
 }
 
-export interface DragConnectionInfo {
+export interface DragCreatingInfo {
+  type: NodeType;
+  x: number;
+  y: number;
+}
+
+export interface DragConnectingInfo {
   source: NodeData;
   sourcePosition: ConnectorPosition;
 }

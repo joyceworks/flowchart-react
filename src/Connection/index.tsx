@@ -11,7 +11,7 @@ interface ConnectionProps {
   onDoubleClick?: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
 }
 
-const FlowchartConnection = function ({
+export function Connection ({
   data,
   nodes,
   isSelected,
@@ -85,6 +85,4 @@ const FlowchartConnection = function ({
       })}
     </g>
   );
-};
-
-export default FlowchartConnection;
+}

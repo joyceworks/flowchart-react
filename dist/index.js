@@ -1109,11 +1109,11 @@ function calcDirection(p1, p2) {
   return "rd";
 }
 
-function distanceOfPoint2Point(p1, p2) {
+function distanceOfP2P(p1, p2) {
   return Math.hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
-function distanceOfPointToLine(point, line) {
+function distanceOfP2L(point, line) {
   var start = line[0],
       end = line[1];
   var k = (end.y - start.y || 1) / (end.x - start.x || 1);
@@ -1159,8 +1159,8 @@ function center(nodes, width, height) {
     $apply: function $apply(state) {
       return state.map(function (node) {
         return _assign(_assign({}, node), {
-          x: roundToNearest10(node.x + offsetX),
-          y: roundToNearest10(node.y + offsetY)
+          x: roundTo10(node.x + offsetX),
+          y: roundTo10(node.y + offsetY)
         });
       });
     }
@@ -1171,7 +1171,7 @@ function isIntersected(p, rect) {
   return p.x > rect.start.x && p.x < rect.end.x && p.y > rect.start.y && p.y < rect.end.y;
 }
 
-function roundToNearest10(number) {
+function roundTo10(number) {
   return Math.ceil(number / 10) * 10;
 }
 
@@ -1285,7 +1285,100 @@ function createConnection(sourceId, sourcePosition, destinationId, destinationPo
   };
 }
 
-var FlowchartOperationNode = function FlowchartOperationNode(_a) {
+function calcGuidelines(node, nodes) {
+  var guidelines = [];
+  var points = locateAngle(node);
+
+  for (var i = 0; i < points.length; i++) {
+    var srcAnglePoint = {
+      x: roundTo10(points[i].x),
+      y: roundTo10(points[i].y)
+    };
+    var lines = void 0;
+    var directions = void 0;
+
+    switch (i) {
+      case 0:
+        {
+          lines = [[{
+            x: srcAnglePoint.x,
+            y: 0
+          }, srcAnglePoint], [{
+            x: 0,
+            y: srcAnglePoint.y
+          }, srcAnglePoint]];
+          directions = ["lu", "u", "l"];
+          break;
+        }
+
+      case 1:
+        {
+          lines = [[{
+            x: srcAnglePoint.x,
+            y: 0
+          }, srcAnglePoint], // todo: replace 10000 with the width of svg
+          [{
+            x: 10000,
+            y: srcAnglePoint.y
+          }, srcAnglePoint]];
+          directions = ["ru", "u", "r"];
+          break;
+        }
+
+      case 2:
+        {
+          lines = [[{
+            x: srcAnglePoint.x,
+            y: 10000
+          }, srcAnglePoint], [{
+            x: 10000,
+            y: srcAnglePoint.y
+          }, srcAnglePoint]];
+          directions = ["r", "rd", "d"];
+          break;
+        }
+
+      default:
+        {
+          lines = [[{
+            x: srcAnglePoint.x,
+            y: 10000
+          }, srcAnglePoint], [{
+            x: 0,
+            y: srcAnglePoint.y
+          }, srcAnglePoint]];
+          directions = ["l", "ld", "d"];
+          break;
+        }
+    }
+
+    for (var _i = 0, _a = nodes.filter(function (internalNode) {
+      return internalNode.id !== node.id;
+    }); _i < _a.length; _i++) {
+      var destination = _a[_i];
+      var line = null;
+
+      for (var _b = 0, _c = locateAngle(destination); _b < _c.length; _b++) {
+        var destPoint = _c[_b];
+        var direction = calcDirection(srcAnglePoint, destPoint);
+
+        if (directions.indexOf(direction) > -1 && (distanceOfP2L(destPoint, lines[0]) < 5 || distanceOfP2L(destPoint, lines[1]) < 5)) {
+          if (line === null || distanceOfP2P(destPoint, srcAnglePoint) < distanceOfP2P(line[0], line[1])) {
+            line = [destPoint, srcAnglePoint];
+          }
+        }
+      }
+
+      if (line) {
+        guidelines.push(line);
+      }
+    }
+  }
+
+  return guidelines;
+}
+
+var OperationNode = function OperationNode(_a) {
   var data = _a.data,
       _b = _a.isSelected,
       isSelected = _b === void 0 ? false : _b;
@@ -1311,7 +1404,7 @@ var FlowchartOperationNode = function FlowchartOperationNode(_a) {
   });
 };
 
-var FlowchartStartEndNode = function FlowchartStartEndNode(_a) {
+var StartEndNode = function StartEndNode(_a) {
   var data = _a.data,
       _b = _a.isSelected,
       isSelected = _b === void 0 ? false : _b;
@@ -1339,14 +1432,18 @@ var FlowchartStartEndNode = function FlowchartStartEndNode(_a) {
 
 function G(props) {
   return /*#__PURE__*/jsx("g", _objectSpread({
-    className: 'g'
+    className: "g " + (props.className || "")
   }, props));
 }
 
 function Circle(props) {
   var style = useMemo(function () {
+    if (!props.isConnecting) {
+      return {};
+    }
+
     return {
-      opacity: props.isConnecting ? 1 : 0
+      opacity: 1
     };
   }, [props.isConnecting]);
   return /*#__PURE__*/jsx("circle", _objectSpread({
@@ -1355,7 +1452,7 @@ function Circle(props) {
   }, props));
 }
 
-var FlowchartNode = function FlowchartNode(_a) {
+var Node = function Node(_a) {
   var data = _a.data,
       isSelected = _a.isSelected,
       isConnecting = _a.isConnecting,
@@ -1370,10 +1467,10 @@ var FlowchartNode = function FlowchartNode(_a) {
     children: /*#__PURE__*/jsxs(G, {
       onDoubleClick: onDoubleClick,
       onMouseDown: onMouseDown,
-      children: [data.type !== "start" && data.type !== "end" ? /*#__PURE__*/jsx(FlowchartOperationNode, {
+      children: [data.type !== "start" && data.type !== "end" ? /*#__PURE__*/jsx(OperationNode, {
         data: data,
         isSelected: isSelected
-      }) : /*#__PURE__*/jsx(FlowchartStartEndNode, {
+      }) : /*#__PURE__*/jsx(StartEndNode, {
         data: data,
         isSelected: isSelected
       }), !readonly && Object.keys(position).map(function (key) {
@@ -1401,7 +1498,7 @@ var selectedConnectionColors = {
   fail: "darkred"
 };
 
-var FlowchartConnection = function FlowchartConnection(_a) {
+function Connection(_a) {
   var data = _a.data,
       nodes = _a.nodes,
       isSelected = _a.isSelected,
@@ -1462,7 +1559,7 @@ var FlowchartConnection = function FlowchartConnection(_a) {
       });
     })
   });
-};
+}
 
 function styleInject(css, ref) {
   if (ref === void 0) ref = {};
@@ -1493,44 +1590,181 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = ".flowchart-zoom {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n}\n.flowchart-container {\n  position: relative;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.flowchart-svg text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #bbbbbb;\n  cursor: crosshair;\n}\n.circle :hover {\n  opacity: 1;\n}\n.g :hover circle {\n  opacity: 1;\n}";
+var css_248z = ".flowchart-zoom {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n}\n.flowchart-container {\n  position: relative;\n}\n.flowchart-container text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.flowchart-content {\n  height: 100%;\n  width: 100%;\n  display: inline-flex;\n}\n.flowchart-toolbar {\n  width: 48px;\n  height: 100%;\n  border-left: 1px solid #dfdfdf;\n  border-top: 1px solid #dfdfdf;\n  border-bottom: 1px solid #dfdfdf;\n}\n.flowchart-toolbar-item {\n  width: 48px;\n  height: 24px;\n}\n.flowchart-creation-item {\n  pointer-events: none;\n  position: absolute;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #bbbbbb;\n  cursor: crosshair;\n  opacity: 0;\n}\n.circle:hover {\n  opacity: 1;\n}\n.g:hover .circle {\n  opacity: 1;\n}";
 styleInject(css_248z);
+var newNode = {
+  id: 0,
+  title: "New Item",
+  type: "start",
+  x: 0,
+  y: 0
+};
+var templateNode = {
+  id: 0,
+  title: "",
+  type: "start",
+  x: 8,
+  y: 8,
+  width: 32,
+  height: 16
+};
+var iconAlign = /*#__PURE__*/jsx("svg", {
+  viewBox: "64 64 896 896",
+  focusable: "false",
+  "data-icon": "align-center",
+  width: "1em",
+  height: "1em",
+  fill: "currentColor",
+  "aria-hidden": "true",
+  children: /*#__PURE__*/jsx("path", {
+    d: "M264 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm496 424c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496zm144 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"
+  })
+});
+var iconZoomOut = /*#__PURE__*/jsxs("svg", {
+  viewBox: "64 64 896 896",
+  focusable: "false",
+  "data-icon": "plus",
+  width: "1em",
+  height: "1em",
+  fill: "currentColor",
+  "aria-hidden": "true",
+  children: [/*#__PURE__*/jsx("defs", {
+    children: /*#__PURE__*/jsx("style", {})
+  }), /*#__PURE__*/jsx("path", {
+    d: "M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+  }), /*#__PURE__*/jsx("path", {
+    d: "M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"
+  })]
+});
+var iconZoomIn = /*#__PURE__*/jsx("svg", {
+  viewBox: "64 64 896 896",
+  focusable: "false",
+  "data-icon": "minus",
+  width: "1em",
+  height: "1em",
+  fill: "currentColor",
+  "aria-hidden": "true",
+  children: /*#__PURE__*/jsx("path", {
+    d: "M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
+  })
+});
+
+function GuideLine(_a) {
+  var line = _a.line;
+  return /*#__PURE__*/jsx("g", {
+    children: /*#__PURE__*/jsx("line", {
+      strokeDasharray: "3 3",
+      stroke: "#666666",
+      strokeWidth: 1,
+      fill: "none",
+      x1: line[0].x,
+      y1: line[0].y,
+      x2: line[1].x,
+      y2: line[1].y
+    })
+  });
+}
+
+function Marker(_a) {
+  var id = _a.id,
+      color = _a.color;
+  return /*#__PURE__*/jsx("marker", {
+    id: id,
+    markerUnits: "strokeWidth",
+    viewBox: "0 0 12 12",
+    refX: 9,
+    refY: 6,
+    markerWidth: 12,
+    markerHeight: 12,
+    orient: "auto",
+    children: /*#__PURE__*/jsx("path", {
+      d: "M2,2 L10,6 L2,10 L6,6 L2,2",
+      fill: color
+    })
+  });
+}
+
+function PendingConnection(_a) {
+  var points = _a.points;
+  return /*#__PURE__*/jsx("g", {
+    children: points.map(function (point, i) {
+      if (i > points.length - 2) {
+        return /*#__PURE__*/jsx(Fragment, {});
+      }
+
+      var source = points[i];
+      var destination = points[i + 1];
+      var isLast = i === points.length - 2;
+      var color = defaultConnectionColors.success;
+      var id = "arrow".concat(color.replace("#", ""));
+      return /*#__PURE__*/jsxs(Fragment, {
+        children: [/*#__PURE__*/jsx("path", {
+          stroke: defaultConnectionColors.success,
+          strokeWidth: 1,
+          fill: "none",
+          d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1]),
+          markerEnd: isLast ? "url(#".concat(id, ")") : undefined
+        }), isLast && /*#__PURE__*/jsx(Marker, {
+          id: id,
+          color: color
+        }), /*#__PURE__*/jsx("path", {
+          stroke: "transparent",
+          strokeWidth: 5,
+          fill: "none",
+          d: "M ".concat(source.join(" "), " L ").concat(destination.join(" "))
+        })]
+      });
+    })
+  });
+}
+
 var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   var nodes = _a.nodes,
       connections = _a.connections,
       _b = _a.readonly,
       readonly = _b === void 0 ? false : _b,
       onNodeDoubleClick = _a.onNodeDoubleClick,
-      onConnectionDoubleClick = _a.onConnectionDoubleClick,
+      onConnDoubleClick = _a.onConnectionDoubleClick,
       onDoubleClick = _a.onDoubleClick,
       onChange = _a.onChange,
       onMouseUp = _a.onMouseUp,
-      style = _a.style;
+      style = _a.style,
+      _c = _a.defaultNodeSize,
+      defaultNodeSize = _c === void 0 ? {
+    width: 120,
+    height: 60
+  } : _c,
+      showToolbar = _a.showToolbar;
   var svgRef = useRef(null);
-
-  var _c = useState([]),
-      selectedNodeIds = _c[0],
-      setSelectedNodeIds = _c[1];
+  var containerRef = useRef(null);
 
   var _d = useState([]),
-      selectedConnectionIds = _d[0],
-      setSelectedConnectionIds = _d[1];
+      selectedNodeIds = _d[0],
+      setSelectedNodeIds = _d[1];
 
-  var _e = useState(),
-      dragSelectionInfo = _e[0],
-      setDragSelectionInfo = _e[1];
+  var _e = useState([]),
+      selectedConnIds = _e[0],
+      setSelectedConnIds = _e[1];
 
   var _f = useState(),
-      dragConnectionInfo = _f[0],
-      setDragConnectionInfo = _f[1];
+      selectingInfo = _f[0],
+      setSelectingInfo = _f[1];
 
   var _g = useState(),
-      dragMovingInfo = _g[0],
-      setDragMovingInfo = _g[1];
+      connectingInfo = _g[0],
+      setConnectingInfo = _g[1];
 
-  var _h = useState(1),
-      zoom = _h[0],
-      setZoom = _h[1];
+  var _h = useState(),
+      movingInfo = _h[0],
+      setMovingInfo = _h[1];
+
+  var _j = useState(),
+      creatingInfo = _j[0],
+      setCreatingInfo = _j[1];
+
+  var _k = useState(1),
+      zoom = _k[0],
+      setZoom = _k[1];
 
   var internalCenter = useCallback(function () {
     if (!svgRef.current) {
@@ -1552,12 +1786,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, []);
 
-  var _j = useState({
+  var _l = useState({
     x: 0,
     y: 0
   }),
-      offsetOfCursorToSVG = _j[0],
-      setOffsetOfCursorToSVG = _j[1];
+      offsetOfCursorToSVG = _l[0],
+      setOffsetOfCursorToSVG = _l[1];
 
   var handleWheel = useCallback(function (event) {
     event.stopPropagation();
@@ -1568,14 +1802,14 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         return;
       }
 
-      setZoom(function (prevState) {
-        var number = Number((prevState - event.deltaY / 100 / 10).toFixed(1));
+      setZoom(function (prev) {
+        var number = Number((prev - event.deltaY / 100 / 10).toFixed(1));
         return number < 0.6 ? 0.6 : number > 1 ? 1 : number;
       });
     }
   }, [zoom]);
   var handleSVGDoubleClick = useCallback(function (event) {
-    onDoubleClick === null || onDoubleClick === void 0 ? void 0 : onDoubleClick(event, zoom);
+    return onDoubleClick === null || onDoubleClick === void 0 ? void 0 : onDoubleClick(event, zoom);
   }, [onDoubleClick, zoom]);
   var handleSVGMouseDown = useCallback(function (event) {
     if (event.ctrlKey || event.metaKey || event.target.tagName !== "svg") {
@@ -1591,12 +1825,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       x: event.nativeEvent.offsetX / zoom,
       y: event.nativeEvent.offsetY / zoom
     };
-    setDragSelectionInfo({
+    setSelectingInfo({
       start: point,
       end: point
     });
     setSelectedNodeIds([]);
-    setSelectedConnectionIds([]);
+    setSelectedConnIds([]);
   }, [zoom]);
   var moveTo = useCallback(function (nodes, id, x, y) {
     var _a;
@@ -1652,52 +1886,52 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     };
     setOffsetOfCursorToSVG(newOffsetOfCursorToSVG);
 
-    if (dragSelectionInfo) {
-      setDragSelectionInfo(function (prevState) {
+    if (selectingInfo) {
+      setSelectingInfo(function (prevState) {
         return {
           start: prevState.start,
           end: newOffsetOfCursorToSVG
         };
       });
-      var edge = calcCorners([dragSelectionInfo.start, newOffsetOfCursorToSVG]);
+      var edge = calcCorners([selectingInfo.start, newOffsetOfCursorToSVG]);
       setSelectedNodeIds(calcIntersectedNodes(nodes, edge).map(function (item) {
         return item.id;
       }));
-      setSelectedConnectionIds(calcIntersectedConnections(nodes, connections, edge).map(function (item) {
+      setSelectedConnIds(calcIntersectedConnections(nodes, connections, edge).map(function (item) {
         return item.id;
       }));
-    } else if (dragMovingInfo) {
+    } else if (movingInfo) {
       var currentNodes = nodes;
 
-      for (var i = 0; i < dragMovingInfo.targetIds.length; i++) {
-        var t = dragMovingInfo.targetIds[i];
-        var delta = dragMovingInfo.deltas[i];
+      for (var i = 0; i < movingInfo.targetIds.length; i++) {
+        var t = movingInfo.targetIds[i];
+        var delta = movingInfo.deltas[i];
         currentNodes = moveTo(currentNodes, t, newOffsetOfCursorToSVG.x - delta.x, newOffsetOfCursorToSVG.y - delta.y);
       }
 
       onChange === null || onChange === void 0 ? void 0 : onChange(currentNodes, connections);
-      setDragMovingInfo(function (prevState) {
+      setMovingInfo(function (prevState) {
         return _assign(_assign({}, prevState), {
           moved: true
         });
       });
     }
-  }, [zoom, dragSelectionInfo, dragMovingInfo, nodes, connections, onChange, moveTo]);
+  }, [zoom, selectingInfo, movingInfo, nodes, connections, onChange, moveTo]);
   var moveSelected = useCallback(function (x, y) {
     move(selectedNodeIds, x, y);
   }, [move, selectedNodeIds]);
   var remove = useCallback(function () {
     if (readonly) return; // Splice arguments of selected connections
 
-    var list1 = selectedConnectionIds.map(function (currentConn) {
+    var list1 = selectedConnIds.map(function (currentConn) {
       return [connections.findIndex(function (interConn) {
         return interConn.id === currentConn;
       }), 1];
     }); // Splice arguments of connections of selected nodes
 
-    var list2 = selectedNodeIds.map(function (currNode) {
+    var list2 = selectedNodeIds.map(function (item) {
       return connections.filter(function (interConn) {
-        return interConn.source.id === currNode || interConn.destination.id === currNode;
+        return interConn.source.id === item || interConn.destination.id === item;
       });
     }).flat().map(function (currentConn) {
       return [connections.findIndex(function (interConn) {
@@ -1719,7 +1953,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       })
     });
     onChange === null || onChange === void 0 ? void 0 : onChange(restNodes, restConnections);
-  }, [readonly, selectedConnectionIds, selectedNodeIds, connections, nodes, onChange]);
+  }, [readonly, selectedConnIds, selectedNodeIds, connections, nodes, onChange]);
   var handleSVGKeyDown = useCallback(function (event) {
     switch (event.keyCode) {
       case 37:
@@ -1740,17 +1974,17 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
       case 27:
         setSelectedNodeIds([]);
-        setSelectedConnectionIds([]);
+        setSelectedConnIds([]);
         break;
 
       case 65:
         if ((event.ctrlKey || event.metaKey) && document.activeElement === document.getElementById("chart")) {
           setSelectedNodeIds([]);
-          setSelectedConnectionIds([]);
+          setSelectedConnIds([]);
           setSelectedNodeIds(nodes.map(function (item) {
             return item.id;
           }));
-          setSelectedConnectionIds(__spreadArray([], selectedConnectionIds, true));
+          setSelectedConnIds(__spreadArray([], selectedConnIds, true));
         }
 
         break;
@@ -1760,13 +1994,13 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         remove();
         break;
     }
-  }, [moveSelected, remove, nodes, selectedConnectionIds]);
+  }, [moveSelected, remove, nodes, selectedConnIds]);
   var handleSVGMouseUp = useCallback(function (event) {
-    setDragSelectionInfo(undefined);
-    setDragConnectionInfo(undefined);
-    setDragMovingInfo(undefined); // Align dragging node
+    setSelectingInfo(undefined);
+    setConnectingInfo(undefined);
+    setMovingInfo(undefined); // Align dragging node
 
-    if (dragMovingInfo) {
+    if (movingInfo) {
       var result = nodes;
 
       var _loop_1 = function _loop_1(t) {
@@ -1776,19 +2010,15 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           return item.id === t;
         })] = {
           x: {
-            $apply: function $apply(prevState) {
-              return Math.round(Math.round(prevState) / 10) * 10;
-            }
+            $apply: roundTo10
           },
           y: {
-            $apply: function $apply(prevState) {
-              return Math.round(Math.round(prevState) / 10) * 10;
-            }
+            $apply: roundTo10
           }
         }, _c));
       };
 
-      for (var _i = 0, _a = dragMovingInfo.targetIds; _i < _a.length; _i++) {
+      for (var _i = 0, _a = movingInfo.targetIds; _i < _a.length; _i++) {
         var t = _a[_i];
 
         _loop_1(t);
@@ -1798,44 +2028,70 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     } // Connect nodes
 
 
-    if (!dragConnectionInfo) {
-      return;
-    }
+    if (connectingInfo) {
+      var node = null;
+      var position = null;
 
-    var node = null;
-    var position = null;
+      for (var _b = 0, nodes_1 = nodes; _b < nodes_1.length; _b++) {
+        var internalNode = nodes_1[_b];
+        var locations = locateConnector(internalNode);
 
-    for (var _b = 0, nodes_1 = nodes; _b < nodes_1.length; _b++) {
-      var internalNode = nodes_1[_b];
-      var locations = locateConnector(internalNode);
+        for (var prop in locations) {
+          var entry = locations[prop];
 
-      for (var prop in locations) {
-        var entry = locations[prop];
-
-        if (distanceOfPoint2Point(entry, offsetOfCursorToSVG) < 6) {
-          node = internalNode;
-          position = prop;
+          if (distanceOfP2P(entry, offsetOfCursorToSVG) < 6) {
+            node = internalNode;
+            position = prop;
+          }
         }
       }
+
+      if (!node || !position) {
+        return;
+      }
+
+      if (connectingInfo.source.id === node.id) {
+        // Node can not connect to itself
+        return;
+      }
+
+      var newConnection = createConnection(connectingInfo.source.id, connectingInfo.sourcePosition, node.id, position);
+      onChange === null || onChange === void 0 ? void 0 : onChange(nodes, __spreadArray(__spreadArray([], connections, true), [newConnection], false));
+      onMouseUp === null || onMouseUp === void 0 ? void 0 : onMouseUp(event, zoom);
     }
 
-    if (!node || !position) {
-      return;
-    }
+    if (creatingInfo) {
+      var nativeEvent = event.nativeEvent;
+      var point = {
+        x: roundTo10(nativeEvent.offsetX - defaultNodeSize.width / 2) / zoom,
+        y: roundTo10(nativeEvent.offsetY - defaultNodeSize.height / 2) / zoom,
+        id: +new Date(),
+        title: "New Item"
+      };
 
-    if (dragConnectionInfo.source.id === node.id) {
-      // Node can not connect to itself
-      return;
+      if (creatingInfo.type === "start") {
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
+          type: "start"
+        }, point)], false), connections);
+      } else if (creatingInfo.type === "end") {
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
+          type: "end"
+        }, point)], false), connections);
+      } else {
+        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
+          type: "operation"
+        }, point)], false), connections);
+      }
     }
+  }, [movingInfo, connectingInfo, creatingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
+  /**
+   * Points of connecting line
+   */
 
-    var newConnection = createConnection(dragConnectionInfo.source.id, dragConnectionInfo.sourcePosition, node.id, position);
-    onChange === null || onChange === void 0 ? void 0 : onChange(nodes, __spreadArray(__spreadArray([], connections, true), [newConnection], false));
-    onMouseUp === null || onMouseUp === void 0 ? void 0 : onMouseUp(event, zoom);
-  }, [dragMovingInfo, dragConnectionInfo, onChange, nodes, connections, onMouseUp, zoom, offsetOfCursorToSVG]);
   var points = useMemo(function () {
-    var points = undefined;
+    var points = [];
 
-    if (dragConnectionInfo) {
+    if (connectingInfo) {
       var endPosition = null;
 
       for (var _i = 0, nodes_2 = nodes; _i < nodes_2.length; _i++) {
@@ -1845,122 +2101,42 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         for (var prop in locations) {
           var entry = locations[prop];
 
-          if (distanceOfPoint2Point(entry, offsetOfCursorToSVG) < 6) {
+          if (distanceOfP2P(entry, offsetOfCursorToSVG) < 6) {
             endPosition = prop;
           }
         }
       }
 
-      points = pathing(locateConnector(dragConnectionInfo.source)[dragConnectionInfo.sourcePosition], offsetOfCursorToSVG, dragConnectionInfo.sourcePosition, endPosition);
+      points = pathing(locateConnector(connectingInfo.source)[connectingInfo.sourcePosition], offsetOfCursorToSVG, connectingInfo.sourcePosition, endPosition);
     }
 
     return points;
-  }, [nodes, dragConnectionInfo, offsetOfCursorToSVG]);
+  }, [nodes, connectingInfo, offsetOfCursorToSVG]);
   var guidelines = useMemo(function () {
     var guidelines = [];
 
-    if (dragMovingInfo) {
+    if (movingInfo) {
       var _loop_2 = function _loop_2(source) {
-        var sourceAnglePoints = locateAngle(nodes.find(function (item) {
+        guidelines.push.apply(guidelines, calcGuidelines(nodes.find(function (item) {
           return item.id === source;
-        }));
-
-        for (var i = 0; i < sourceAnglePoints.length; i++) {
-          var sourceAnglePoint = {
-            x: Math.round(Math.round(sourceAnglePoints[i].x) / 10) * 10,
-            y: Math.round(Math.round(sourceAnglePoints[i].y) / 10) * 10
-          };
-          var lines = void 0;
-          var directions = void 0;
-
-          switch (i) {
-            case 0:
-              {
-                lines = [[{
-                  x: sourceAnglePoint.x,
-                  y: 0
-                }, sourceAnglePoint], [{
-                  x: 0,
-                  y: sourceAnglePoint.y
-                }, sourceAnglePoint]];
-                directions = ["lu", "u", "l"];
-                break;
-              }
-
-            case 1:
-              {
-                lines = [[{
-                  x: sourceAnglePoint.x,
-                  y: 0
-                }, sourceAnglePoint], // todo: replace 10000 with the width of svg
-                [{
-                  x: 10000,
-                  y: sourceAnglePoint.y
-                }, sourceAnglePoint]];
-                directions = ["ru", "u", "r"];
-                break;
-              }
-
-            case 2:
-              {
-                lines = [[{
-                  x: sourceAnglePoint.x,
-                  y: 10000
-                }, sourceAnglePoint], [{
-                  x: 10000,
-                  y: sourceAnglePoint.y
-                }, sourceAnglePoint]];
-                directions = ["r", "rd", "d"];
-                break;
-              }
-
-            default:
-              {
-                lines = [[{
-                  x: sourceAnglePoint.x,
-                  y: 10000
-                }, sourceAnglePoint], [{
-                  x: 0,
-                  y: sourceAnglePoint.y
-                }, sourceAnglePoint]];
-                directions = ["l", "ld", "d"];
-                break;
-              }
-          }
-
-          for (var _b = 0, _c = nodes.filter(function (internalNode) {
-            return internalNode.id !== source;
-          }); _b < _c.length; _b++) {
-            var destination = _c[_b];
-            var line = null;
-
-            for (var _d = 0, _e = locateAngle(destination); _d < _e.length; _d++) {
-              var destinationPoint = _e[_d];
-              var direction = calcDirection(sourceAnglePoint, destinationPoint);
-
-              if (directions.indexOf(direction) > -1 && (distanceOfPointToLine(destinationPoint, lines[0]) < 5 || distanceOfPointToLine(destinationPoint, lines[1]) < 5)) {
-                if (line === null || distanceOfPoint2Point(destinationPoint, sourceAnglePoint) < distanceOfPoint2Point(line[0], line[1])) {
-                  line = [destinationPoint, sourceAnglePoint];
-                }
-              }
-            }
-
-            if (line) {
-              guidelines.push(line);
-            }
-          }
-        }
+        }), nodes));
       };
 
-      for (var _i = 0, _a = dragMovingInfo.targetIds; _i < _a.length; _i++) {
+      for (var _i = 0, _a = movingInfo.targetIds; _i < _a.length; _i++) {
         var source = _a[_i];
 
         _loop_2(source);
       }
+    } else if (creatingInfo) {
+      guidelines.push.apply(guidelines, calcGuidelines({
+        id: +new Date(),
+        x: offsetOfCursorToSVG.x - defaultNodeSize.width / 2,
+        y: offsetOfCursorToSVG.y - defaultNodeSize.height / 2
+      }, nodes));
     }
 
     return guidelines;
-  }, [nodes, dragMovingInfo]);
+  }, [movingInfo, creatingInfo, nodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, defaultNodeSize.width, defaultNodeSize.height]);
   useImperativeHandle(ref, function () {
     return {
       getData: function getData() {
@@ -1972,21 +2148,23 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     };
   });
   var selectionAreaCorners = useMemo(function () {
-    return dragSelectionInfo ? calcCorners([dragSelectionInfo.start, dragSelectionInfo.end]) : undefined;
-  }, [dragSelectionInfo]);
-  var svgStyle = useMemo(function () {
+    return selectingInfo ? calcCorners([selectingInfo.start, selectingInfo.end]) : undefined;
+  }, [selectingInfo]);
+  var zoomStyle = useMemo(function () {
     return {
       zoom: zoom
     };
   }, [zoom]);
   var nodeElements = useMemo(function () {
     return nodes === null || nodes === void 0 ? void 0 : nodes.map(function (node) {
-      return /*#__PURE__*/jsx(FlowchartNode, {
+      node.width = node.width || defaultNodeSize.width;
+      node.height = node.height || defaultNodeSize.height;
+      return /*#__PURE__*/jsx(Node, {
         readonly: readonly,
         isSelected: selectedNodeIds.some(function (item) {
           return item === node.id;
         }),
-        isConnecting: dragConnectionInfo !== undefined,
+        isConnecting: !!connectingInfo,
         data: node,
         onDoubleClick: function onDoubleClick(event) {
           event.stopPropagation();
@@ -1999,34 +2177,34 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
-            var findIndex = selectedNodeIds.findIndex(function (item) {
+            var index = selectedNodeIds.findIndex(function (item) {
               return item === node.id;
             });
 
-            if (findIndex === -1) {
+            if (index === -1) {
               setSelectedNodeIds(__spreadArray(__spreadArray([], selectedNodeIds, true), [node.id], false));
             } else {
               setSelectedNodeIds(update(selectedNodeIds, {
-                $splice: [[findIndex, 1]]
+                $splice: [[index, 1]]
               }));
             }
           } else {
             var tempCurrentNodes = selectedNodeIds;
 
-            if (!selectedNodeIds.some(function (currentNode) {
-              return currentNode === node.id;
+            if (!selectedNodeIds.some(function (id) {
+              return id === node.id;
             })) {
               tempCurrentNodes = [node.id];
               setSelectedNodeIds(tempCurrentNodes);
             }
 
-            setSelectedConnectionIds([]);
+            setSelectedConnIds([]);
 
             if (readonly) {
               return;
             }
 
-            setDragMovingInfo({
+            setMovingInfo({
               targetIds: tempCurrentNodes,
               deltas: tempCurrentNodes.map(function (tempCurrentNode) {
                 var find = nodes.find(function (item) {
@@ -2045,194 +2223,183 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             return;
           }
 
-          setDragConnectionInfo({
+          setConnectingInfo({
             source: node,
             sourcePosition: position
           });
         }
       }, node.id);
     });
-  }, [nodes, readonly, selectedNodeIds, dragConnectionInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
+  }, [nodes, defaultNodeSize.width, defaultNodeSize.height, readonly, selectedNodeIds, connectingInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
   var connectionElements = useMemo(function () {
     return connections === null || connections === void 0 ? void 0 : connections.map(function (conn) {
-      return /*#__PURE__*/jsx(FlowchartConnection, {
-        isSelected: selectedConnectionIds.some(function (item) {
+      return /*#__PURE__*/jsx(Connection, {
+        isSelected: selectedConnIds.some(function (item) {
           return conn.id === item;
         }),
         onDoubleClick: function onDoubleClick() {
-          return onConnectionDoubleClick === null || onConnectionDoubleClick === void 0 ? void 0 : onConnectionDoubleClick(conn);
+          return onConnDoubleClick === null || onConnDoubleClick === void 0 ? void 0 : onConnDoubleClick(conn);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
-            var findIndex = selectedConnectionIds.findIndex(function (item) {
+            var i_1 = selectedConnIds.findIndex(function (item) {
               return item === conn.id;
             });
 
-            if (findIndex === -1) {
-              setSelectedConnectionIds(__spreadArray(__spreadArray([], selectedConnectionIds, true), [conn.id], false));
+            if (i_1 === -1) {
+              setSelectedConnIds(function (prevState) {
+                return __spreadArray(__spreadArray([], prevState, true), [conn.id], false);
+              });
             } else {
-              setSelectedConnectionIds(update(selectedConnectionIds, {
-                $splice: [[findIndex, 1]]
-              }));
+              setSelectedConnIds(function (prev) {
+                return update(prev, {
+                  $splice: [[i_1, 1]]
+                });
+              });
             }
           } else {
             setSelectedNodeIds([]);
-            setSelectedConnectionIds([conn.id]);
+            setSelectedConnIds([conn.id]);
           }
         },
         data: conn,
         nodes: nodes
       }, conn.id);
     });
-  }, [connections, selectedConnectionIds, nodes, onConnectionDoubleClick]);
-  var guidelineElements = useMemo(function () {
-    return dragMovingInfo && dragMovingInfo.moved && guidelines.map(function (guideline, index) {
-      return /*#__PURE__*/jsx("g", {
-        children: /*#__PURE__*/jsx("line", {
-          strokeDasharray: "3 3",
-          stroke: "#666666",
-          strokeWidth: 1,
-          fill: "none",
-          x1: guideline[0].x,
-          y1: guideline[0].y,
-          x2: guideline[1].x,
-          y2: guideline[1].y
-        })
-      }, index);
+  }, [connections, selectedConnIds, nodes, onConnDoubleClick]);
+  var handleToolbarMouseDown = useCallback(function (type, event) {
+    var rect = containerRef.current.getBoundingClientRect();
+    setCreatingInfo({
+      type: type,
+      x: event.clientX - rect.x - defaultNodeSize.width * zoom / 2,
+      y: event.clientY - rect.y - defaultNodeSize.height * zoom / 2
     });
-  }, [dragMovingInfo, guidelines]);
-  return /*#__PURE__*/jsxs("div", {
-    style: style,
-    className: "flowchart-container",
-    children: [/*#__PURE__*/jsxs("div", {
-      className: "flowchart-zoom",
-      children: [/*#__PURE__*/jsx("button", {
-        style: {
-          border: "none",
-          backgroundColor: "transparent"
-        },
-        onClick: zoomIn,
-        children: /*#__PURE__*/jsx("svg", {
-          viewBox: "64 64 896 896",
-          focusable: "false",
-          "data-icon": "minus",
-          width: "1em",
-          height: "1em",
-          fill: "currentColor",
-          "aria-hidden": "true",
-          children: /*#__PURE__*/jsx("path", {
-            d: "M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-          })
-        })
-      }), /*#__PURE__*/jsxs("span", {
-        style: {
-          display: "inline-block",
-          width: 40,
-          textAlign: "center"
-        },
-        children: [zoom * 100, "%"]
-      }), /*#__PURE__*/jsx("button", {
-        style: {
-          border: "none",
-          backgroundColor: "transparent"
-        },
-        onClick: zoomOut,
-        children: /*#__PURE__*/jsxs("svg", {
-          viewBox: "64 64 896 896",
-          focusable: "false",
-          "data-icon": "plus",
-          width: "1em",
-          height: "1em",
-          fill: "currentColor",
-          "aria-hidden": "true",
-          children: [/*#__PURE__*/jsx("defs", {
-            children: /*#__PURE__*/jsx("style", {})
-          }), /*#__PURE__*/jsx("path", {
-            d: "M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
-          }), /*#__PURE__*/jsx("path", {
-            d: "M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"
-          })]
-        })
-      }), !readonly && /*#__PURE__*/jsx("button", {
-        style: {
-          border: "none",
-          backgroundColor: "transparent"
-        },
-        onClick: internalCenter,
-        children: /*#__PURE__*/jsx("svg", {
-          viewBox: "64 64 896 896",
-          focusable: "false",
-          "data-icon": "align-center",
-          width: "1em",
-          height: "1em",
-          fill: "currentColor",
-          "aria-hidden": "true",
-          children: /*#__PURE__*/jsx("path", {
-            d: "M264 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm496 424c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496zm144 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"
-          })
-        })
-      })]
-    }), /*#__PURE__*/jsxs("svg", {
-      ref: svgRef,
-      className: "flowchart-svg",
-      style: svgStyle,
-      id: "chart",
-      tabIndex: 0,
-      onKeyDown: handleSVGKeyDown,
-      onWheel: handleWheel,
-      onDoubleClick: handleSVGDoubleClick,
-      onMouseUp: handleSVGMouseUp,
-      onMouseDown: handleSVGMouseDown,
-      onMouseMove: handleSVGMouseMove,
-      children: [nodeElements, connectionElements, selectionAreaCorners && /*#__PURE__*/jsx("rect", {
-        stroke: "lightblue",
-        fill: "lightblue",
-        fillOpacity: 0.8,
-        x: selectionAreaCorners.start.x,
-        y: selectionAreaCorners.start.y,
-        width: selectionAreaCorners.end.x - selectionAreaCorners.start.x,
-        height: selectionAreaCorners.end.y - selectionAreaCorners.start.y
-      }), dragConnectionInfo && /*#__PURE__*/jsx("g", {
-        children: points.map(function (point, i) {
-          if (i > points.length - 2) {
-            return /*#__PURE__*/jsx(Fragment, {});
-          }
+  }, [defaultNodeSize.height, defaultNodeSize.width, zoom]);
+  var handleContainerMouseUp = useCallback(function () {
+    setCreatingInfo(undefined);
+  }, []);
+  var handleContainerMouseMove = useCallback(function (event) {
+    if (!event || !creatingInfo) {
+      return;
+    }
 
-          var source = points[i];
-          var destination = points[i + 1];
-          var isLast = i === points.length - 2;
-          var color = defaultConnectionColors.success;
-          var id = "arrow".concat(color.replace("#", ""));
-          return /*#__PURE__*/jsxs(Fragment, {
-            children: [/*#__PURE__*/jsx("path", {
-              stroke: defaultConnectionColors.success,
-              strokeWidth: 1,
-              fill: "none",
-              d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1]),
-              markerEnd: isLast ? "url(#".concat(id, ")") : undefined
-            }), isLast && /*#__PURE__*/jsx("marker", {
-              id: id,
-              markerUnits: "strokeWidth",
-              viewBox: "0 0 12 12",
-              refX: 9,
-              refY: 6,
-              markerWidth: 12,
-              markerHeight: 12,
-              orient: "auto",
-              children: /*#__PURE__*/jsx("path", {
-                d: "M2,2 L10,6 L2,10 L6,6 L2,2",
-                fill: color
+    var rect = containerRef.current.getBoundingClientRect();
+    setCreatingInfo(_assign(_assign({}, creatingInfo), {
+      x: event.clientX - rect.x - defaultNodeSize.width * zoom / 2,
+      y: event.clientY - rect.y - defaultNodeSize.height * zoom / 2
+    }));
+  }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]); // TODO: disable right click
+  // TODO: resize
+
+  return /*#__PURE__*/jsx(Fragment, {
+    children: /*#__PURE__*/jsxs("div", {
+      style: style,
+      ref: containerRef,
+      className: "flowchart-container",
+      onMouseUp: handleContainerMouseUp,
+      onMouseMove: handleContainerMouseMove,
+      children: [/*#__PURE__*/jsxs("div", {
+        className: "flowchart-zoom",
+        children: [/*#__PURE__*/jsx("button", {
+          style: {
+            border: "none",
+            backgroundColor: "transparent"
+          },
+          onClick: zoomIn,
+          children: iconZoomIn
+        }), /*#__PURE__*/jsxs("span", {
+          style: {
+            display: "inline-block",
+            width: 40,
+            textAlign: "center"
+          },
+          children: [zoom * 100, "%"]
+        }), /*#__PURE__*/jsx("button", {
+          style: {
+            border: "none",
+            backgroundColor: "transparent"
+          },
+          onClick: zoomOut,
+          children: iconZoomOut
+        }), !readonly && /*#__PURE__*/jsx("button", {
+          style: {
+            border: "none",
+            backgroundColor: "transparent"
+          },
+          onClick: internalCenter,
+          children: iconAlign
+        })]
+      }), /*#__PURE__*/jsxs("div", {
+        className: "flowchart-content",
+        children: [readonly || showToolbar === false ? /*#__PURE__*/jsx(Fragment, {}) : /*#__PURE__*/jsxs("div", {
+          className: "flowchart-toolbar",
+          children: [/*#__PURE__*/jsx("div", {
+            onMouseDown: function onMouseDown(event) {
+              return handleToolbarMouseDown("start", event);
+            },
+            children: /*#__PURE__*/jsx("svg", {
+              className: "flowchart-toolbar-item",
+              children: /*#__PURE__*/jsx(StartEndNode, {
+                data: templateNode
               })
-            }), /*#__PURE__*/jsx("path", {
-              stroke: "transparent",
-              strokeWidth: 5,
-              fill: "none",
-              d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1])
-            })]
-          });
+            })
+          }), /*#__PURE__*/jsx("div", {
+            onMouseDown: function onMouseDown(event) {
+              return handleToolbarMouseDown("operation", event);
+            },
+            children: /*#__PURE__*/jsx("svg", {
+              className: "flowchart-toolbar-item",
+              children: /*#__PURE__*/jsx(OperationNode, {
+                data: templateNode
+              })
+            })
+          })]
+        }), /*#__PURE__*/jsxs("svg", {
+          ref: svgRef,
+          className: "flowchart-svg",
+          style: zoomStyle,
+          id: "chart",
+          tabIndex: 0,
+          onKeyDown: handleSVGKeyDown,
+          onWheel: handleWheel,
+          onDoubleClick: handleSVGDoubleClick,
+          onMouseUp: handleSVGMouseUp,
+          onMouseDown: handleSVGMouseDown,
+          onMouseMove: handleSVGMouseMove,
+          children: [nodeElements, connectionElements, selectionAreaCorners && /*#__PURE__*/jsx("rect", {
+            stroke: "lightblue",
+            fill: "lightblue",
+            fillOpacity: 0.8,
+            x: selectionAreaCorners.start.x,
+            y: selectionAreaCorners.start.y,
+            width: selectionAreaCorners.end.x - selectionAreaCorners.start.x,
+            height: selectionAreaCorners.end.y - selectionAreaCorners.start.y
+          }), /*#__PURE__*/jsx(PendingConnection, {
+            points: points
+          }), guidelines.map(function (guideline, index) {
+            return /*#__PURE__*/jsx(GuideLine, {
+              line: guideline
+            }, index);
+          })]
+        })]
+      }), creatingInfo ? /*#__PURE__*/jsx("div", {
+        className: "flowchart-creation-item",
+        style: {
+          left: creatingInfo.x,
+          top: creatingInfo.y,
+          width: defaultNodeSize.width * zoom,
+          height: defaultNodeSize.height * zoom
+        },
+        children: /*#__PURE__*/jsx("svg", {
+          style: zoomStyle,
+          children: creatingInfo.type === "start" ? /*#__PURE__*/jsx(StartEndNode, {
+            data: newNode
+          }) : /*#__PURE__*/jsx(OperationNode, {
+            data: newNode
+          })
         })
-      }), guidelineElements]
-    })]
+      }) : /*#__PURE__*/jsx(Fragment, {})]
+    })
   });
 });
 export { Flowchart as default };

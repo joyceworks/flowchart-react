@@ -5,12 +5,14 @@ export default function Circle(
     isConnecting: boolean;
   } & React.SVGAttributes<SVGCircleElement>
 ): JSX.Element {
-  const style = useMemo<CSSProperties>(
-    () => ({
-      opacity: props.isConnecting ? 1 : 0,
-    }),
-    [props.isConnecting]
-  );
+  const style = useMemo<CSSProperties>(() => {
+    if (!props.isConnecting) {
+      return {};
+    }
+    return {
+      opacity: 1,
+    };
+  }, [props.isConnecting]);
   return (
     <circle
       className={"circle"}

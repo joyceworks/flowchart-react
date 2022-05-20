@@ -101,7 +101,6 @@ export default App;
 
 ## Demo
 
-- [https://github.com/joyceworks/flowchart-react-demo](https://github.com/joyceworks/flowchart-react-demo)
 - [CodeSandbox](https://codesandbox.io/s/stoic-borg-w626tt)
 
 ## API

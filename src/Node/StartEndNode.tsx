@@ -1,7 +1,7 @@
 import React from "react";
 import { NodeProps } from "./schema";
 
-const FlowchartStartEndNode = function ({
+const StartEndNode = function ({
   data,
   isSelected = false,
 }: NodeProps): JSX.Element {
@@ -20,11 +20,15 @@ const FlowchartStartEndNode = function ({
         strokeWidth={1}
         stroke={borderColor}
       />
-      <text x={data.x + halfWidth} y={data.y + halfHeight + 5} textAnchor={"middle"}>
+      <text
+        x={data.x + halfWidth}
+        y={data.y + halfHeight + 5}
+        textAnchor={"middle"}
+      >
         {text}
       </text>
     </>
   );
 };
 
-export default FlowchartStartEndNode;
+export default StartEndNode;

@@ -609,11 +609,11 @@ function calcDirection(p1: Point, p2: Point): Direction {
   return "rd";
 }
 
-function distanceOfPoint2Point(p1: Point, p2: Point): number {
+function distanceOfP2P(p1: Point, p2: Point): number {
   return Math.hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
-function distanceOfPointToLine(point: Point, line: Line): number {
+function distanceOfP2L(point: Point, line: Line): number {
   const start = line[0],
     end = line[1];
   const k = (end.y - start.y || 1) / (end.x - start.x || 1);
@@ -660,8 +660,8 @@ function center(nodes: NodeData[], width: number, height: number): NodeData[] {
     $apply: (state: NodeData[]) =>
       state.map((node) => ({
         ...node,
-        x: roundToNearest10(node.x + offsetX),
-        y: roundToNearest10(node.y + offsetY),
+        x: roundTo10(node.x + offsetX),
+        y: roundTo10(node.y + offsetY),
       })),
   });
 }
@@ -681,11 +681,7 @@ function isIntersected(
   );
 }
 
-function roundTo20(number: number): number {
-  return number < 20 ? 20 : number;
-}
-
-function roundToNearest10(number: number): number {
+function roundTo10(number: number): number {
   return Math.ceil(number / 10) * 10;
 }
 
@@ -710,7 +706,9 @@ function locateConnector(node: NodeData): {
  * Get angle positions: top-left, top-right, bottom-right, bottom-left
  * @param node
  */
-function locateAngle(node: NodeData): [Point, Point, Point, Point] {
+function locateAngle(
+  node: Pick<NodeData, "width" | "height" | "x" | "y">
+): [Point, Point, Point, Point] {
   const width = node.width || 120;
   const height = node.height || 60;
   return [
@@ -776,14 +774,91 @@ function createConnection(
   };
 }
 
+export function calcGuidelines(
+  node: Pick<NodeData, "width" | "height" | "x" | "y" | "id">,
+  nodes: NodeData[]
+): Line[] {
+  const guidelines: Line[] = [];
+  const points = locateAngle(node);
+  for (let i = 0; i < points.length; i++) {
+    const srcAnglePoint = {
+      x: roundTo10(points[i].x),
+      y: roundTo10(points[i].y),
+    };
+
+    let lines: Line[];
+    let directions: Direction[];
+    switch (i) {
+      case 0: {
+        lines = [
+          [{ x: srcAnglePoint.x, y: 0 }, srcAnglePoint],
+          [{ x: 0, y: srcAnglePoint.y }, srcAnglePoint],
+        ];
+        directions = ["lu", "u", "l"];
+        break;
+      }
+      case 1: {
+        lines = [
+          [{ x: srcAnglePoint.x, y: 0 }, srcAnglePoint],
+          // todo: replace 10000 with the width of svg
+          [{ x: 10000, y: srcAnglePoint.y }, srcAnglePoint],
+        ];
+        directions = ["ru", "u", "r"];
+        break;
+      }
+      case 2: {
+        lines = [
+          [{ x: srcAnglePoint.x, y: 10000 }, srcAnglePoint],
+          [{ x: 10000, y: srcAnglePoint.y }, srcAnglePoint],
+        ];
+        directions = ["r", "rd", "d"];
+        break;
+      }
+      default: {
+        lines = [
+          [{ x: srcAnglePoint.x, y: 10000 }, srcAnglePoint],
+          [{ x: 0, y: srcAnglePoint.y }, srcAnglePoint],
+        ];
+        directions = ["l", "ld", "d"];
+        break;
+      }
+    }
+
+    for (const destination of nodes.filter(
+      (internalNode) => internalNode.id !== node.id
+    )) {
+      let line: Line | null = null;
+      for (const destPoint of locateAngle(destination)) {
+        const direction = calcDirection(srcAnglePoint, destPoint);
+        if (
+          directions.indexOf(direction) > -1 &&
+          (distanceOfP2L(destPoint, lines[0]) < 5 ||
+            distanceOfP2L(destPoint, lines[1]) < 5)
+        ) {
+          if (
+            line === null ||
+            distanceOfP2P(destPoint, srcAnglePoint) <
+              distanceOfP2P(line[0], line[1])
+          ) {
+            line = [destPoint, srcAnglePoint];
+          }
+        }
+      }
+      if (line) {
+        guidelines.push(line);
+      }
+    }
+  }
+  return guidelines;
+}
+
 export {
   isIntersected,
-  distanceOfPointToLine,
-  distanceOfPoint2Point,
+  distanceOfP2L,
+  distanceOfP2P,
   calcDirection,
   calcCorners,
   between,
-  roundTo20,
   pathing,
   approximatelyEquals,
   locateConnector,
@@ -791,6 +866,6 @@ export {
   calcIntersectedConnections,
   calcIntersectedNodes,
   createConnection,
-  roundToNearest10,
+  roundTo10,
   center,
 };
