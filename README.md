@@ -6,7 +6,7 @@
 
 English | [中文](https://www.joyceworks.com/2022/02/26/flowchart-react-readme-cn/)
 
-<img width="801" alt="image" src="https://user-images.githubusercontent.com/5696485/155135822-93cc3901-6a61-42da-a9be-ee495398cdf5.png">
+<img width="801" alt="image" src="https://user-images.githubusercontent.com/5696485/175803118-bd1ef913-4854-43ab-9338-d8f6deb5c81a.png">
 
 ## Install
 
