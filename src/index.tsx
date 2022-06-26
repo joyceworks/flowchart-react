@@ -42,6 +42,7 @@ import OperationNode from "./Node/OperationNode";
 import { iconAlign, newNode, templateNode } from "./constant";
 import { GuideLine } from "./GuideLine";
 import { PendingConnection } from "./PendingConnection";
+import { DecisionNode } from "./Node/DecisionNode";
 
 const Flowchart = forwardRef(
   (
@@ -364,16 +365,10 @@ const Flowchart = forwardRef(
             id: +new Date(),
             title: "New Item",
           };
-          if (creatingInfo.type === "start") {
-            onChange?.([...nodes, { type: "start", ...point }], connections);
-          } else if (creatingInfo.type === "end") {
-            onChange?.([...nodes, { type: "end", ...point }], connections);
-          } else {
-            onChange?.(
-              [...nodes, { type: "operation", ...point }],
-              connections
-            );
-          }
+          onChange?.(
+            [...nodes, { type: creatingInfo.type, ...point }],
+            connections
+          );
         }
       },
       [
@@ -611,7 +606,6 @@ const Flowchart = forwardRef(
 
     // TODO: disable right click
     // TODO: resize
-    // TODO: tailwindcss
 
     return (
       <>
@@ -662,6 +656,15 @@ const Flowchart = forwardRef(
                 >
                   <svg className={"flowchart-toolbar-item"}>
                     <OperationNode data={templateNode} />
+                  </svg>
+                </div>
+                <div
+                  onMouseDown={(event) =>
+                    handleToolbarMouseDown("decision", event)
+                  }
+                >
+                  <svg className={"flowchart-toolbar-item"}>
+                    <DecisionNode data={templateNode} />
                   </svg>
                 </div>
               </div>
@@ -715,6 +718,8 @@ const Flowchart = forwardRef(
               <svg style={zoomStyle}>
                 {creatingInfo.type === "start" ? (
                   <StartEndNode data={newNode} />
+                ) : creatingInfo.type === "decision" ? (
+                  <DecisionNode data={newNode} />
                 ) : (
                   <OperationNode data={newNode} />
                 )}

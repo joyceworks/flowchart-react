@@ -1452,6 +1452,34 @@ function Circle(props) {
   }, props));
 }
 
+var DecisionNode = function DecisionNode(_a) {
+  var data = _a.data,
+      isSelected = _a.isSelected;
+  var borderColor = isSelected ? "#666666" : "#bbbbbb";
+  var text = typeof data.title === "function" && data.title() || data.title;
+  var width = data.width || 120;
+  var halfWidth = width / 2;
+  var height = data.height || 60;
+  var halfHeight = height / 2;
+  var top = "".concat(data.x + halfWidth, ",").concat(data.y);
+  var bottom = "".concat(data.x + halfWidth, ",").concat(data.y + height);
+  var left = "".concat(data.x, ",").concat(data.y + halfHeight);
+  var right = "".concat(data.x + width, ",").concat(data.y + halfHeight);
+  return /*#__PURE__*/jsxs(Fragment, {
+    children: [/*#__PURE__*/jsx("polygon", {
+      points: "".concat(left, " ").concat(top, " ").concat(right, " ").concat(bottom),
+      fill: "white",
+      strokeWidth: 1,
+      stroke: borderColor
+    }), /*#__PURE__*/jsx("text", {
+      x: data.x + halfWidth,
+      y: data.y + halfHeight + 5,
+      textAnchor: "middle",
+      children: text
+    })]
+  });
+};
+
 var Node = function Node(_a) {
   var data = _a.data,
       isSelected = _a.isSelected,
@@ -1467,10 +1495,13 @@ var Node = function Node(_a) {
     children: /*#__PURE__*/jsxs(G, {
       onDoubleClick: onDoubleClick,
       onMouseDown: onMouseDown,
-      children: [data.type !== "start" && data.type !== "end" ? /*#__PURE__*/jsx(OperationNode, {
+      children: [data.type === "operation" ? /*#__PURE__*/jsx(OperationNode, {
         data: data,
         isSelected: isSelected
-      }) : /*#__PURE__*/jsx(StartEndNode, {
+      }) : data.type === "start" || data.type === "end" ? /*#__PURE__*/jsx(StartEndNode, {
+        data: data,
+        isSelected: isSelected
+      }) : /*#__PURE__*/jsx(DecisionNode, {
         data: data,
         isSelected: isSelected
       }), !readonly && Object.keys(position).map(function (key) {
@@ -2042,20 +2073,9 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         id: +new Date(),
         title: "New Item"
       };
-
-      if (creatingInfo.type === "start") {
-        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
-          type: "start"
-        }, point)], false), connections);
-      } else if (creatingInfo.type === "end") {
-        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
-          type: "end"
-        }, point)], false), connections);
-      } else {
-        onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
-          type: "operation"
-        }, point)], false), connections);
-      }
+      onChange === null || onChange === void 0 ? void 0 : onChange(__spreadArray(__spreadArray([], nodes, true), [_assign({
+        type: creatingInfo.type
+      }, point)], false), connections);
     }
   }, [movingInfo, connectingInfo, creatingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
   /**
@@ -2264,7 +2284,6 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }));
   }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]); // TODO: disable right click
   // TODO: resize
-  // TODO: tailwindcss
 
   return /*#__PURE__*/jsx(Fragment, {
     children: /*#__PURE__*/jsxs("div", {
@@ -2315,6 +2334,16 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 data: templateNode
               })
             })
+          }), /*#__PURE__*/jsx("div", {
+            onMouseDown: function onMouseDown(event) {
+              return handleToolbarMouseDown("decision", event);
+            },
+            children: /*#__PURE__*/jsx("svg", {
+              className: "flowchart-toolbar-item",
+              children: /*#__PURE__*/jsx(DecisionNode, {
+                data: templateNode
+              })
+            })
           })]
         }), /*#__PURE__*/jsxs("svg", {
           ref: svgRef,
@@ -2355,6 +2384,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         children: /*#__PURE__*/jsx("svg", {
           style: zoomStyle,
           children: creatingInfo.type === "start" ? /*#__PURE__*/jsx(StartEndNode, {
+            data: newNode
+          }) : creatingInfo.type === "decision" ? /*#__PURE__*/jsx(DecisionNode, {
             data: newNode
           }) : /*#__PURE__*/jsx(OperationNode, {
             data: newNode
