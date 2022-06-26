@@ -36,15 +36,10 @@ import {
 import Node from "./Node";
 import { Connection } from "./Connection";
 import "./index.css";
+import "./output.css";
 import StartEndNode from "./Node/StartEndNode";
 import OperationNode from "./Node/OperationNode";
-import {
-  iconAlign,
-  iconZoomIn,
-  iconZoomOut,
-  newNode,
-  templateNode,
-} from "./constant";
+import { iconAlign, newNode, templateNode } from "./constant";
 import { GuideLine } from "./GuideLine";
 import { PendingConnection } from "./PendingConnection";
 
@@ -627,38 +622,26 @@ const Flowchart = forwardRef(
           onMouseUp={handleContainerMouseUp}
           onMouseMove={handleContainerMouseMove}
         >
-          <div className={"flowchart-zoom"}>
-            <button
-              style={{ border: "none", backgroundColor: "transparent" }}
-              onClick={zoomIn}
-            >
-              {iconZoomIn}
+          <div className={"absolute top-2 right-2"}>
+            <button className={"border-none bg-transparent"} onClick={zoomIn}>
+              -
             </button>
-            <span
-              style={{
-                display: "inline-block",
-                width: 40,
-                textAlign: "center",
-              }}
-            >
+            <button className={"border-none bg-transparent"}>
               {zoom * 100}%
-            </span>
-            <button
-              style={{ border: "none", backgroundColor: "transparent" }}
-              onClick={zoomOut}
-            >
-              {iconZoomOut}
+            </button>
+            <button className={"border-none bg-transparent"} onClick={zoomOut}>
+              +
             </button>
             {!readonly && (
               <button
-                style={{ border: "none", backgroundColor: "transparent" }}
+                className={"border-none bg-transparent"}
                 onClick={internalCenter}
               >
                 {iconAlign}
               </button>
             )}
           </div>
-          <div className={"flowchart-content"}>
+          <div className={"w-full h-full inline-flex"}>
             {readonly || showToolbar === false ? (
               <></>
             ) : (
@@ -721,7 +704,7 @@ const Flowchart = forwardRef(
           </div>
           {creatingInfo ? (
             <div
-              className={"flowchart-creation-item"}
+              className={"pointer-events-none absolute"}
               style={{
                 left: creatingInfo.x,
                 top: creatingInfo.y,
