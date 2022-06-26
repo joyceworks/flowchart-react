@@ -5,6 +5,7 @@ import React, { useMemo } from "react";
 import { locateConnector } from "../util";
 import G from "./G";
 import Circle from "./Circle";
+import { DecisionNode } from "./DecisionNode";
 
 interface NodeProps {
   data: NodeData;
@@ -29,10 +30,12 @@ const Node = function ({
   return (
     <>
       <G onDoubleClick={onDoubleClick} onMouseDown={onMouseDown}>
-        {data.type !== "start" && data.type !== "end" ? (
+        {data.type === "operation" ? (
           <OperationNode data={data} isSelected={isSelected} />
-        ) : (
+        ) : data.type === "start" || data.type === "end" ? (
           <StartEndNode data={data} isSelected={isSelected} />
+        ) : (
+          <DecisionNode data={data} isSelected={isSelected} />
         )}
         {!readonly &&
           Object.keys(position).map((key) => {

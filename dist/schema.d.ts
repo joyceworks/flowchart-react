@@ -33,7 +33,7 @@ export interface SelectingInfo {
     end: Point;
 }
 export declare type ConnectorPosition = "left" | "right" | "top" | "bottom";
-export declare type NodeType = "start" | "end" | "operation";
+export declare type NodeType = "start" | "end" | "operation" | "decision";
 export interface FlowchartProps {
     style?: CSSProperties;
     nodes: NodeData[];
