@@ -1822,7 +1822,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       return;
     }
 
-    if (event.nativeEvent.which !== 1) {
+    if (event.nativeEvent.button !== 0) {
       return;
     }
 
