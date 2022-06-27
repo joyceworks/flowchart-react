@@ -2170,6 +2170,10 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           onNodeDoubleClick === null || onNodeDoubleClick === void 0 ? void 0 : onNodeDoubleClick(node);
         },
         onMouseDown: function onMouseDown(event) {
+          if (event.nativeEvent.button !== 0) {
+            return;
+          }
+
           if (event.ctrlKey || event.metaKey) {
             var index = selectedNodeIds.findIndex(function (item) {
               return item === node.id;

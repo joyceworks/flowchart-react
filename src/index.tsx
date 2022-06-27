@@ -124,7 +124,7 @@ const Flowchart = forwardRef(
           return;
         }
 
-        if (event.nativeEvent.which !== 1) {
+        if (event.nativeEvent.button !== 0) {
           return;
         }
 
@@ -483,6 +483,9 @@ const Flowchart = forwardRef(
               onNodeDoubleClick?.(node);
             }}
             onMouseDown={(event) => {
+              if (event.nativeEvent.button !== 0) {
+                return;
+              }
               if (event.ctrlKey || event.metaKey) {
                 const index = selectedNodeIds.findIndex(
                   (item) => item === node.id
