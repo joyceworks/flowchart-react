@@ -53,6 +53,57 @@ const Node = function ({
               />
             );
           })}
+        {isSelected ? (
+          <>
+            <rect
+              x={data.x}
+              y={data.y}
+              width={data.width}
+              height={data.height}
+              strokeWidth={1}
+              stroke={"lightblue"}
+              fill={"transparent"}
+            />
+            <rect
+              x={data.x - 3}
+              y={data.y - 3}
+              width={6}
+              height={6}
+              strokeWidth={1}
+              stroke={"lightblue"}
+              fill={"white"}
+            />
+            <rect
+              x={data.x - 3}
+              y={data.y + (data.height || 60) - 3}
+              width={6}
+              height={6}
+              strokeWidth={1}
+              stroke={"lightblue"}
+              fill={"white"}
+            />
+            <rect
+              x={data.x + (data.width || 120) - 3}
+              y={data.y - 3}
+              width={6}
+              height={6}
+              strokeWidth={1}
+              stroke={"lightblue"}
+              fill={"white"}
+            />
+            <rect
+              x={data.x + (data.width || 120) - 3}
+              y={data.y + (data.height || 60) - 3}
+              width={6}
+              height={6}
+              strokeWidth={1}
+              stroke={"lightblue"}
+              fill={"white"}
+            />
+          </>
+        ) : (
+          <></>
+        )}
       </G>
     </>
   );
