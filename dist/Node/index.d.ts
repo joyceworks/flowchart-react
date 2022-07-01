@@ -1,4 +1,4 @@
-import { ConnectorPosition, NodeData } from "../schema";
+import { ConnectorPosition, Direction, NodeData } from "../schema";
 import React from "react";
 interface NodeProps {
     data: NodeData;
@@ -7,7 +7,8 @@ interface NodeProps {
     onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
     onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
     onConnectorMouseDown: (position: ConnectorPosition) => void;
+    onResizerMouseDown: (direction: Direction) => void;
     readonly?: boolean;
 }
-declare const Node: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, readonly, }: NodeProps) => JSX.Element;
+declare const Node: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, onResizerMouseDown, readonly, }: NodeProps) => JSX.Element;
 export default Node;

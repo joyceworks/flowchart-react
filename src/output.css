@@ -484,15 +484,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   right: 0.5rem;
 }
 
-.my-1 {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.inline-block {
-  display: inline-block;
-}
-
 .inline-flex {
   display: inline-flex;
 }
@@ -505,16 +496,28 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100%;
 }
 
-.w-10 {
-  width: 2.5rem;
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-nw-resize {
+  cursor: nw-resize;
+}
+
+.cursor-ne-resize {
+  cursor: ne-resize;
+}
+
+.cursor-sw-resize {
+  cursor: sw-resize;
+}
+
+.cursor-se-resize {
+  cursor: se-resize;
 }
 
 .resize {
   resize: both;
-}
-
-.border {
-  border-width: 1px;
 }
 
 .border-none {
@@ -523,20 +526,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .bg-transparent {
   background-color: transparent;
-}
-
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.text-center {
-  text-align: center;
 }
 
 .filter {
