@@ -2001,15 +2001,30 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       });
       var node = nodes[index];
       var patch = void 0;
+      var finalWidth = node.width || 120;
+      var finalHeight = node.height || 60;
+      var maxX = node.x + finalWidth;
+      var maxY = node.y + finalHeight;
 
       switch (resizingInfo.direction) {
         case "lu":
           patch = {
             x: newOffsetOfCursorToSVG.x,
             y: newOffsetOfCursorToSVG.y,
-            width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
-            height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y
+            width: 0,
+            height: 0
           };
+
+          if (patch.x >= maxX) {
+            patch.x = maxX - 1;
+          }
+
+          if (patch.y >= maxY) {
+            patch.y = maxY - 1;
+          }
+
+          patch.width = maxX - patch.x;
+          patch.height = maxY - patch.y;
           break;
 
         case "ru":
@@ -2017,17 +2032,37 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             x: node.x,
             y: newOffsetOfCursorToSVG.y,
             width: newOffsetOfCursorToSVG.x - node.x,
-            height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y
+            height: maxY - newOffsetOfCursorToSVG.y
           };
+
+          if (patch.width <= 0) {
+            patch.width = 1;
+          }
+
+          if (patch.y >= maxY) {
+            patch.y = maxY - 1;
+            patch.height = maxY - patch.y;
+          }
+
           break;
 
         case "ld":
           patch = {
             x: newOffsetOfCursorToSVG.x,
             y: node.y,
-            width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+            width: maxX - newOffsetOfCursorToSVG.x,
             height: newOffsetOfCursorToSVG.y - node.y
           };
+
+          if (patch.x >= maxX) {
+            patch.x = maxX - 1;
+            patch.width = 1;
+          }
+
+          if (patch.height <= 0) {
+            patch.height = 1;
+          }
+
           break;
 
         case "rd":
@@ -2037,6 +2072,15 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             width: newOffsetOfCursorToSVG.x - node.x,
             height: newOffsetOfCursorToSVG.y - node.y
           };
+
+          if (patch.width <= 0) {
+            patch.width = 1;
+          }
+
+          if (patch.height <= 0) {
+            patch.height = 1;
+          }
+
           break;
       }
 
@@ -2426,7 +2470,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       onMouseMove: handleContainerMouseMove,
       children: [/*#__PURE__*/jsxs("div", {
         className: "absolute top-2 right-2",
-        children: [/*#__PURE__*/jsx("button", {
+        children: [JSON.stringify(offsetOfCursorToSVG), /*#__PURE__*/jsx("button", {
           className: "border-none bg-transparent",
           onClick: zoomIn,
           children: "-"

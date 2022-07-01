@@ -217,30 +217,56 @@ const Flowchart = forwardRef(
           )!;
           const node = nodes[index]!;
           let patch: { x: number; y: number; width: number; height: number };
+          const finalWidth = node.width || 120;
+          const finalHeight = node.height || 60;
+          const maxX = node.x + finalWidth;
+          const maxY = node.y + finalHeight;
           switch (resizingInfo.direction) {
             case "lu":
               patch = {
                 x: newOffsetOfCursorToSVG.x,
                 y: newOffsetOfCursorToSVG.y,
-                width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
-                height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y,
+                width: 0,
+                height: 0,
               };
+              if (patch.x >= maxX) {
+                patch.x = maxX - 1;
+              }
+              if (patch.y >= maxY) {
+                patch.y = maxY - 1;
+              }
+              patch.width = maxX - patch.x;
+              patch.height = maxY - patch.y;
               break;
             case "ru":
               patch = {
                 x: node.x,
                 y: newOffsetOfCursorToSVG.y,
                 width: newOffsetOfCursorToSVG.x - node.x,
-                height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y,
+                height: maxY - newOffsetOfCursorToSVG.y,
               };
+              if (patch.width <= 0) {
+                patch.width = 1;
+              }
+              if (patch.y >= maxY) {
+                patch.y = maxY - 1;
+                patch.height = maxY - patch.y;
+              }
               break;
             case "ld":
               patch = {
                 x: newOffsetOfCursorToSVG.x,
                 y: node.y,
-                width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+                width: maxX - newOffsetOfCursorToSVG.x,
                 height: newOffsetOfCursorToSVG.y - node.y,
               };
+              if (patch.x >= maxX) {
+                patch.x = maxX - 1;
+                patch.width = 1;
+              }
+              if (patch.height <= 0) {
+                patch.height = 1;
+              }
               break;
             case "rd":
               patch = {
@@ -249,6 +275,12 @@ const Flowchart = forwardRef(
                 width: newOffsetOfCursorToSVG.x - node.x,
                 height: newOffsetOfCursorToSVG.y - node.y,
               };
+              if (patch.width <= 0) {
+                patch.width = 1;
+              }
+              if (patch.height <= 0) {
+                patch.height = 1;
+              }
               break;
           }
           onChange?.(
@@ -683,6 +715,7 @@ const Flowchart = forwardRef(
           onMouseMove={handleContainerMouseMove}
         >
           <div className={"absolute top-2 right-2"}>
+            {JSON.stringify(offsetOfCursorToSVG)}
             <button className={"border-none bg-transparent"} onClick={zoomIn}>
               -
             </button>
