@@ -2011,20 +2011,9 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           patch = {
             x: newOffsetOfCursorToSVG.x,
             y: newOffsetOfCursorToSVG.y,
-            width: 0,
-            height: 0
+            width: maxX - newOffsetOfCursorToSVG.x,
+            height: maxY - newOffsetOfCursorToSVG.y
           };
-
-          if (patch.x >= maxX) {
-            patch.x = maxX - 1;
-          }
-
-          if (patch.y >= maxY) {
-            patch.y = maxY - 1;
-          }
-
-          patch.width = maxX - patch.x;
-          patch.height = maxY - patch.y;
           break;
 
         case "ru":
@@ -2034,16 +2023,6 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             width: newOffsetOfCursorToSVG.x - node.x,
             height: maxY - newOffsetOfCursorToSVG.y
           };
-
-          if (patch.width <= 0) {
-            patch.width = 1;
-          }
-
-          if (patch.y >= maxY) {
-            patch.y = maxY - 1;
-            patch.height = maxY - patch.y;
-          }
-
           break;
 
         case "ld":
@@ -2053,36 +2032,37 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             width: maxX - newOffsetOfCursorToSVG.x,
             height: newOffsetOfCursorToSVG.y - node.y
           };
-
-          if (patch.x >= maxX) {
-            patch.x = maxX - 1;
-            patch.width = 1;
-          }
-
-          if (patch.height <= 0) {
-            patch.height = 1;
-          }
-
           break;
 
-        case "rd":
+        default:
           patch = {
             x: node.x,
             y: node.y,
             width: newOffsetOfCursorToSVG.x - node.x,
             height: newOffsetOfCursorToSVG.y - node.y
           };
-
-          if (patch.width <= 0) {
-            patch.width = 1;
-          }
-
-          if (patch.height <= 0) {
-            patch.height = 1;
-          }
-
           break;
       }
+
+      if (patch.x >= maxX) {
+        patch.x = maxX - 10;
+        patch.width = 10;
+      }
+
+      if (patch.y >= maxY) {
+        patch.y = maxY - 10;
+        patch.height = 10;
+      }
+
+      if (patch.width <= 0) {
+        patch.width = 10;
+      }
+
+      if (patch.height <= 0) {
+        patch.height = 10;
+      } // patch.x = roundTo10(patch.x);
+      // patch.y = roundTo10(patch.y);
+
 
       onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
         $set: _assign(_assign({}, node), patch)
