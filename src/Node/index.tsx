@@ -1,4 +1,4 @@
-import { ConnectorPosition, NodeData } from "../schema";
+import { ConnectorPosition, Direction, NodeData } from "../schema";
 import OperationNode from "./OperationNode";
 import StartEndNode from "./StartEndNode";
 import React, { useMemo } from "react";
@@ -15,6 +15,7 @@ interface NodeProps {
   onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
   onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
   onConnectorMouseDown: (position: ConnectorPosition) => void;
+  onResizerMouseDown: (direction: Direction) => void;
   readonly?: boolean;
 }
 
@@ -25,6 +26,7 @@ const Node = function ({
   onDoubleClick,
   onMouseDown,
   onConnectorMouseDown,
+  onResizerMouseDown,
   readonly,
 }: NodeProps) {
   const position = useMemo(() => locateConnector(data), [data]);
@@ -54,7 +56,11 @@ const Node = function ({
               />
             );
           })}
-        {isSelected && !readonly ? <Resizer data={data} /> : <></>}
+        {isSelected && !readonly ? (
+          <Resizer onMouseDown={onResizerMouseDown} data={data} />
+        ) : (
+          <></>
+        )}
       </G>
     </>
   );

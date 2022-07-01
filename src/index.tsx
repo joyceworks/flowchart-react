@@ -13,6 +13,7 @@ import {
   DragConnectingInfo,
   DragCreatingInfo,
   DragMovingInfo,
+  DragResizingInfo,
   FlowchartProps,
   IFlowchart,
   Line,
@@ -67,6 +68,7 @@ const Flowchart = forwardRef(
     const [selectedConnIds, setSelectedConnIds] = useState<number[]>([]);
     const [selectingInfo, setSelectingInfo] = useState<SelectingInfo>();
     const [connectingInfo, setConnectingInfo] = useState<DragConnectingInfo>();
+    const [resizingInfo, setResizingInfo] = useState<DragResizingInfo>();
     const [movingInfo, setMovingInfo] = useState<DragMovingInfo>();
     const [creatingInfo, setCreatingInfo] = useState<DragCreatingInfo>();
     const [zoom, setZoom] = useState<number>(1);
@@ -209,9 +211,66 @@ const Flowchart = forwardRef(
           }
           onChange?.(currentNodes, connections);
           setMovingInfo((prevState) => ({ ...prevState!, moved: true }));
+        } else if (resizingInfo) {
+          const index = nodes.findIndex(
+            (it) => it.id === resizingInfo.targetId
+          )!;
+          const node = nodes[index]!;
+          let patch: { x: number; y: number; width: number; height: number };
+          switch (resizingInfo.direction) {
+            case "lu":
+              patch = {
+                x: newOffsetOfCursorToSVG.x,
+                y: newOffsetOfCursorToSVG.y,
+                width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+                height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y,
+              };
+              break;
+            case "ru":
+              patch = {
+                x: node.x,
+                y: newOffsetOfCursorToSVG.y,
+                width: newOffsetOfCursorToSVG.x - node.x,
+                height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y,
+              };
+              break;
+            case "ld":
+              patch = {
+                x: newOffsetOfCursorToSVG.x,
+                y: node.y,
+                width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+                height: newOffsetOfCursorToSVG.y - node.y,
+              };
+              break;
+            case "rd":
+              patch = {
+                x: node.x,
+                y: node.y,
+                width: newOffsetOfCursorToSVG.x - node.x,
+                height: newOffsetOfCursorToSVG.y - node.y,
+              };
+              break;
+          }
+          onChange?.(
+            update(nodes, {
+              [index]: {
+                $set: { ...node, ...patch! },
+              },
+            }),
+            connections
+          );
         }
       },
-      [zoom, selectingInfo, movingInfo, nodes, connections, onChange, moveTo]
+      [
+        zoom,
+        selectingInfo,
+        movingInfo,
+        resizingInfo,
+        nodes,
+        connections,
+        onChange,
+        moveTo,
+      ]
     );
     const moveSelected = useCallback(
       (x, y) => {
@@ -308,6 +367,7 @@ const Flowchart = forwardRef(
         setSelectingInfo(undefined);
         setConnectingInfo(undefined);
         setMovingInfo(undefined);
+        setResizingInfo(undefined);
 
         // Align dragging node
         if (movingInfo) {
@@ -527,6 +587,12 @@ const Flowchart = forwardRef(
               }
               setConnectingInfo({ source: node, sourcePosition: position });
             }}
+            onResizerMouseDown={(direction) => {
+              setResizingInfo({
+                direction,
+                targetId: node.id,
+              });
+            }}
           />
         );
       });
@@ -606,9 +672,6 @@ const Flowchart = forwardRef(
       },
       [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]
     );
-
-    // TODO: disable right click
-    // TODO: resize
 
     return (
       <>

@@ -1,5 +1,5 @@
 import React from "react";
-import { NodeData } from "../schema";
+import { Direction, NodeData } from "../schema";
 
 const strokeProps: React.SVGProps<SVGRectElement> = {
   strokeWidth: 1,
@@ -11,7 +11,13 @@ const props: React.SVGProps<SVGRectElement> = {
   fill: "white",
   ...strokeProps,
 };
-const Resizer = function ({ data }: { data: NodeData }) {
+const Resizer = function ({
+  data,
+  onMouseDown,
+}: {
+  data: NodeData;
+  onMouseDown: (direction: Direction) => void;
+}) {
   return (
     <>
       <rect
@@ -29,6 +35,7 @@ const Resizer = function ({ data }: { data: NodeData }) {
         {...props}
         onMouseDown={(event) => {
           event.stopPropagation();
+          onMouseDown("lu");
         }}
       />
       <rect
@@ -38,6 +45,7 @@ const Resizer = function ({ data }: { data: NodeData }) {
         {...props}
         onMouseDown={(event) => {
           event.stopPropagation();
+          onMouseDown("ld");
         }}
       />
       <rect
@@ -47,6 +55,7 @@ const Resizer = function ({ data }: { data: NodeData }) {
         {...props}
         onMouseDown={(event) => {
           event.stopPropagation();
+          onMouseDown("ru");
         }}
       />
       <rect
@@ -56,6 +65,7 @@ const Resizer = function ({ data }: { data: NodeData }) {
         {...props}
         onMouseDown={(event) => {
           event.stopPropagation();
+          onMouseDown("rd");
         }}
       />
     </>

@@ -59,7 +59,7 @@ export interface FlowchartProps {
   defaultNodeSize?: {
     width: number;
     height: number;
-  },
+  };
   showToolbar?: boolean;
 }
 
@@ -88,6 +88,11 @@ export interface IFlowchart {
     nodes: NodeData[];
     connections: ConnectionData[];
   };
+}
+
+export interface DragResizingInfo {
+  targetId: number;
+  direction: Direction;
 }
 
 export type Direction = "l" | "r" | "u" | "d" | "lu" | "ru" | "ld" | "rd";

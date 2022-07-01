@@ -1492,7 +1492,8 @@ var props = _assign({
 }, strokeProps);
 
 var Resizer = function Resizer(_a) {
-  var data = _a.data;
+  var data = _a.data,
+      _onMouseDown = _a.onMouseDown;
   return /*#__PURE__*/jsxs(Fragment, {
     children: [/*#__PURE__*/jsx("rect", _objectSpread({
       x: data.x,
@@ -1507,6 +1508,8 @@ var Resizer = function Resizer(_a) {
     }, props), {}, {
       onMouseDown: function onMouseDown(event) {
         event.stopPropagation();
+
+        _onMouseDown("lu");
       }
     })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
       className: "cursor-sw-resize",
@@ -1515,6 +1518,8 @@ var Resizer = function Resizer(_a) {
     }, props), {}, {
       onMouseDown: function onMouseDown(event) {
         event.stopPropagation();
+
+        _onMouseDown("ld");
       }
     })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
       className: "cursor-ne-resize",
@@ -1523,6 +1528,8 @@ var Resizer = function Resizer(_a) {
     }, props), {}, {
       onMouseDown: function onMouseDown(event) {
         event.stopPropagation();
+
+        _onMouseDown("ru");
       }
     })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
       className: "cursor-se-resize",
@@ -1531,6 +1538,8 @@ var Resizer = function Resizer(_a) {
     }, props), {}, {
       onMouseDown: function onMouseDown(event) {
         event.stopPropagation();
+
+        _onMouseDown("rd");
       }
     }))]
   });
@@ -1543,6 +1552,7 @@ var Node = function Node(_a) {
       onDoubleClick = _a.onDoubleClick,
       onMouseDown = _a.onMouseDown,
       onConnectorMouseDown = _a.onConnectorMouseDown,
+      onResizerMouseDown = _a.onResizerMouseDown,
       readonly = _a.readonly;
   var position = useMemo(function () {
     return locateConnector(data);
@@ -1572,6 +1582,7 @@ var Node = function Node(_a) {
           }
         }, key);
       }), isSelected && !readonly ? /*#__PURE__*/jsx(Resizer, {
+        onMouseDown: onResizerMouseDown,
         data: data
       }) : /*#__PURE__*/jsx(Fragment, {})]
     })
@@ -1818,16 +1829,20 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       setConnectingInfo = _g[1];
 
   var _h = useState(),
-      movingInfo = _h[0],
-      setMovingInfo = _h[1];
+      resizingInfo = _h[0],
+      setResizingInfo = _h[1];
 
   var _j = useState(),
-      creatingInfo = _j[0],
-      setCreatingInfo = _j[1];
+      movingInfo = _j[0],
+      setMovingInfo = _j[1];
 
-  var _k = useState(1),
-      zoom = _k[0],
-      setZoom = _k[1];
+  var _k = useState(),
+      creatingInfo = _k[0],
+      setCreatingInfo = _k[1];
+
+  var _l = useState(1),
+      zoom = _l[0],
+      setZoom = _l[1];
 
   var internalCenter = useCallback(function () {
     if (!svgRef.current) {
@@ -1849,12 +1864,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, []);
 
-  var _l = useState({
+  var _m = useState({
     x: 0,
     y: 0
   }),
-      offsetOfCursorToSVG = _l[0],
-      setOffsetOfCursorToSVG = _l[1];
+      offsetOfCursorToSVG = _m[0],
+      setOffsetOfCursorToSVG = _m[1];
 
   var handleWheel = useCallback(function (event) {
     event.stopPropagation();
@@ -1943,6 +1958,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     onChange === null || onChange === void 0 ? void 0 : onChange(tempState, connections);
   }, [connections, nodes, onChange, readonly]);
   var handleSVGMouseMove = useCallback(function (event) {
+    var _a;
+
     var newOffsetOfCursorToSVG = {
       x: event.nativeEvent.offsetX / zoom,
       y: event.nativeEvent.offsetY / zoom
@@ -1978,8 +1995,56 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           moved: true
         });
       });
+    } else if (resizingInfo) {
+      var index = nodes.findIndex(function (it) {
+        return it.id === resizingInfo.targetId;
+      });
+      var node = nodes[index];
+      var patch = void 0;
+
+      switch (resizingInfo.direction) {
+        case "lu":
+          patch = {
+            x: newOffsetOfCursorToSVG.x,
+            y: newOffsetOfCursorToSVG.y,
+            width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+            height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y
+          };
+          break;
+
+        case "ru":
+          patch = {
+            x: node.x,
+            y: newOffsetOfCursorToSVG.y,
+            width: newOffsetOfCursorToSVG.x - node.x,
+            height: node.y + (node.height || 60) - newOffsetOfCursorToSVG.y
+          };
+          break;
+
+        case "ld":
+          patch = {
+            x: newOffsetOfCursorToSVG.x,
+            y: node.y,
+            width: node.x + (node.width || 120) - newOffsetOfCursorToSVG.x,
+            height: newOffsetOfCursorToSVG.y - node.y
+          };
+          break;
+
+        case "rd":
+          patch = {
+            x: node.x,
+            y: node.y,
+            width: newOffsetOfCursorToSVG.x - node.x,
+            height: newOffsetOfCursorToSVG.y - node.y
+          };
+          break;
+      }
+
+      onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
+        $set: _assign(_assign({}, node), patch)
+      }, _a)), connections);
     }
-  }, [zoom, selectingInfo, movingInfo, nodes, connections, onChange, moveTo]);
+  }, [zoom, selectingInfo, movingInfo, resizingInfo, nodes, connections, onChange, moveTo]);
   var moveSelected = useCallback(function (x, y) {
     move(selectedNodeIds, x, y);
   }, [move, selectedNodeIds]);
@@ -2061,7 +2126,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   var handleSVGMouseUp = useCallback(function (event) {
     setSelectingInfo(undefined);
     setConnectingInfo(undefined);
-    setMovingInfo(undefined); // Align dragging node
+    setMovingInfo(undefined);
+    setResizingInfo(undefined); // Align dragging node
 
     if (movingInfo) {
       var result = nodes;
@@ -2283,6 +2349,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             source: node,
             sourcePosition: position
           });
+        },
+        onResizerMouseDown: function onResizerMouseDown(direction) {
+          setResizingInfo({
+            direction: direction,
+            targetId: node.id
+          });
         }
       }, node.id);
     });
@@ -2344,9 +2416,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       x: event.clientX - rect.x - defaultNodeSize.width * zoom / 2,
       y: event.clientY - rect.y - defaultNodeSize.height * zoom / 2
     }));
-  }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]); // TODO: disable right click
-  // TODO: resize
-
+  }, [defaultNodeSize.height, defaultNodeSize.width, creatingInfo, zoom]);
   return /*#__PURE__*/jsx(Fragment, {
     children: /*#__PURE__*/jsxs("div", {
       style: style,

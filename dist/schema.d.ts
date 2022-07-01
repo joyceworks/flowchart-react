@@ -73,4 +73,8 @@ export interface IFlowchart {
         connections: ConnectionData[];
     };
 }
+export interface DragResizingInfo {
+    targetId: number;
+    direction: Direction;
+}
 export declare type Direction = "l" | "r" | "u" | "d" | "lu" | "ru" | "ld" | "rd";
