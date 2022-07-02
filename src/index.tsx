@@ -226,17 +226,9 @@ const Flowchart = forwardRef(
               patch = {
                 x: newOffsetOfCursorToSVG.x,
                 y: newOffsetOfCursorToSVG.y,
-                width: 0,
-                height: 0,
+                width: maxX - newOffsetOfCursorToSVG.x,
+                height: maxY - newOffsetOfCursorToSVG.y,
               };
-              if (patch.x >= maxX) {
-                patch.x = maxX - 1;
-              }
-              if (patch.y >= maxY) {
-                patch.y = maxY - 1;
-              }
-              patch.width = maxX - patch.x;
-              patch.height = maxY - patch.y;
               break;
             case "ru":
               patch = {
@@ -245,13 +237,6 @@ const Flowchart = forwardRef(
                 width: newOffsetOfCursorToSVG.x - node.x,
                 height: maxY - newOffsetOfCursorToSVG.y,
               };
-              if (patch.width <= 0) {
-                patch.width = 1;
-              }
-              if (patch.y >= maxY) {
-                patch.y = maxY - 1;
-                patch.height = maxY - patch.y;
-              }
               break;
             case "ld":
               patch = {
@@ -260,28 +245,29 @@ const Flowchart = forwardRef(
                 width: maxX - newOffsetOfCursorToSVG.x,
                 height: newOffsetOfCursorToSVG.y - node.y,
               };
-              if (patch.x >= maxX) {
-                patch.x = maxX - 1;
-                patch.width = 1;
-              }
-              if (patch.height <= 0) {
-                patch.height = 1;
-              }
               break;
-            case "rd":
+            default:
               patch = {
                 x: node.x,
                 y: node.y,
                 width: newOffsetOfCursorToSVG.x - node.x,
                 height: newOffsetOfCursorToSVG.y - node.y,
               };
-              if (patch.width <= 0) {
-                patch.width = 1;
-              }
-              if (patch.height <= 0) {
-                patch.height = 1;
-              }
               break;
+          }
+          if (patch.x >= maxX) {
+            patch.x = maxX - 10;
+            patch.width = 10;
+          }
+          if (patch.y >= maxY) {
+            patch.y = maxY - 10;
+            patch.height = 10;
+          }
+          if (patch.width <= 0) {
+            patch.width = 10;
+          }
+          if (patch.height <= 0) {
+            patch.height = 10;
           }
           onChange?.(
             update(nodes, {
@@ -462,11 +448,96 @@ const Flowchart = forwardRef(
             connections
           );
         }
+
+        if (resizingInfo) {
+          const index = nodes.findIndex(
+            (it) => it.id === resizingInfo.targetId
+          )!;
+          switch (resizingInfo.direction) {
+            case "lu":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newX = roundTo10(it.x);
+                      const newY = roundTo10(it.y);
+                      const maxX = it.width! + it.x;
+                      const maxY = it.height! + it.y;
+                      return {
+                        ...it,
+                        x: newX,
+                        y: newY,
+                        width: maxX - newX,
+                        height: maxY - newY,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "ru":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newY = roundTo10(it.y);
+                      const maxY = it.height! + it.y;
+                      return {
+                        ...it,
+                        y: newY,
+                        width: roundTo10(it.width!),
+                        height: maxY - newY,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "ld":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newX = roundTo10(it.x);
+                      const maxX = it.width! + it.x;
+                      return {
+                        ...it,
+                        x: newX,
+                        width: maxX - newX,
+                        height: roundTo10(it.height!),
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "rd":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      return {
+                        ...it,
+                        width: roundTo10(it.width!),
+                        height: roundTo10(it.height!),
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+          }
+        }
       },
       [
         movingInfo,
         connectingInfo,
         creatingInfo,
+        resizingInfo,
         nodes,
         onChange,
         connections,
@@ -524,11 +595,19 @@ const Flowchart = forwardRef(
             nodes
           )
         );
+      } else if (resizingInfo) {
+        guidelines.push(
+          ...calcGuidelines(
+            nodes.find((item) => item.id === resizingInfo.targetId)!,
+            nodes
+          )
+        );
       }
       return guidelines;
     }, [
       movingInfo,
       creatingInfo,
+      resizingInfo,
       nodes,
       offsetOfCursorToSVG.x,
       offsetOfCursorToSVG.y,
