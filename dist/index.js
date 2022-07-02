@@ -2060,9 +2060,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
       if (patch.height <= 0) {
         patch.height = 10;
-      } // patch.x = roundTo10(patch.x);
-      // patch.y = roundTo10(patch.y);
-
+      }
 
       onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
         $set: _assign(_assign({}, node), patch)
@@ -2148,6 +2146,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
   }, [moveSelected, remove, nodes, selectedConnIds]);
   var handleSVGMouseUp = useCallback(function (event) {
+    var _a, _b, _c, _d;
+
     setSelectingInfo(undefined);
     setConnectingInfo(undefined);
     setMovingInfo(undefined);
@@ -2157,9 +2157,9 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       var result = nodes;
 
       var _loop_1 = function _loop_1(t) {
-        var _c;
+        var _g;
 
-        result = update(result, (_c = {}, _c[result.findIndex(function (item) {
+        result = update(result, (_g = {}, _g[result.findIndex(function (item) {
           return item.id === t;
         })] = {
           x: {
@@ -2168,11 +2168,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           y: {
             $apply: roundTo10
           }
-        }, _c));
+        }, _g));
       };
 
-      for (var _i = 0, _a = movingInfo.targetIds; _i < _a.length; _i++) {
-        var t = _a[_i];
+      for (var _i = 0, _e = movingInfo.targetIds; _i < _e.length; _i++) {
+        var t = _e[_i];
 
         _loop_1(t);
       }
@@ -2185,8 +2185,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       var node = null;
       var position = null;
 
-      for (var _b = 0, nodes_1 = nodes; _b < nodes_1.length; _b++) {
-        var internalNode = nodes_1[_b];
+      for (var _f = 0, nodes_1 = nodes; _f < nodes_1.length; _f++) {
+        var internalNode = nodes_1[_f];
         var locations = locateConnector(internalNode);
 
         for (var prop in locations) {
@@ -2225,7 +2225,71 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         type: creatingInfo.type
       }, point)], false), connections);
     }
-  }, [movingInfo, connectingInfo, creatingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
+
+    if (resizingInfo) {
+      var index = nodes.findIndex(function (it) {
+        return it.id === resizingInfo.targetId;
+      });
+
+      switch (resizingInfo.direction) {
+        case "lu":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
+            $apply: function $apply(it) {
+              var newX = roundTo10(it.x);
+              var newY = roundTo10(it.y);
+              var maxX = it.width + it.x;
+              var maxY = it.height + it.y;
+              return _assign(_assign({}, it), {
+                x: newX,
+                y: newY,
+                width: maxX - newX,
+                height: maxY - newY
+              });
+            }
+          }, _a)), connections);
+          break;
+
+        case "ru":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_b = {}, _b[index] = {
+            $apply: function $apply(it) {
+              var newY = roundTo10(it.y);
+              var maxY = it.height + it.y;
+              return _assign(_assign({}, it), {
+                y: newY,
+                width: roundTo10(it.width),
+                height: maxY - newY
+              });
+            }
+          }, _b)), connections);
+          break;
+
+        case "ld":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_c = {}, _c[index] = {
+            $apply: function $apply(it) {
+              var newX = roundTo10(it.x);
+              var maxX = it.width + it.x;
+              return _assign(_assign({}, it), {
+                x: newX,
+                width: maxX - newX,
+                height: roundTo10(it.height)
+              });
+            }
+          }, _c)), connections);
+          break;
+
+        case "rd":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_d = {}, _d[index] = {
+            $apply: function $apply(it) {
+              return _assign(_assign({}, it), {
+                width: roundTo10(it.width),
+                height: roundTo10(it.height)
+              });
+            }
+          }, _d)), connections);
+          break;
+      }
+    }
+  }, [movingInfo, connectingInfo, creatingInfo, resizingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
   /**
    * Points of connecting line
    */
@@ -2275,10 +2339,14 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         x: offsetOfCursorToSVG.x - defaultNodeSize.width / 2,
         y: offsetOfCursorToSVG.y - defaultNodeSize.height / 2
       }, nodes));
+    } else if (resizingInfo) {
+      guidelines.push.apply(guidelines, calcGuidelines(nodes.find(function (item) {
+        return item.id === resizingInfo.targetId;
+      }), nodes));
     }
 
     return guidelines;
-  }, [movingInfo, creatingInfo, nodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, defaultNodeSize.width, defaultNodeSize.height]);
+  }, [movingInfo, creatingInfo, resizingInfo, nodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, defaultNodeSize.width, defaultNodeSize.height]);
   useImperativeHandle(ref, function () {
     return {
       getData: function getData() {

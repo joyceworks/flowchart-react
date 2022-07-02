@@ -448,11 +448,96 @@ const Flowchart = forwardRef(
             connections
           );
         }
+
+        if (resizingInfo) {
+          const index = nodes.findIndex(
+            (it) => it.id === resizingInfo.targetId
+          )!;
+          switch (resizingInfo.direction) {
+            case "lu":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newX = roundTo10(it.x);
+                      const newY = roundTo10(it.y);
+                      const maxX = it.width! + it.x;
+                      const maxY = it.height! + it.y;
+                      return {
+                        ...it,
+                        x: newX,
+                        y: newY,
+                        width: maxX - newX,
+                        height: maxY - newY,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "ru":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newY = roundTo10(it.y);
+                      const maxY = it.height! + it.y;
+                      return {
+                        ...it,
+                        y: newY,
+                        width: roundTo10(it.width!),
+                        height: maxY - newY,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "ld":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newX = roundTo10(it.x);
+                      const maxX = it.width! + it.x;
+                      return {
+                        ...it,
+                        x: newX,
+                        width: maxX - newX,
+                        height: roundTo10(it.height!),
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "rd":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      return {
+                        ...it,
+                        width: roundTo10(it.width!),
+                        height: roundTo10(it.height!),
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+          }
+        }
       },
       [
         movingInfo,
         connectingInfo,
         creatingInfo,
+        resizingInfo,
         nodes,
         onChange,
         connections,
@@ -510,11 +595,19 @@ const Flowchart = forwardRef(
             nodes
           )
         );
+      } else if (resizingInfo) {
+        guidelines.push(
+          ...calcGuidelines(
+            nodes.find((item) => item.id === resizingInfo.targetId)!,
+            nodes
+          )
+        );
       }
       return guidelines;
     }, [
       movingInfo,
       creatingInfo,
+      resizingInfo,
       nodes,
       offsetOfCursorToSVG.x,
       offsetOfCursorToSVG.y,
