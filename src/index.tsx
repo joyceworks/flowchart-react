@@ -794,7 +794,6 @@ const Flowchart = forwardRef(
           onMouseMove={handleContainerMouseMove}
         >
           <div className={"absolute top-2 right-2"}>
-            {JSON.stringify(offsetOfCursorToSVG)}
             <button className={"border-none bg-transparent"} onClick={zoomIn}>
               -
             </button>

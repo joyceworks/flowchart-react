@@ -2518,7 +2518,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       onMouseMove: handleContainerMouseMove,
       children: [/*#__PURE__*/jsxs("div", {
         className: "absolute top-2 right-2",
-        children: [JSON.stringify(offsetOfCursorToSVG), /*#__PURE__*/jsx("button", {
+        children: [/*#__PURE__*/jsx("button", {
           className: "border-none bg-transparent",
           onClick: zoomIn,
           children: "-"
