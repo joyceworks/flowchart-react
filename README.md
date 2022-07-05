@@ -128,7 +128,6 @@ Connections between nodes.
 
 | Props       | Description        | Type                                                       | Default | Required |
 |-------------|--------------------|:-----------------------------------------------------------|---------|----------|
-| id          | Identity           | number                                                     |         | true     |
 | type        | Type of connection | `success`, `fail`                                          |         | false    |
 | source      | Source info        | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
 | destination | Destination info   | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
