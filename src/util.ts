@@ -769,7 +769,6 @@ function createConnection(
   return {
     source: { id: sourceId, position: sourcePosition },
     destination: { id: destinationId, position: destinationPosition },
-    id: +new Date(),
     type: "success",
   };
 }

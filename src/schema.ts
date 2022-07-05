@@ -15,7 +15,6 @@ export interface NodeData {
 }
 
 export interface ConnectionData {
-  id: number;
   type: "success" | "fail";
   source: {
     id: number;

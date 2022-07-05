@@ -194,7 +194,7 @@ const Flowchart = forwardRef(
           );
           setSelectedConnIds(
             calcIntersectedConnections(nodes, connections, edge).map(
-              (item) => item.id
+              (item, index) => index
             )
           );
         } else if (movingInfo) {
@@ -301,7 +301,7 @@ const Flowchart = forwardRef(
 
       // Splice arguments of selected connections
       const list1: [number, number][] = selectedConnIds.map((currentConn) => [
-        connections.findIndex((interConn) => interConn.id === currentConn),
+        connections.findIndex((interConn, index) => index === currentConn),
         1,
       ]);
       // Splice arguments of connections of selected nodes
@@ -314,7 +314,7 @@ const Flowchart = forwardRef(
         )
         .flat()
         .map((currentConn) => [
-          connections.findIndex((interConn) => interConn.id === currentConn.id),
+          connections.findIndex((interConn) => interConn === currentConn),
           1,
         ]);
       const restConnections = update(connections, {
@@ -721,19 +721,17 @@ const Flowchart = forwardRef(
 
     const connectionElements = useMemo(
       () =>
-        connections?.map((conn) => {
+        connections?.map((conn, index) => {
           return (
             <Connection
-              key={conn.id}
-              isSelected={selectedConnIds.some((item) => conn.id === item)}
+              key={conn.source.id + conn.destination.id}
+              isSelected={selectedConnIds.some((item) => index === item)}
               onDoubleClick={() => onConnDoubleClick?.(conn)}
               onMouseDown={(event) => {
                 if (event.ctrlKey || event.metaKey) {
-                  const i = selectedConnIds.findIndex(
-                    (item) => item === conn.id
-                  );
+                  const i = selectedConnIds.findIndex((item) => item === index);
                   if (i === -1) {
-                    setSelectedConnIds((prevState) => [...prevState, conn.id]);
+                    setSelectedConnIds((prevState) => [...prevState, index]);
                   } else {
                     setSelectedConnIds((prev) =>
                       update(prev, { $splice: [[i, 1]] })
@@ -741,7 +739,7 @@ const Flowchart = forwardRef(
                   }
                 } else {
                   setSelectedNodeIds([]);
-                  setSelectedConnIds([conn.id]);
+                  setSelectedConnIds([index]);
                 }
               }}
               data={conn}

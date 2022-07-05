@@ -1280,7 +1280,6 @@ function createConnection(sourceId, sourcePosition, destinationId, destinationPo
       id: destinationId,
       position: destinationPosition
     },
-    id: +new Date(),
     type: "success"
   };
 }
@@ -1977,8 +1976,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       setSelectedNodeIds(calcIntersectedNodes(nodes, edge).map(function (item) {
         return item.id;
       }));
-      setSelectedConnIds(calcIntersectedConnections(nodes, connections, edge).map(function (item) {
-        return item.id;
+      setSelectedConnIds(calcIntersectedConnections(nodes, connections, edge).map(function (item, index) {
+        return index;
       }));
     } else if (movingInfo) {
       var currentNodes = nodes;
@@ -2074,8 +2073,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     if (readonly) return; // Splice arguments of selected connections
 
     var list1 = selectedConnIds.map(function (currentConn) {
-      return [connections.findIndex(function (interConn) {
-        return interConn.id === currentConn;
+      return [connections.findIndex(function (interConn, index) {
+        return index === currentConn;
       }), 1];
     }); // Splice arguments of connections of selected nodes
 
@@ -2085,7 +2084,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       });
     }).flat().map(function (currentConn) {
       return [connections.findIndex(function (interConn) {
-        return interConn.id === currentConn.id;
+        return interConn === currentConn;
       }), 1];
     });
     var restConnections = update(connections, {
@@ -2452,10 +2451,10 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, [nodes, defaultNodeSize.width, defaultNodeSize.height, readonly, selectedNodeIds, connectingInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
   var connectionElements = useMemo(function () {
-    return connections === null || connections === void 0 ? void 0 : connections.map(function (conn) {
+    return connections === null || connections === void 0 ? void 0 : connections.map(function (conn, index) {
       return /*#__PURE__*/jsx(Connection, {
         isSelected: selectedConnIds.some(function (item) {
-          return conn.id === item;
+          return index === item;
         }),
         onDoubleClick: function onDoubleClick() {
           return onConnDoubleClick === null || onConnDoubleClick === void 0 ? void 0 : onConnDoubleClick(conn);
@@ -2463,12 +2462,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         onMouseDown: function onMouseDown(event) {
           if (event.ctrlKey || event.metaKey) {
             var i_1 = selectedConnIds.findIndex(function (item) {
-              return item === conn.id;
+              return item === index;
             });
 
             if (i_1 === -1) {
               setSelectedConnIds(function (prevState) {
-                return __spreadArray(__spreadArray([], prevState, true), [conn.id], false);
+                return __spreadArray(__spreadArray([], prevState, true), [index], false);
               });
             } else {
               setSelectedConnIds(function (prev) {
@@ -2479,12 +2478,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             }
           } else {
             setSelectedNodeIds([]);
-            setSelectedConnIds([conn.id]);
+            setSelectedConnIds([index]);
           }
         },
         data: conn,
         nodes: nodes
-      }, conn.id);
+      }, conn.source.id + conn.destination.id);
     });
   }, [connections, selectedConnIds, nodes, onConnDoubleClick]);
   var handleToolbarMouseDown = useCallback(function (type, event) {
