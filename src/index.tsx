@@ -422,6 +422,17 @@ const Flowchart = forwardRef(
             // Node can not connect to itself
             return;
           }
+          if (
+            connections.find(
+              (item) =>
+                item.source.id === connectingInfo.source.id &&
+                item.source.position === connectingInfo.sourcePosition &&
+                item.destination.id === node!.id &&
+                item.destination.position === position
+            )
+          ) {
+            return;
+          }
           const newConnection = createConnection(
             connectingInfo.source.id,
             connectingInfo.sourcePosition,
@@ -724,7 +735,12 @@ const Flowchart = forwardRef(
         connections?.map((conn, index) => {
           return (
             <Connection
-              key={conn.source.id + conn.destination.id}
+              key={
+                conn.source.id +
+                conn.source.position +
+                conn.destination.id +
+                conn.destination.position
+              }
               isSelected={selectedConnIds.some((item) => index === item)}
               onDoubleClick={() => onConnDoubleClick?.(conn)}
               onMouseDown={(event) => {

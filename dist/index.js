@@ -2181,8 +2181,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
 
     if (connectingInfo) {
-      var node = null;
-      var position = null;
+      var node_1 = null;
+      var position_1 = null;
 
       for (var _f = 0, nodes_1 = nodes; _f < nodes_1.length; _f++) {
         var internalNode = nodes_1[_f];
@@ -2192,22 +2192,32 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           var entry = locations[prop];
 
           if (distanceOfP2P(entry, offsetOfCursorToSVG) < 6) {
-            node = internalNode;
-            position = prop;
+            node_1 = internalNode;
+            position_1 = prop;
           }
         }
       }
 
-      if (!node || !position) {
+      if (!node_1 || !position_1) {
         return;
       }
 
-      if (connectingInfo.source.id === node.id) {
+      if (connectingInfo.source.id === node_1.id) {
         // Node can not connect to itself
         return;
       }
 
-      var newConnection = createConnection(connectingInfo.source.id, connectingInfo.sourcePosition, node.id, position);
+      alert(connections.find(function (item) {
+        return item.source.id === connectingInfo.source.id && item.source.position === connectingInfo.sourcePosition && item.destination.id === node_1.id && item.destination.position === position_1;
+      }));
+
+      if (connections.find(function (item) {
+        return item.source.id === connectingInfo.source.id && item.source.position === connectingInfo.sourcePosition && item.destination.id === node_1.id && item.destination.position === position_1;
+      })) {
+        return;
+      }
+
+      var newConnection = createConnection(connectingInfo.source.id, connectingInfo.sourcePosition, node_1.id, position_1);
       onChange === null || onChange === void 0 ? void 0 : onChange(nodes, __spreadArray(__spreadArray([], connections, true), [newConnection], false));
       onMouseUp === null || onMouseUp === void 0 ? void 0 : onMouseUp(event, zoom);
     }
@@ -2483,7 +2493,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         },
         data: conn,
         nodes: nodes
-      }, conn.source.id + conn.destination.id);
+      }, conn.source.id + conn.source.position + conn.destination.id + conn.destination.position);
     });
   }, [connections, selectedConnIds, nodes, onConnDoubleClick]);
   var handleToolbarMouseDown = useCallback(function (type, event) {
