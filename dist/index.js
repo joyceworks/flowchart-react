@@ -2207,10 +2207,6 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         return;
       }
 
-      alert(connections.find(function (item) {
-        return item.source.id === connectingInfo.source.id && item.source.position === connectingInfo.sourcePosition && item.destination.id === node_1.id && item.destination.position === position_1;
-      }));
-
       if (connections.find(function (item) {
         return item.source.id === connectingInfo.source.id && item.source.position === connectingInfo.sourcePosition && item.destination.id === node_1.id && item.destination.position === position_1;
       })) {
