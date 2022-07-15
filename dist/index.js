@@ -2372,15 +2372,18 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   }, [zoom]);
   var nodeElements = useMemo(function () {
     return nodes === null || nodes === void 0 ? void 0 : nodes.map(function (node) {
-      node.width = node.width || defaultNodeSize.width;
-      node.height = node.height || defaultNodeSize.height;
+      var formattedNode = _assign(_assign({}, node), {
+        width: node.width || defaultNodeSize.width,
+        height: node.height || defaultNodeSize.height
+      });
+
       return /*#__PURE__*/jsx(Node, {
         readonly: readonly,
         isSelected: selectedNodeIds.some(function (item) {
-          return item === node.id;
+          return item === formattedNode.id;
         }),
         isConnecting: !!connectingInfo,
-        data: node,
+        data: formattedNode,
         onDoubleClick: function onDoubleClick(event) {
           event.stopPropagation();
 
@@ -2388,7 +2391,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             return;
           }
 
-          onNodeDoubleClick === null || onNodeDoubleClick === void 0 ? void 0 : onNodeDoubleClick(node);
+          onNodeDoubleClick === null || onNodeDoubleClick === void 0 ? void 0 : onNodeDoubleClick(formattedNode);
         },
         onMouseDown: function onMouseDown(event) {
           if (event.nativeEvent.button !== 0) {
@@ -2397,11 +2400,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
           if (event.ctrlKey || event.metaKey) {
             var index = selectedNodeIds.findIndex(function (item) {
-              return item === node.id;
+              return item === formattedNode.id;
             });
 
             if (index === -1) {
-              setSelectedNodeIds(__spreadArray(__spreadArray([], selectedNodeIds, true), [node.id], false));
+              setSelectedNodeIds(__spreadArray(__spreadArray([], selectedNodeIds, true), [formattedNode.id], false));
             } else {
               setSelectedNodeIds(update(selectedNodeIds, {
                 $splice: [[index, 1]]
@@ -2411,9 +2414,9 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             var tempCurrentNodes = selectedNodeIds;
 
             if (!selectedNodeIds.some(function (id) {
-              return id === node.id;
+              return id === formattedNode.id;
             })) {
-              tempCurrentNodes = [node.id];
+              tempCurrentNodes = [formattedNode.id];
               setSelectedNodeIds(tempCurrentNodes);
             }
 
@@ -2438,22 +2441,22 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           }
         },
         onConnectorMouseDown: function onConnectorMouseDown(position) {
-          if (node.type === "end") {
+          if (formattedNode.type === "end") {
             return;
           }
 
           setConnectingInfo({
-            source: node,
+            source: formattedNode,
             sourcePosition: position
           });
         },
         onResizerMouseDown: function onResizerMouseDown(direction) {
           setResizingInfo({
             direction: direction,
-            targetId: node.id
+            targetId: formattedNode.id
           });
         }
-      }, node.id);
+      }, formattedNode.id);
     });
   }, [nodes, defaultNodeSize.width, defaultNodeSize.height, readonly, selectedNodeIds, connectingInfo, onNodeDoubleClick, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y]);
   var connectionElements = useMemo(function () {

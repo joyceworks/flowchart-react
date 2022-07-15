@@ -648,21 +648,26 @@ const Flowchart = forwardRef(
 
     const nodeElements = useMemo(() => {
       return nodes?.map((node) => {
-        node.width = node.width || defaultNodeSize.width;
-        node.height = node.height || defaultNodeSize.height;
+        const formattedNode: NodeData = {
+          ...node,
+          width: node.width || defaultNodeSize.width,
+          height: node.height || defaultNodeSize.height,
+        };
         return (
           <Node
             readonly={readonly}
-            key={node.id}
-            isSelected={selectedNodeIds.some((item) => item === node.id)}
+            key={formattedNode.id}
+            isSelected={selectedNodeIds.some(
+              (item) => item === formattedNode.id
+            )}
             isConnecting={!!connectingInfo}
-            data={node}
+            data={formattedNode}
             onDoubleClick={(event) => {
               event.stopPropagation();
               if (readonly) {
                 return;
               }
-              onNodeDoubleClick?.(node);
+              onNodeDoubleClick?.(formattedNode);
             }}
             onMouseDown={(event) => {
               if (event.nativeEvent.button !== 0) {
@@ -670,10 +675,10 @@ const Flowchart = forwardRef(
               }
               if (event.ctrlKey || event.metaKey) {
                 const index = selectedNodeIds.findIndex(
-                  (item) => item === node.id
+                  (item) => item === formattedNode.id
                 );
                 if (index === -1) {
-                  setSelectedNodeIds([...selectedNodeIds, node.id]);
+                  setSelectedNodeIds([...selectedNodeIds, formattedNode.id]);
                 } else {
                   setSelectedNodeIds(
                     update(selectedNodeIds, { $splice: [[index, 1]] })
@@ -681,8 +686,8 @@ const Flowchart = forwardRef(
                 }
               } else {
                 let tempCurrentNodes: number[] = selectedNodeIds;
-                if (!selectedNodeIds.some((id) => id === node.id)) {
-                  tempCurrentNodes = [node.id];
+                if (!selectedNodeIds.some((id) => id === formattedNode.id)) {
+                  tempCurrentNodes = [formattedNode.id];
                   setSelectedNodeIds(tempCurrentNodes);
                 }
                 setSelectedConnIds([]);
@@ -704,15 +709,18 @@ const Flowchart = forwardRef(
               }
             }}
             onConnectorMouseDown={(position) => {
-              if (node.type === "end") {
+              if (formattedNode.type === "end") {
                 return;
               }
-              setConnectingInfo({ source: node, sourcePosition: position });
+              setConnectingInfo({
+                source: formattedNode,
+                sourcePosition: position,
+              });
             }}
             onResizerMouseDown={(direction) => {
               setResizingInfo({
                 direction,
-                targetId: node.id,
+                targetId: formattedNode.id,
               });
             }}
           />
