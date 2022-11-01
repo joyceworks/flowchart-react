@@ -148,6 +148,10 @@ Default: `{ width: 120, height: 60 }`.
 
 `false` to hide toolbar.
 
+#### quickEdit: `boolean | undefined`
+
+Edit title by double-click.
+
 ### Events
 
 #### onChange: `(nodes: NodeData[], connections: ConnectionData[]) => void`

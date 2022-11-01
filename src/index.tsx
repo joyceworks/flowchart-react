@@ -59,6 +59,7 @@ const Flowchart = forwardRef(
       style,
       defaultNodeSize = { width: 120, height: 60 },
       showToolbar,
+      quickEdit = false,
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -647,7 +648,7 @@ const Flowchart = forwardRef(
     );
 
     const nodeElements = useMemo(() => {
-      return nodes?.map((node) => {
+      return nodes?.map((node, index) => {
         const formattedNode: NodeData = {
           ...node,
           width: node.width || defaultNodeSize.width,
@@ -668,6 +669,23 @@ const Flowchart = forwardRef(
                 return;
               }
               onNodeDoubleClick?.(formattedNode);
+              const title =
+                typeof formattedNode.title === "function"
+                  ? formattedNode.title()
+                  : formattedNode.title;
+              if (quickEdit) {
+                const newTitle = prompt("Edit", title) || "";
+                onChange?.(
+                  update(nodes, {
+                    [index]: {
+                      title: {
+                        $set: newTitle,
+                      },
+                    },
+                  }),
+                  connections
+                );
+              }
             }}
             onMouseDown={(event) => {
               if (event.nativeEvent.button !== 0) {
