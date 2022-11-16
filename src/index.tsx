@@ -59,6 +59,7 @@ const Flowchart = forwardRef(
       style,
       defaultNodeSize = { width: 120, height: 60 },
       showToolbar,
+      connectionPosition = "top",
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -881,8 +882,13 @@ const Flowchart = forwardRef(
               onMouseDown={handleSVGMouseDown}
               onMouseMove={handleSVGMouseMove}
             >
+              {connectionPosition === "bottom" ? connectionElements : <></>}
               {nodeElements}
-              {connectionElements}
+              {connectionPosition === "top" || !connectionPosition ? (
+                connectionElements
+              ) : (
+                <></>
+              )}
               {selectionAreaCorners && (
                 <rect
                   stroke={"lightblue"}

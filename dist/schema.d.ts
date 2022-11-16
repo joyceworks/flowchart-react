@@ -48,6 +48,7 @@ export interface FlowchartProps {
         height: number;
     };
     showToolbar?: boolean;
+    connectionPosition?: "bottom" | "top";
 }
 export interface DragMovingInfo {
     targetIds: number[];

@@ -109,16 +109,17 @@ Array of nodes.
 
 ##### NodeData
 
-| Props   | Description   | Type                                    | Default | Required |
-|---------|---------------|:----------------------------------------|---------|----------|
-| id      | Identity      | number                                  |         | true     |
-| title   | Title of node | string, `(node: NodeData) => string`    |         | true     |
-| type    | Type of node  | `start`, `end`, `operation`, `decision` |         | true     |
-| x       | X axis        | number                                  |         | true     |
-| y       | Y axis        | number                                  |         | true     |
-| payload | Custom data   | `{[key: string]: unknown}`              |         | false    |
-| width   | Node width    | number                                  | 120     | false    |
-| height  | Node height   | number                                  | 60      | false    |
+| Props              | Description         | Type                                    | Default | Required |
+|--------------------|---------------------|:----------------------------------------|---------|----------|
+| id                 | Identity            | number                                  |         | true     |
+| title              | Title of node       | string, `(node: NodeData) => string`    |         | true     |
+| type               | Type of node        | `start`, `end`, `operation`, `decision` |         | true     |
+| x                  | X axis              | number                                  |         | true     |
+| y                  | Y axis              | number                                  |         | true     |
+| payload            | Custom data         | `{[key: string]: unknown}`              |         | false    |
+| width              | Node width          | number                                  | `120`   | false    |
+| height             | Node height         | number                                  | `60`    | false    |
+| connectionPosition | Connection position | `top`, `bottom`                         | `top`   | false    |
 
 #### connections: `ConnectionData[]`
 

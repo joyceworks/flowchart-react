@@ -1807,41 +1807,43 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     width: 120,
     height: 60
   } : _c,
-      showToolbar = _a.showToolbar;
+      showToolbar = _a.showToolbar,
+      _d = _a.connectionPosition,
+      connectionPosition = _d === void 0 ? "top" : _d;
   var svgRef = useRef(null);
   var containerRef = useRef(null);
 
-  var _d = useState([]),
-      selectedNodeIds = _d[0],
-      setSelectedNodeIds = _d[1];
-
   var _e = useState([]),
-      selectedConnIds = _e[0],
-      setSelectedConnIds = _e[1];
+      selectedNodeIds = _e[0],
+      setSelectedNodeIds = _e[1];
 
-  var _f = useState(),
-      selectingInfo = _f[0],
-      setSelectingInfo = _f[1];
+  var _f = useState([]),
+      selectedConnIds = _f[0],
+      setSelectedConnIds = _f[1];
 
   var _g = useState(),
-      connectingInfo = _g[0],
-      setConnectingInfo = _g[1];
+      selectingInfo = _g[0],
+      setSelectingInfo = _g[1];
 
   var _h = useState(),
-      resizingInfo = _h[0],
-      setResizingInfo = _h[1];
+      connectingInfo = _h[0],
+      setConnectingInfo = _h[1];
 
   var _j = useState(),
-      movingInfo = _j[0],
-      setMovingInfo = _j[1];
+      resizingInfo = _j[0],
+      setResizingInfo = _j[1];
 
   var _k = useState(),
-      creatingInfo = _k[0],
-      setCreatingInfo = _k[1];
+      movingInfo = _k[0],
+      setMovingInfo = _k[1];
 
-  var _l = useState(1),
-      zoom = _l[0],
-      setZoom = _l[1];
+  var _l = useState(),
+      creatingInfo = _l[0],
+      setCreatingInfo = _l[1];
+
+  var _m = useState(1),
+      zoom = _m[0],
+      setZoom = _m[1];
 
   var internalCenter = useCallback(function () {
     if (!svgRef.current) {
@@ -1863,12 +1865,12 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     });
   }, []);
 
-  var _m = useState({
+  var _o = useState({
     x: 0,
     y: 0
   }),
-      offsetOfCursorToSVG = _m[0],
-      setOffsetOfCursorToSVG = _m[1];
+      offsetOfCursorToSVG = _o[0],
+      setOffsetOfCursorToSVG = _o[1];
 
   var handleWheel = useCallback(function (event) {
     event.stopPropagation();
@@ -2589,7 +2591,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           onMouseUp: handleSVGMouseUp,
           onMouseDown: handleSVGMouseDown,
           onMouseMove: handleSVGMouseMove,
-          children: [nodeElements, connectionElements, selectionAreaCorners && /*#__PURE__*/jsx("rect", {
+          children: [connectionPosition === "bottom" ? connectionElements : /*#__PURE__*/jsx(Fragment, {}), nodeElements, connectionPosition === "top" || !connectionPosition ? connectionElements : /*#__PURE__*/jsx(Fragment, {}), selectionAreaCorners && /*#__PURE__*/jsx("rect", {
             stroke: "lightblue",
             fill: "lightblue",
             fillOpacity: 0.8,
