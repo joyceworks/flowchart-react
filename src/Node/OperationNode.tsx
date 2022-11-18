@@ -1,5 +1,6 @@
 import React from "react";
 import { NodeProps } from "./schema";
+import { SupportedSVGShapeProps, SupportedSVGTextProps } from "../schema";
 
 const OperationNode = function ({
   data,
@@ -19,8 +20,14 @@ const OperationNode = function ({
         y={data.y}
         strokeWidth={1}
         stroke={borderColor}
+        {...(data.containerProps as SupportedSVGShapeProps)}
       />
-      <text x={data.x + halfWidth} y={data.y + halfHeight + 5} textAnchor={"middle"}>
+      <text
+        x={data.x + halfWidth}
+        y={data.y + halfHeight + 5}
+        textAnchor={"middle"}
+        {...(data.textProps as SupportedSVGTextProps)}
+      >
         {text}
       </text>
     </>

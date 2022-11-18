@@ -1386,7 +1386,7 @@ var OperationNode = function OperationNode(_a) {
   var halfWidth = (data.width || 120) / 2;
   var halfHeight = (data.height || 60) / 2;
   return /*#__PURE__*/jsxs(Fragment, {
-    children: [/*#__PURE__*/jsx("rect", {
+    children: [/*#__PURE__*/jsx("rect", _objectSpread({
       width: data.width || 120,
       height: data.height || 60,
       fill: "white",
@@ -1394,12 +1394,13 @@ var OperationNode = function OperationNode(_a) {
       y: data.y,
       strokeWidth: 1,
       stroke: borderColor
-    }), /*#__PURE__*/jsx("text", {
+    }, data.containerProps)), /*#__PURE__*/jsx("text", _objectSpread(_objectSpread({
       x: data.x + halfWidth,
       y: data.y + halfHeight + 5,
-      textAnchor: "middle",
+      textAnchor: "middle"
+    }, data.textProps), {}, {
       children: text
-    })]
+    }))]
   });
 };
 
@@ -1412,7 +1413,7 @@ var StartEndNode = function StartEndNode(_a) {
   var halfWidth = (data.width || 120) / 2;
   var halfHeight = (data.height || 60) / 2;
   return /*#__PURE__*/jsxs(Fragment, {
-    children: [/*#__PURE__*/jsx("ellipse", {
+    children: [/*#__PURE__*/jsx("ellipse", _objectSpread({
       cx: data.x + halfWidth,
       cy: data.y + halfHeight,
       rx: halfWidth,
@@ -1420,12 +1421,13 @@ var StartEndNode = function StartEndNode(_a) {
       fill: "white",
       strokeWidth: 1,
       stroke: borderColor
-    }), /*#__PURE__*/jsx("text", {
+    }, data.containerProps)), /*#__PURE__*/jsx("text", _objectSpread(_objectSpread({
       x: data.x + halfWidth,
       y: data.y + halfHeight + 5,
-      textAnchor: "middle",
+      textAnchor: "middle"
+    }, data.textProps), {}, {
       children: text
-    })]
+    }))]
   });
 };
 
