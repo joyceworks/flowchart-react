@@ -10,7 +10,11 @@ export interface NodeData {
     };
     width?: number;
     height?: number;
+    containerProps?: SupportedSVGShapeProps;
+    textProps?: SupportedSVGTextProps;
 }
+export declare type SupportedSVGShapeProps = Pick<React.SVGProps<SVGElement>, "fill" | "stroke">;
+export declare type SupportedSVGTextProps = Pick<React.SVGProps<SVGTextElement>, "fill">;
 export interface ConnectionData {
     type: "success" | "fail";
     source: {

@@ -12,7 +12,19 @@ export interface NodeData {
   payload?: { [key: string]: unknown };
   width?: number;
   height?: number;
+  containerProps?: SupportedSVGShapeProps;
+  textProps?: SupportedSVGTextProps;
 }
+
+export type SupportedSVGShapeProps = Pick<
+  React.SVGProps<SVGElement>,
+  "fill" | "stroke"
+>;
+
+export type SupportedSVGTextProps = Pick<
+  React.SVGProps<SVGTextElement>,
+  "fill"
+>;
 
 export interface ConnectionData {
   type: "success" | "fail";
