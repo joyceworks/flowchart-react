@@ -1467,17 +1467,18 @@ var DecisionNode = function DecisionNode(_a) {
   var left = "".concat(data.x, ",").concat(data.y + halfHeight);
   var right = "".concat(data.x + width, ",").concat(data.y + halfHeight);
   return /*#__PURE__*/jsxs(Fragment, {
-    children: [/*#__PURE__*/jsx("polygon", {
+    children: [/*#__PURE__*/jsx("polygon", _objectSpread({
       points: "".concat(left, " ").concat(top, " ").concat(right, " ").concat(bottom),
       fill: "white",
       strokeWidth: 1,
       stroke: borderColor
-    }), /*#__PURE__*/jsx("text", {
+    }, data.containerProps)), /*#__PURE__*/jsx("text", _objectSpread(_objectSpread({
       x: data.x + halfWidth,
       y: data.y + halfHeight + 5,
-      textAnchor: "middle",
+      textAnchor: "middle"
+    }, data.textProps), {}, {
       children: text
-    })]
+    }))]
   });
 };
 
