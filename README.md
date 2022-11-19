@@ -120,6 +120,21 @@ Array of nodes.
 | width              | Node width          | number                                  | `120`   | false    |
 | height             | Node height         | number                                  | `60`    | false    |
 | connectionPosition | Connection position | `top`, `bottom`                         | `top`   | false    |
+| containerProps     |                     | SupportedSVGShapeProps                  |         | false    |
+| textProps          |                     | SupportedSVGTextProps                   |         | false    |
+
+##### SupportedSVGShapeProps
+
+| Props  | Description | Type   | Default | Required |
+|--------|-------------|:-------|---------|----------|
+| fill   |             | string |         | false    |
+| stroke |             | string |         | false    |
+
+##### SupportedSVGTextProps
+
+| Props  | Description | Type   | Default | Required |
+|--------|-------------|:-------|---------|----------|
+| fill   |             | string |         | false    |
 
 #### connections: `ConnectionData[]`
 
