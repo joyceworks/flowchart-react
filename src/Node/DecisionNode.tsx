@@ -1,10 +1,10 @@
 import React from "react";
 import { NodeProps } from "./schema";
-import { SupportedSVGShapeProps, SupportedSVGTextProps } from "../schema";
+import { SupportedSVGShapeProps } from "../schema";
+import { Text } from "./Text";
 
 const DecisionNode = function ({ data, isSelected }: NodeProps) {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
-  const text = (typeof data.title === "function" && data.title()) || data.title;
   const width = data.width || 120;
   const halfWidth = width / 2;
   const height = data.height || 60;
@@ -22,14 +22,7 @@ const DecisionNode = function ({ data, isSelected }: NodeProps) {
         stroke={borderColor}
         {...(data.containerProps as SupportedSVGShapeProps)}
       />
-      <text
-        x={data.x + halfWidth}
-        y={data.y + halfHeight + 5}
-        textAnchor={"middle"}
-        {...(data.textProps as SupportedSVGTextProps)}
-      >
-        {text}
-      </text>
+      <Text data={data} />
     </>
   );
 };
