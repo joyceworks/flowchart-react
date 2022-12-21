@@ -1,13 +1,13 @@
 import React from "react";
 import { NodeProps } from "./schema";
-import { SupportedSVGShapeProps, SupportedSVGTextProps } from "../schema";
+import { SupportedSVGShapeProps } from "../schema";
+import { Text } from "./Text";
 
 const StartEndNode = function ({
   data,
   isSelected = false,
 }: NodeProps): JSX.Element {
   const borderColor = isSelected ? "#666666" : "#bbbbbb";
-  const text = (typeof data.title === "function" && data.title()) || data.title;
   const halfWidth = (data.width || 120) / 2;
   const halfHeight = (data.height || 60) / 2;
   return (
@@ -22,14 +22,7 @@ const StartEndNode = function ({
         stroke={borderColor}
         {...(data.containerProps as SupportedSVGShapeProps)}
       />
-      <text
-        x={data.x + halfWidth}
-        y={data.y + halfHeight + 5}
-        textAnchor={"middle"}
-        {...(data.textProps as SupportedSVGTextProps)}
-      >
-        {text}
-      </text>
+      <Text data={data} />
     </>
   );
 };
