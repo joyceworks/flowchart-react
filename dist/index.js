@@ -1395,7 +1395,7 @@ var Text = function Text(_a) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        lineHeight: 18
+        lineHeight: "18px"
       },
       children: text
     })
