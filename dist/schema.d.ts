@@ -25,6 +25,7 @@ export interface ConnectionData {
         id: number;
         position: ConnectorPosition;
     };
+    title?: string;
 }
 export interface Point {
     x: number;

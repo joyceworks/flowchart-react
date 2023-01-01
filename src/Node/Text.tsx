@@ -6,6 +6,7 @@ const Text = function ({ data }: NodeProps) {
   const text = (typeof data.title === "function" && data.title()) || data.title;
   return (
     <foreignObject
+      className={"pointer-events-none"}
       x={data.x}
       y={data.y}
       width={data.width || 120}

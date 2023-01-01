@@ -484,6 +484,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   right: 0.5rem;
 }
 
+.flex {
+  display: flex;
+}
+
 .inline-flex {
   display: inline-flex;
 }
@@ -496,28 +500,20 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100%;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .cursor-nw-resize {
   cursor: nw-resize;
-}
-
-.cursor-ne-resize {
-  cursor: ne-resize;
 }
 
 .cursor-sw-resize {
   cursor: sw-resize;
 }
 
-.cursor-se-resize {
-  cursor: se-resize;
+.cursor-ne-resize {
+  cursor: ne-resize;
 }
 
-.resize {
-  resize: both;
+.cursor-se-resize {
+  cursor: se-resize;
 }
 
 .border-none {
