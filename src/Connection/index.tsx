@@ -11,7 +11,7 @@ interface ConnectionProps {
   onDoubleClick?: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
 }
 
-export function Connection ({
+export function Connection({
   data,
   nodes,
   isSelected,
@@ -34,6 +34,18 @@ export function Connection ({
   const colors = useMemo((): { success: string; fail: string } => {
     return isSelected ? selectedConnectionColors : defaultConnectionColors;
   }, [isSelected]);
+  let center: number[];
+  if (points.length % 2 === 0) {
+    const start = points[points.length / 2 - 1];
+    const end = points[points.length / 2];
+    center = [
+      Math.min(start[0], end[0]) + Math.abs(end[0] - start[0]) / 2,
+      Math.min(start[1], end[1]) + Math.abs(end[1] - start[1]) / 2,
+    ];
+  } else {
+    center = points[(points.length - 1) / 2];
+  }
+
   return (
     <g>
       {points.map((point, i) => {
@@ -80,6 +92,19 @@ export function Connection ({
               fill={"none"}
               d={`M ${source[0]} ${source[1]} L ${destination[0]} ${destination[1]}`}
             />
+            {data.title ? (
+              <text
+                fontSize={12}
+                textAnchor={"middle"}
+                dominantBaseline={"middle"}
+                x={center[0]}
+                y={center[1]}
+              >
+                {data.title}
+              </text>
+            ) : (
+              <></>
+            )}
           </>
         );
       })}
