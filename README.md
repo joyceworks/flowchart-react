@@ -142,11 +142,12 @@ Connections between nodes.
 
 ##### ConnectionData
 
-| Props       | Description        | Type                                                       | Default | Required |
-|-------------|--------------------|:-----------------------------------------------------------|---------|----------|
-| type        | Type of connection | `success`, `fail`                                          |         | false    |
-| source      | Source info        | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
-| destination | Destination info   | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
+| Props       | Description         | Type                                                       | Default | Required |
+|-------------|---------------------|:-----------------------------------------------------------|---------|----------|
+| type        | Type of connection  | `success`, `fail`                                          |         | false    |
+| source      | Source info         | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
+| destination | Destination info    | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
+| title       | Title of connection | string                                                     |         | false    |
 
 #### readonly: `boolean | undefined`
 
