@@ -52,7 +52,7 @@ export interface FlowchartProps {
         width: number;
         height: number;
     };
-    showToolbar?: boolean;
+    showToolbar?: boolean | ("start-end" | "operation" | "decision")[];
     connectionPosition?: "bottom" | "top";
 }
 export interface DragMovingInfo {

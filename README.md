@@ -161,7 +161,7 @@ Style of background svg.
 
 Default: `{ width: 120, height: 60 }`.
 
-#### showToolbar: `boolean | undefined`
+#### showToolbar: `boolean | undefined | ("start-end" | "operation" | "decision")[]`
 
 `false` to hide toolbar.
 

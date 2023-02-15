@@ -2577,7 +2577,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         className: "w-full h-full inline-flex",
         children: [readonly || showToolbar === false ? /*#__PURE__*/jsx(Fragment, {}) : /*#__PURE__*/jsxs("div", {
           className: "flowchart-toolbar",
-          children: [/*#__PURE__*/jsx("div", {
+          children: [showToolbar === true || Array.isArray(showToolbar) && showToolbar.includes("start-end") ? /*#__PURE__*/jsx("div", {
             onMouseDown: function onMouseDown(event) {
               return handleToolbarMouseDown("start", event);
             },
@@ -2587,7 +2587,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 data: templateNode
               })
             })
-          }), /*#__PURE__*/jsx("div", {
+          }) : /*#__PURE__*/jsx(Fragment, {}), showToolbar === true || Array.isArray(showToolbar) && showToolbar.includes("operation") ? /*#__PURE__*/jsx("div", {
             onMouseDown: function onMouseDown(event) {
               return handleToolbarMouseDown("operation", event);
             },
@@ -2597,7 +2597,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 data: templateNode
               })
             })
-          }), /*#__PURE__*/jsx("div", {
+          }) : /*#__PURE__*/jsx(Fragment, {}), showToolbar === true || Array.isArray(showToolbar) && showToolbar.includes("decision") ? /*#__PURE__*/jsx("div", {
             onMouseDown: function onMouseDown(event) {
               return handleToolbarMouseDown("decision", event);
             },
@@ -2607,7 +2607,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 data: templateNode
               })
             })
-          })]
+          }) : /*#__PURE__*/jsx(Fragment, {})]
         }), /*#__PURE__*/jsxs("svg", {
           ref: svgRef,
           className: "flowchart-svg",

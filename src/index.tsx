@@ -840,33 +840,51 @@ const Flowchart = forwardRef(
               <></>
             ) : (
               <div className={"flowchart-toolbar"}>
-                <div
-                  onMouseDown={(event) =>
-                    handleToolbarMouseDown("start", event)
-                  }
-                >
-                  <svg className={"flowchart-toolbar-item"}>
-                    <StartEndNode data={templateNode} />
-                  </svg>
-                </div>
-                <div
-                  onMouseDown={(event) =>
-                    handleToolbarMouseDown("operation", event)
-                  }
-                >
-                  <svg className={"flowchart-toolbar-item"}>
-                    <OperationNode data={templateNode} />
-                  </svg>
-                </div>
-                <div
-                  onMouseDown={(event) =>
-                    handleToolbarMouseDown("decision", event)
-                  }
-                >
-                  <svg className={"flowchart-toolbar-item"}>
-                    <DecisionNode data={templateNode} />
-                  </svg>
-                </div>
+                {showToolbar === true ||
+                (Array.isArray(showToolbar) &&
+                  showToolbar.includes("start-end")) ? (
+                  <div
+                    onMouseDown={(event) =>
+                      handleToolbarMouseDown("start", event)
+                    }
+                  >
+                    <svg className={"flowchart-toolbar-item"}>
+                      <StartEndNode data={templateNode} />
+                    </svg>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {showToolbar === true ||
+                (Array.isArray(showToolbar) &&
+                  showToolbar.includes("operation")) ? (
+                  <div
+                    onMouseDown={(event) =>
+                      handleToolbarMouseDown("operation", event)
+                    }
+                  >
+                    <svg className={"flowchart-toolbar-item"}>
+                      <OperationNode data={templateNode} />
+                    </svg>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {showToolbar === true ||
+                (Array.isArray(showToolbar) &&
+                  showToolbar.includes("decision")) ? (
+                  <div
+                    onMouseDown={(event) =>
+                      handleToolbarMouseDown("decision", event)
+                    }
+                  >
+                    <svg className={"flowchart-toolbar-item"}>
+                      <DecisionNode data={templateNode} />
+                    </svg>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             )}
             <svg
