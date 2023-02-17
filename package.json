@@ -1,6 +1,6 @@
 {
   "name": "flowchart-react",
-  "version": "3.10.3",
+  "version": "3.10.4",
   "main": "./dist",
   "license": "MIT",
   "scripts": {
