@@ -1884,7 +1884,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   var zoomIn = useCallback(function () {
     setZoom(function (prevState) {
       var number = Number((prevState - 0.1).toFixed(1));
-      return number < 0.6 ? 0.6 : number;
+      return number < 0.1 ? 0.1 : number;
     });
   }, []);
   var zoomOut = useCallback(function () {
@@ -1903,7 +1903,6 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
 
   var handleWheel = useCallback(function (event) {
     event.stopPropagation();
-    event.preventDefault();
 
     if (event.ctrlKey || event.metaKey) {
       if (event.deltaY > 0 && zoom === 0.1) {

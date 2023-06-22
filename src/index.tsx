@@ -86,7 +86,7 @@ const Flowchart = forwardRef(
     const zoomIn = useCallback(() => {
       setZoom((prevState) => {
         const number = Number((prevState - 0.1).toFixed(1));
-        return number < 0.6 ? 0.6 : number;
+        return number < 0.1 ? 0.1 : number;
       });
     }, []);
     const zoomOut = useCallback(() => {
