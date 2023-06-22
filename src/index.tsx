@@ -102,7 +102,6 @@ const Flowchart = forwardRef(
     const handleWheel = useCallback(
       (event: React.WheelEvent<SVGSVGElement>) => {
         event.stopPropagation();
-        event.preventDefault();
         if (event.ctrlKey || event.metaKey) {
           if (event.deltaY > 0 && zoom === 0.1) {
             return;
