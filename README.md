@@ -101,6 +101,8 @@ export default App;
 
 ## API
 
+Flowchart use nodes and connections to describe a flowchart.
+
 ### Props
 
 #### nodes: `NodeData[]`
@@ -109,21 +111,23 @@ Array of nodes.
 
 ##### NodeData
 
-| Props              | Description         | Type                                    | Default | Required |
-|--------------------|---------------------|:----------------------------------------|---------|----------|
-| id                 | Identity            | number                                  |         | true     |
-| title              | Title of node       | string, `(node: NodeData) => string`    |         | true     |
-| type               | Type of node        | `start`, `end`, `operation`, `decision` |         | true     |
-| x                  | X axis              | number                                  |         | true     |
-| y                  | Y axis              | number                                  |         | true     |
-| payload            | Custom data         | `{[key: string]: unknown}`              |         | false    |
-| width              | Node width          | number                                  | `120`   | false    |
-| height             | Node height         | number                                  | `60`    | false    |
-| connectionPosition | Connection position | `top`, `bottom`                         | `top`   | false    |
-| containerProps     |                     | SupportedSVGShapeProps                  |         | false    |
-| textProps          |                     | SupportedSVGTextProps                   |         | false    |
+| Props              | Description         | Type                                              | Default | Required |
+|--------------------|---------------------|:--------------------------------------------------|---------|----------|
+| id                 | Identity            | number                                            |         | true     |
+| title              | Title of node       | string, `(node: NodeData) => string`, JSX.Element |         | true     |
+| type               | Type of node        | `start`, `end`, `operation`, `decision`           |         | true     |
+| x                  | X axis              | number                                            |         | true     |
+| y                  | Y axis              | number                                            |         | true     |
+| payload            | Custom data         | `{[key: string]: unknown}`                        |         | false    |
+| width              | Node width          | number                                            | `120`   | false    |
+| height             | Node height         | number                                            | `60`    | false    |
+| connectionPosition | Connection position | `top`, `bottom`                                   | `top`   | false    |
+| containerProps     |                     | SupportedSVGShapeProps                            |         | false    |
+| textProps          |                     | SupportedSVGTextProps                             |         | false    |
 
 ##### SupportedSVGShapeProps
+
+Node shape props, only `fill` and `stroke` are supported, for more information, please refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute).
 
 | Props  | Description | Type   | Default | Required |
 |--------|-------------|:-------|---------|----------|
@@ -131,6 +135,10 @@ Array of nodes.
 | stroke |             | string |         | false    |
 
 ##### SupportedSVGTextProps
+
+Node text props, only `fill` is supported, for more information, please refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute).
+
+Works when `title` is a string.
 
 | Props  | Description | Type   | Default | Required |
 |--------|-------------|:-------|---------|----------|
@@ -142,6 +150,8 @@ Connections between nodes.
 
 ##### ConnectionData
 
+Use `type` to describe the type of connection, `success` will draw a green line, `fail` will draw a red line.
+
 | Props       | Description         | Type                                                       | Default | Required |
 |-------------|---------------------|:-----------------------------------------------------------|---------|----------|
 | type        | Type of connection  | `success`, `fail`                                          |         | false    |
@@ -151,13 +161,15 @@ Connections between nodes.
 
 #### readonly: `boolean | undefined`
 
-Prop to disabled drag, connect and delete action.
+Prop to disabled drag, connect and delete nodes.
 
 #### style: `React.CSSProperties`
 
-Style of background svg.
+Style of container.
 
 #### defaultNodeSize: `{width: number, height: number} | undefined`
+
+Global node size, works when `width` or `height` of node is not set.
 
 Default: `{ width: 120, height: 60 }`.
 
@@ -225,6 +237,10 @@ Triggered when a connection is double-clicked.
 Triggered when the mouse is up on the background svg.
 
 > Tip: Drop something to here to implement node creation.
+
+#### className: `string | undefined`
+
+Custom class name of container.
 
 ## License
 

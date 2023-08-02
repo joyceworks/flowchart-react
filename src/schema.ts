@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 
 export interface NodeData {
   id: number;
-  title: string | (() => string);
+  title: string | (() => string) | JSX.Element;
   type: NodeType;
   // approveMethod?: number;
   // editableFields?: string;
@@ -74,6 +74,10 @@ export interface FlowchartProps {
   };
   showToolbar?: boolean | ("start-end" | "operation" | "decision")[];
   connectionPosition?: "bottom" | "top";
+  /**
+   * Custom class name for the flowchart container
+   */
+  className?: string;
 }
 
 export interface DragMovingInfo {

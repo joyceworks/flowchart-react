@@ -1,7 +1,7 @@
 import React, { CSSProperties } from "react";
 export interface NodeData {
     id: number;
-    title: string | (() => string);
+    title: string | (() => string) | JSX.Element;
     type: NodeType;
     x: number;
     y: number;

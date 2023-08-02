@@ -60,6 +60,7 @@ const Flowchart = forwardRef(
       defaultNodeSize = { width: 120, height: 60 },
       showToolbar,
       connectionPosition = "top",
+      className
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -811,7 +812,7 @@ const Flowchart = forwardRef(
         <div
           style={style}
           ref={containerRef}
-          className={"flowchart-container"}
+          className={"flowchart-container " + (className || "")}
           onMouseUp={handleContainerMouseUp}
           onMouseMove={handleContainerMouseMove}
         >
