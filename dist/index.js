@@ -1838,7 +1838,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
   } : _c,
       showToolbar = _a.showToolbar,
       _d = _a.connectionPosition,
-      connectionPosition = _d === void 0 ? "top" : _d;
+      connectionPosition = _d === void 0 ? "top" : _d,
+      className = _a.className;
   var svgRef = useRef(null);
   var containerRef = useRef(null);
 
@@ -2551,7 +2552,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     children: /*#__PURE__*/jsxs("div", {
       style: style,
       ref: containerRef,
-      className: "flowchart-container",
+      className: "flowchart-container " + (className || ""),
       onMouseUp: handleContainerMouseUp,
       onMouseMove: handleContainerMouseMove,
       children: [/*#__PURE__*/jsxs("div", {

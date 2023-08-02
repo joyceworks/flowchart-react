@@ -54,6 +54,10 @@ export interface FlowchartProps {
     };
     showToolbar?: boolean | ("start-end" | "operation" | "decision")[];
     connectionPosition?: "bottom" | "top";
+    /**
+     * Custom class name for the flowchart container
+     */
+    className?: string;
 }
 export interface DragMovingInfo {
     targetIds: number[];
