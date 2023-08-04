@@ -20,7 +20,7 @@ export const templateNode: NodeData = {
 };
 
 export const iconAlign = (
-  <svg
+  <svg className={"mt-[2px]"}
     viewBox="64 64 896 896"
     focusable="false"
     data-icon="align-center"
