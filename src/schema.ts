@@ -3,7 +3,7 @@ import React, { CSSProperties } from "react";
 export interface NodeData {
   id: number;
   title: string | (() => string) | JSX.Element;
-  type: NodeType;
+  type?: NodeType;
   // approveMethod?: number;
   // editableFields?: string;
   // approvers?: { id: number; name: string }[];
@@ -27,7 +27,7 @@ export type SupportedSVGTextProps = Pick<
 >;
 
 export interface ConnectionData {
-  type: "success" | "fail";
+  type?: "success" | "fail";
   source: {
     id: number;
     position: ConnectorPosition;

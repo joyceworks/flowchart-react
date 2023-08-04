@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 export interface NodeData {
     id: number;
     title: string | (() => string) | JSX.Element;
-    type: NodeType;
+    type?: NodeType;
     x: number;
     y: number;
     payload?: {
@@ -16,7 +16,7 @@ export interface NodeData {
 export declare type SupportedSVGShapeProps = Pick<React.SVGProps<SVGElement>, "fill" | "stroke">;
 export declare type SupportedSVGTextProps = Pick<React.SVGProps<SVGTextElement>, "fill">;
 export interface ConnectionData {
-    type: "success" | "fail";
+    type?: "success" | "fail";
     source: {
         id: number;
         position: ConnectorPosition;

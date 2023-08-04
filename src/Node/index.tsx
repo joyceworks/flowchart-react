@@ -33,7 +33,7 @@ const Node = function ({
   return (
     <>
       <G onDoubleClick={onDoubleClick} onMouseDown={onMouseDown}>
-        {data.type === "operation" ? (
+        {data.type === "operation" || !data.type ? (
           <OperationNode data={data} isSelected={isSelected} />
         ) : data.type === "start" || data.type === "end" ? (
           <StartEndNode data={data} isSelected={isSelected} />

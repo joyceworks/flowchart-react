@@ -44,7 +44,6 @@ const App = () => {
       y: 190,
       id: 3,
       title: "Joyce",
-      type: "operation",
     },
     {
       x: 330,
@@ -53,29 +52,24 @@ const App = () => {
       title: () => {
         return "No approver";
       },
-      type: "operation",
     },
   ]);
   const [conns, setConns] = useState<ConnectionData[]>([
     {
       source: { id: 1, position: "right" },
       destination: { id: 3, position: "left" },
-      type: "success",
     },
     {
       source: { id: 3, position: "right" },
       destination: { id: 2, position: "left" },
-      type: "success",
     },
     {
       source: { id: 1, position: "bottom" },
       destination: { id: 4, position: "left" },
-      type: "success",
     },
     {
       source: { id: 4, position: "right" },
       destination: { id: 2, position: "bottom" },
-      type: "success",
     },
   ]);
 
@@ -111,19 +105,19 @@ Array of nodes.
 
 ##### NodeData
 
-| Props              | Description         | Type                                              | Default | Required |
-|--------------------|---------------------|:--------------------------------------------------|---------|----------|
-| id                 | Identity            | number                                            |         | true     |
-| title              | Title of node       | string, `(node: NodeData) => string`, JSX.Element |         | true     |
-| type               | Type of node        | `start`, `end`, `operation`, `decision`           |         | true     |
-| x                  | X axis              | number                                            |         | true     |
-| y                  | Y axis              | number                                            |         | true     |
-| payload            | Custom data         | `{[key: string]: unknown}`                        |         | false    |
-| width              | Node width          | number                                            | `120`   | false    |
-| height             | Node height         | number                                            | `60`    | false    |
-| connectionPosition | Connection position | `top`, `bottom`                                   | `top`   | false    |
-| containerProps     |                     | SupportedSVGShapeProps                            |         | false    |
-| textProps          |                     | SupportedSVGTextProps                             |         | false    |
+| Props              | Description         | Type                                              | Default     | Required |
+|--------------------|---------------------|:--------------------------------------------------|-------------|----------|
+| id                 | Identity            | number                                            |             | true     |
+| title              | Title of node       | string, `(node: NodeData) => string`, JSX.Element |             | true     |
+| type               | Type of node        | `start`, `end`, `operation`, `decision`           | `operation` | false    |
+| x                  | X axis              | number                                            |             | true     |
+| y                  | Y axis              | number                                            |             | true     |
+| payload            | Custom data         | `{[key: string]: unknown}`                        |             | false    |
+| width              | Node width          | number                                            | `120`       | false    |
+| height             | Node height         | number                                            | `60`        | false    |
+| connectionPosition | Connection position | `top`, `bottom`                                   | `top`       | false    |
+| containerProps     |                     | SupportedSVGShapeProps                            |             | false    |
+| textProps          |                     | SupportedSVGTextProps                             |             | false    |
 
 ##### SupportedSVGShapeProps
 
@@ -152,12 +146,12 @@ Connections between nodes.
 
 Use `type` to describe the type of connection, `success` will draw a green line, `fail` will draw a red line.
 
-| Props       | Description         | Type                                                       | Default | Required |
-|-------------|---------------------|:-----------------------------------------------------------|---------|----------|
-| type        | Type of connection  | `success`, `fail`                                          |         | false    |
-| source      | Source info         | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
-| destination | Destination info    | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |         | true     |
-| title       | Title of connection | string                                                     |         | false    |
+| Props       | Description         | Type                                                       | Default   | Required |
+|-------------|---------------------|:-----------------------------------------------------------|-----------|----------|
+| type        | Type of connection  | `success`, `fail`                                          | `success` | false    |
+| source      | Source info         | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
+| destination | Destination info    | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
+| title       | Title of connection | string                                                     |           | false    |
 
 #### readonly: `boolean | undefined`
 

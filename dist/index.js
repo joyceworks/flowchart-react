@@ -1572,7 +1572,7 @@ var Node = function Node(_a) {
     children: /*#__PURE__*/jsxs(G, {
       onDoubleClick: onDoubleClick,
       onMouseDown: onMouseDown,
-      children: [data.type === "operation" ? /*#__PURE__*/jsx(OperationNode, {
+      children: [data.type === "operation" || !data.type ? /*#__PURE__*/jsx(OperationNode, {
         data: data,
         isSelected: isSelected
       }) : data.type === "start" || data.type === "end" ? /*#__PURE__*/jsx(StartEndNode, {
@@ -1641,14 +1641,15 @@ function Connection(_a) {
         return /*#__PURE__*/jsx(Fragment, {});
       }
 
-      var source = points[i];
+      var source = point;
       var destination = points[i + 1];
       var isLast = i === points.length - 2;
-      var color = colors[data.type];
+      var type = data.type || "success";
+      var color = colors[type];
       var id = "arrow".concat(color.replace("#", ""));
       return /*#__PURE__*/jsxs(Fragment, {
         children: [/*#__PURE__*/jsx("path", {
-          stroke: colors[data.type],
+          stroke: colors[type],
           strokeWidth: 1,
           fill: "none",
           d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1]),
