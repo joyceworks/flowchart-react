@@ -48,6 +48,15 @@ export function Connection({
 
   return (
     <g>
+      <defs>
+        <filter x="0" y="0" width="1" height="1" id="solid">
+          <feFlood floodColor="#f3f3f3" result="bg" />
+          <feMerge>
+            <feMergeNode in="bg" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
       {points.map((point, i) => {
         if (i > points.length - 2) {
           return <></>;
@@ -95,9 +104,10 @@ export function Connection({
             />
             {data.title ? (
               <text
+                filter={"url(#solid)"}
                 fontSize={12}
                 textAnchor={"middle"}
-                dominantBaseline={"middle"}
+                dominantBaseline={"central"}
                 x={center[0]}
                 y={center[1]}
               >

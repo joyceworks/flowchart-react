@@ -1635,8 +1635,26 @@ function Connection(_a) {
     center = points[(points.length - 1) / 2];
   }
 
-  return /*#__PURE__*/jsx("g", {
-    children: points.map(function (point, i) {
+  return /*#__PURE__*/jsxs("g", {
+    children: [/*#__PURE__*/jsx("defs", {
+      children: /*#__PURE__*/jsxs("filter", {
+        x: "0",
+        y: "0",
+        width: "1",
+        height: "1",
+        id: "solid",
+        children: [/*#__PURE__*/jsx("feFlood", {
+          floodColor: "#f3f3f3",
+          result: "bg"
+        }), /*#__PURE__*/jsxs("feMerge", {
+          children: [/*#__PURE__*/jsx("feMergeNode", {
+            "in": "bg"
+          }), /*#__PURE__*/jsx("feMergeNode", {
+            "in": "SourceGraphic"
+          })]
+        })]
+      })
+    }), points.map(function (point, i) {
       if (i > points.length - 2) {
         return /*#__PURE__*/jsx(Fragment, {});
       }
@@ -1678,15 +1696,16 @@ function Connection(_a) {
           fill: "none",
           d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1])
         }), data.title ? /*#__PURE__*/jsx("text", {
+          filter: "url(#solid)",
           fontSize: 12,
           textAnchor: "middle",
-          dominantBaseline: "middle",
+          dominantBaseline: "central",
           x: center[0],
           y: center[1],
           children: data.title
         }) : /*#__PURE__*/jsx(Fragment, {})]
       });
-    })
+    })]
   });
 }
 
@@ -1719,7 +1738,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z$1 = ".flowchart-container {\n  position: relative;\n}\n.flowchart-container text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.flowchart-toolbar {\n  width: 48px;\n  height: 100%;\n  border-left: 1px solid #dfdfdf;\n  border-top: 1px solid #dfdfdf;\n  border-bottom: 1px solid #dfdfdf;\n}\n.flowchart-toolbar-item {\n  width: 48px;\n  height: 24px;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #bbbbbb;\n  cursor: crosshair;\n  opacity: 0;\n}\n.circle:hover {\n  opacity: 1;\n}\n.g:hover .circle {\n  opacity: 1;\n}\n";
+var css_248z$1 = ".flowchart-container {\n  position: relative;\n}\n.flowchart-container text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.flowchart-toolbar {\n  width: 48px;\n  height: 100%;\n  border-left: 1px solid #dfdfdf;\n  border-top: 1px solid #dfdfdf;\n  border-bottom: 1px solid #dfdfdf;\n}\n.flowchart-toolbar-item {\n  width: 48px;\n  height: 24px;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #1890ff;\n  cursor: crosshair;\n  opacity: 0;\n}\n.circle:hover {\n  opacity: 1;\n}\n.g:hover .circle {\n  opacity: 1;\n}\n";
 styleInject(css_248z$1);
 var css_248z = "*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  \n}\n\n.container {\n  width: 100%\n}\n\n@media (min-width: 640px) {\n  .container {\n    max-width: 640px\n  }\n}\n\n@media (min-width: 768px) {\n  .container {\n    max-width: 768px\n  }\n}\n\n@media (min-width: 1024px) {\n  .container {\n    max-width: 1024px\n  }\n}\n\n@media (min-width: 1280px) {\n  .container {\n    max-width: 1280px\n  }\n}\n\n@media (min-width: 1536px) {\n  .container {\n    max-width: 1536px\n  }\n}\n\n.pointer-events-none {\n  pointer-events: none\n}\n\n.absolute {\n  position: absolute\n}\n\n.top-2 {\n  top: 0.5rem\n}\n\n.right-2 {\n  right: 0.5rem\n}\n\n.mt-\\[2px\\] {\n  margin-top: 2px\n}\n\n.flex {\n  display: flex\n}\n\n.inline-flex {\n  display: inline-flex\n}\n\n.h-full {\n  height: 100%\n}\n\n.w-full {\n  width: 100%\n}\n\n.cursor-nw-resize {\n  cursor: nw-resize\n}\n\n.cursor-sw-resize {\n  cursor: sw-resize\n}\n\n.cursor-ne-resize {\n  cursor: ne-resize\n}\n\n.cursor-se-resize {\n  cursor: se-resize\n}\n\n.items-center {\n  align-items: center\n}\n\n.justify-center {\n  justify-content: center\n}\n\n.border-none {\n  border-style: none\n}\n\n.bg-transparent {\n  background-color: transparent\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)\n}\n";
 styleInject(css_248z);

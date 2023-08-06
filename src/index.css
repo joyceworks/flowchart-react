@@ -30,7 +30,7 @@
 .circle {
   fill: white;
   stroke-width: 1px;
-  stroke: #bbbbbb;
+  stroke: #1890ff;
   cursor: crosshair;
   opacity: 0;
 }
