@@ -816,7 +816,7 @@ const Flowchart = forwardRef(
           onMouseUp={handleContainerMouseUp}
           onMouseMove={handleContainerMouseMove}
         >
-          <div className={"absolute top-2 right-2"}>
+          <div className={"absolute top-2 right-2 flex items-center justify-center"}>
             <button className={"border-none bg-transparent"} onClick={zoomIn}>
               -
             </button>
