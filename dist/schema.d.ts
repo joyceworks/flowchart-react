@@ -82,7 +82,7 @@ export interface IFlowchart {
         connections: ConnectionData[];
     };
 }
-export interface DragResizingInfo {
+export interface ControlInfo {
     targetId: number;
     direction: Direction;
 }

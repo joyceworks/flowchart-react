@@ -13,7 +13,7 @@ import {
   DragConnectingInfo,
   DragCreatingInfo,
   DragMovingInfo,
-  DragResizingInfo,
+  ControlInfo,
   FlowchartProps,
   IFlowchart,
   Line,
@@ -60,7 +60,7 @@ const Flowchart = forwardRef(
       defaultNodeSize = { width: 120, height: 60 },
       showToolbar,
       connectionPosition = "top",
-      className
+      className,
     }: FlowchartProps,
     ref: Ref<IFlowchart>
   ) => {
@@ -70,7 +70,7 @@ const Flowchart = forwardRef(
     const [selectedConnIds, setSelectedConnIds] = useState<number[]>([]);
     const [selectingInfo, setSelectingInfo] = useState<SelectingInfo>();
     const [connectingInfo, setConnectingInfo] = useState<DragConnectingInfo>();
-    const [resizingInfo, setResizingInfo] = useState<DragResizingInfo>();
+    const [controlInfo, setControlInfo] = useState<ControlInfo>();
     const [movingInfo, setMovingInfo] = useState<DragMovingInfo>();
     const [creatingInfo, setCreatingInfo] = useState<DragCreatingInfo>();
     const [zoom, setZoom] = useState<number>(1);
@@ -212,9 +212,9 @@ const Flowchart = forwardRef(
           }
           onChange?.(currentNodes, connections);
           setMovingInfo((prevState) => ({ ...prevState!, moved: true }));
-        } else if (resizingInfo) {
+        } else if (controlInfo) {
           const index = nodes.findIndex(
-            (it) => it.id === resizingInfo.targetId
+            (it) => it.id === controlInfo.targetId
           )!;
           const node = nodes[index]!;
           let patch: { x: number; y: number; width: number; height: number };
@@ -222,7 +222,39 @@ const Flowchart = forwardRef(
           const finalHeight = node.height || 60;
           const maxX = node.x + finalWidth;
           const maxY = node.y + finalHeight;
-          switch (resizingInfo.direction) {
+          switch (controlInfo.direction) {
+            case "u":
+              patch = {
+                x: node.x,
+                y: newOffsetOfCursorToSVG.y,
+                width: finalWidth,
+                height: maxY - newOffsetOfCursorToSVG.y,
+              };
+              break;
+            case "d":
+              patch = {
+                x: node.x,
+                y: node.y,
+                width: finalWidth,
+                height: newOffsetOfCursorToSVG.y - node.y,
+              };
+              break;
+            case "l":
+              patch = {
+                x: newOffsetOfCursorToSVG.x,
+                y: node.y,
+                width: maxX - newOffsetOfCursorToSVG.x,
+                height: finalHeight,
+              };
+              break;
+            case "r":
+              patch = {
+                x: node.x,
+                y: node.y,
+                width: newOffsetOfCursorToSVG.x - node.x,
+                height: finalHeight,
+              };
+              break;
             case "lu":
               patch = {
                 x: newOffsetOfCursorToSVG.x,
@@ -284,7 +316,7 @@ const Flowchart = forwardRef(
         zoom,
         selectingInfo,
         movingInfo,
-        resizingInfo,
+        controlInfo,
         nodes,
         connections,
         onChange,
@@ -386,7 +418,7 @@ const Flowchart = forwardRef(
         setSelectingInfo(undefined);
         setConnectingInfo(undefined);
         setMovingInfo(undefined);
-        setResizingInfo(undefined);
+        setControlInfo(undefined);
 
         // Align dragging node
         if (movingInfo) {
@@ -461,11 +493,79 @@ const Flowchart = forwardRef(
           );
         }
 
-        if (resizingInfo) {
+        if (controlInfo) {
           const index = nodes.findIndex(
-            (it) => it.id === resizingInfo.targetId
+            (it) => it.id === controlInfo.targetId
           )!;
-          switch (resizingInfo.direction) {
+          switch (controlInfo.direction) {
+            case "u":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newY = roundTo10(it.y);
+                      const maxY = it.height! + it.y;
+                      return {
+                        ...it,
+                        y: newY,
+                        height: maxY - newY,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "d":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const maxY = roundTo10(it.height! + it.y);
+                      return {
+                        ...it,
+                        height: maxY - it.y,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "l":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const newX = roundTo10(it.x);
+                      const maxX = it.width! + it.x;
+                      return {
+                        ...it,
+                        x: newX,
+                        width: maxX - newX,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
+            case "r":
+              onChange?.(
+                update(nodes, {
+                  [index]: {
+                    $apply: (it) => {
+                      const maxX = roundTo10(it.width! + it.x);
+                      return {
+                        ...it,
+                        width: maxX - it.x,
+                      };
+                    },
+                  },
+                }),
+                connections
+              );
+              break;
             case "lu":
               onChange?.(
                 update(nodes, {
@@ -549,7 +649,7 @@ const Flowchart = forwardRef(
         movingInfo,
         connectingInfo,
         creatingInfo,
-        resizingInfo,
+        controlInfo,
         nodes,
         onChange,
         connections,
@@ -607,10 +707,10 @@ const Flowchart = forwardRef(
             nodes
           )
         );
-      } else if (resizingInfo) {
+      } else if (controlInfo) {
         guidelines.push(
           ...calcGuidelines(
-            nodes.find((item) => item.id === resizingInfo.targetId)!,
+            nodes.find((item) => item.id === controlInfo.targetId)!,
             nodes
           )
         );
@@ -619,7 +719,7 @@ const Flowchart = forwardRef(
     }, [
       movingInfo,
       creatingInfo,
-      resizingInfo,
+      controlInfo,
       nodes,
       offsetOfCursorToSVG.x,
       offsetOfCursorToSVG.y,
@@ -718,8 +818,8 @@ const Flowchart = forwardRef(
                 sourcePosition: position,
               });
             }}
-            onResizerMouseDown={(direction) => {
-              setResizingInfo({
+            onControllerMouseDown={(direction) => {
+              setControlInfo({
                 direction,
                 targetId: formattedNode.id,
               });
@@ -816,7 +916,11 @@ const Flowchart = forwardRef(
           onMouseUp={handleContainerMouseUp}
           onMouseMove={handleContainerMouseMove}
         >
-          <div className={"absolute top-2 right-2 flex items-center justify-center"}>
+          <div
+            className={
+              "absolute top-2 right-2 flex items-center justify-center"
+            }
+          >
             <button className={"border-none bg-transparent"} onClick={zoomIn}>
               -
             </button>

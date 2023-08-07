@@ -107,7 +107,7 @@ export interface IFlowchart {
   };
 }
 
-export interface DragResizingInfo {
+export interface ControlInfo {
   targetId: number;
   direction: Direction;
 }

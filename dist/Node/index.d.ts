@@ -7,8 +7,8 @@ interface NodeProps {
     onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
     onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
     onConnectorMouseDown: (position: ConnectorPosition) => void;
-    onResizerMouseDown: (direction: Direction) => void;
+    onControllerMouseDown: (direction: Direction) => void;
     readonly?: boolean;
 }
-declare const Node: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, onResizerMouseDown, readonly, }: NodeProps) => JSX.Element;
+declare const Node: ({ data, isSelected, isConnecting, onDoubleClick, onMouseDown, onConnectorMouseDown, onControllerMouseDown, readonly, }: NodeProps) => JSX.Element;
 export default Node;

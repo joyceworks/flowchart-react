@@ -11,7 +11,7 @@ const props: React.SVGProps<SVGRectElement> = {
   fill: "white",
   ...strokeProps,
 };
-const Resizer = function ({
+const Controller = function ({
   data,
   onMouseDown,
 }: {
@@ -28,6 +28,7 @@ const Resizer = function ({
         fill={"transparent"}
         {...strokeProps}
       />
+      {/* Top left */}
       <rect
         className={"cursor-nw-resize"}
         x={data.x - 3}
@@ -38,6 +39,17 @@ const Resizer = function ({
           onMouseDown("lu");
         }}
       />
+      {/* Top */}
+      <rect
+        className={"cursor-n-resize"}
+        x={data.x + (data.width || 120) / 2 - 3}
+        y={data.y - 3}
+        {...props}
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          onMouseDown("u");
+        }}
+      />
       <rect
         className={"cursor-sw-resize"}
         x={data.x - 3}
@@ -46,6 +58,39 @@ const Resizer = function ({
         onMouseDown={(event) => {
           event.stopPropagation();
           onMouseDown("ld");
+        }}
+      />
+      {/* Right */}
+      <rect
+        className={"cursor-w-resize"}
+        x={data.x - 3}
+        y={data.y + (data.height || 60) / 2 - 3}
+        {...props}
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          onMouseDown("l");
+        }}
+      />
+      {/* Down */}
+      <rect
+        className={"cursor-s-resize"}
+        x={data.x + (data.width || 120) / 2 - 3}
+        y={data.y + (data.height || 60) - 3}
+        {...props}
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          onMouseDown("d");
+        }}
+      />
+      {/* Left */}
+      <rect
+        className={"cursor-e-resize"}
+        x={data.x + (data.width || 120) - 3}
+        y={data.y + (data.height || 60) / 2 - 3}
+        {...props}
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          onMouseDown("r");
         }}
       />
       <rect
@@ -72,4 +117,4 @@ const Resizer = function ({
   );
 };
 
-export { Resizer };
+export { Controller };

@@ -1502,7 +1502,7 @@ var props = _assign({
   fill: "white"
 }, strokeProps);
 
-var Resizer = function Resizer(_a) {
+var Controller = function Controller(_a) {
   var data = _a.data,
       _onMouseDown = _a.onMouseDown;
   return /*#__PURE__*/jsxs(Fragment, {
@@ -1523,6 +1523,16 @@ var Resizer = function Resizer(_a) {
         _onMouseDown("lu");
       }
     })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
+      className: "cursor-n-resize",
+      x: data.x + (data.width || 120) / 2 - 3,
+      y: data.y - 3
+    }, props), {}, {
+      onMouseDown: function onMouseDown(event) {
+        event.stopPropagation();
+
+        _onMouseDown("u");
+      }
+    })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
       className: "cursor-sw-resize",
       x: data.x - 3,
       y: data.y + (data.height || 60) - 3
@@ -1531,6 +1541,36 @@ var Resizer = function Resizer(_a) {
         event.stopPropagation();
 
         _onMouseDown("ld");
+      }
+    })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
+      className: "cursor-w-resize",
+      x: data.x - 3,
+      y: data.y + (data.height || 60) / 2 - 3
+    }, props), {}, {
+      onMouseDown: function onMouseDown(event) {
+        event.stopPropagation();
+
+        _onMouseDown("l");
+      }
+    })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
+      className: "cursor-s-resize",
+      x: data.x + (data.width || 120) / 2 - 3,
+      y: data.y + (data.height || 60) - 3
+    }, props), {}, {
+      onMouseDown: function onMouseDown(event) {
+        event.stopPropagation();
+
+        _onMouseDown("d");
+      }
+    })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
+      className: "cursor-e-resize",
+      x: data.x + (data.width || 120) - 3,
+      y: data.y + (data.height || 60) / 2 - 3
+    }, props), {}, {
+      onMouseDown: function onMouseDown(event) {
+        event.stopPropagation();
+
+        _onMouseDown("r");
       }
     })), /*#__PURE__*/jsx("rect", _objectSpread(_objectSpread({
       className: "cursor-ne-resize",
@@ -1563,7 +1603,7 @@ var Node = function Node(_a) {
       onDoubleClick = _a.onDoubleClick,
       onMouseDown = _a.onMouseDown,
       onConnectorMouseDown = _a.onConnectorMouseDown,
-      onResizerMouseDown = _a.onResizerMouseDown,
+      onControllerMouseDown = _a.onControllerMouseDown,
       readonly = _a.readonly;
   var position = useMemo(function () {
     return locateConnector(data);
@@ -1586,14 +1626,14 @@ var Node = function Node(_a) {
           isConnecting: isConnecting,
           cx: position[key].x,
           cy: position[key].y,
-          r: 4,
+          r: 3,
           onMouseDown: function onMouseDown(event) {
             event.stopPropagation();
             onConnectorMouseDown(key);
           }
         }, key);
-      }), isSelected && !readonly ? /*#__PURE__*/jsx(Resizer, {
-        onMouseDown: onResizerMouseDown,
+      }), isSelected && !readonly ? /*#__PURE__*/jsx(Controller, {
+        onMouseDown: onControllerMouseDown,
         data: data
       }) : /*#__PURE__*/jsx(Fragment, {})]
     })
@@ -1740,7 +1780,7 @@ function styleInject(css, ref) {
 
 var css_248z$1 = ".flowchart-container {\n  position: relative;\n}\n.flowchart-container text {\n  moz-user-select: -moz-none;\n  -moz-user-select: none;\n  -o-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.flowchart-toolbar {\n  width: 48px;\n  height: 100%;\n  border-left: 1px solid #dfdfdf;\n  border-top: 1px solid #dfdfdf;\n  border-bottom: 1px solid #dfdfdf;\n}\n.flowchart-toolbar-item {\n  width: 48px;\n  height: 24px;\n}\n.flowchart-svg {\n  height: 100%;\n  width: 100%;\n  border: 1px solid #dfdfdf;\n  background-color: #f3f3f3;\n}\n.circle {\n  fill: white;\n  stroke-width: 1px;\n  stroke: #1890ff;\n  cursor: crosshair;\n  opacity: 0;\n}\n.circle:hover {\n  opacity: 1;\n}\n.g:hover .circle {\n  opacity: 1;\n}\n";
 styleInject(css_248z$1);
-var css_248z = "*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  \n}\n\n.container {\n  width: 100%\n}\n\n@media (min-width: 640px) {\n  .container {\n    max-width: 640px\n  }\n}\n\n@media (min-width: 768px) {\n  .container {\n    max-width: 768px\n  }\n}\n\n@media (min-width: 1024px) {\n  .container {\n    max-width: 1024px\n  }\n}\n\n@media (min-width: 1280px) {\n  .container {\n    max-width: 1280px\n  }\n}\n\n@media (min-width: 1536px) {\n  .container {\n    max-width: 1536px\n  }\n}\n\n.pointer-events-none {\n  pointer-events: none\n}\n\n.absolute {\n  position: absolute\n}\n\n.top-2 {\n  top: 0.5rem\n}\n\n.right-2 {\n  right: 0.5rem\n}\n\n.mt-\\[2px\\] {\n  margin-top: 2px\n}\n\n.flex {\n  display: flex\n}\n\n.inline-flex {\n  display: inline-flex\n}\n\n.h-full {\n  height: 100%\n}\n\n.w-full {\n  width: 100%\n}\n\n.cursor-nw-resize {\n  cursor: nw-resize\n}\n\n.cursor-sw-resize {\n  cursor: sw-resize\n}\n\n.cursor-ne-resize {\n  cursor: ne-resize\n}\n\n.cursor-se-resize {\n  cursor: se-resize\n}\n\n.items-center {\n  align-items: center\n}\n\n.justify-center {\n  justify-content: center\n}\n\n.border-none {\n  border-style: none\n}\n\n.bg-transparent {\n  background-color: transparent\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)\n}\n";
+var css_248z = "*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  \n}\n\n.container {\n  width: 100%\n}\n\n@media (min-width: 640px) {\n  .container {\n    max-width: 640px\n  }\n}\n\n@media (min-width: 768px) {\n  .container {\n    max-width: 768px\n  }\n}\n\n@media (min-width: 1024px) {\n  .container {\n    max-width: 1024px\n  }\n}\n\n@media (min-width: 1280px) {\n  .container {\n    max-width: 1280px\n  }\n}\n\n@media (min-width: 1536px) {\n  .container {\n    max-width: 1536px\n  }\n}\n\n.pointer-events-none {\n  pointer-events: none\n}\n\n.absolute {\n  position: absolute\n}\n\n.top-2 {\n  top: 0.5rem\n}\n\n.right-2 {\n  right: 0.5rem\n}\n\n.mt-\\[2px\\] {\n  margin-top: 2px\n}\n\n.flex {\n  display: flex\n}\n\n.inline-flex {\n  display: inline-flex\n}\n\n.h-full {\n  height: 100%\n}\n\n.w-full {\n  width: 100%\n}\n\n.cursor-nw-resize {\n  cursor: nw-resize\n}\n\n.cursor-n-resize {\n  cursor: n-resize\n}\n\n.cursor-sw-resize {\n  cursor: sw-resize\n}\n\n.cursor-w-resize {\n  cursor: w-resize\n}\n\n.cursor-ne-resize {\n  cursor: ne-resize\n}\n\n.cursor-se-resize {\n  cursor: se-resize\n}\n\n.cursor-s-resize {\n  cursor: s-resize\n}\n\n.cursor-e-resize {\n  cursor: e-resize\n}\n\n.items-center {\n  align-items: center\n}\n\n.justify-center {\n  justify-content: center\n}\n\n.border-none {\n  border-style: none\n}\n\n.bg-transparent {\n  background-color: transparent\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)\n}\n";
 styleInject(css_248z);
 var newNode = {
   id: 0,
@@ -1881,8 +1921,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       setConnectingInfo = _h[1];
 
   var _j = useState(),
-      resizingInfo = _j[0],
-      setResizingInfo = _j[1];
+      controlInfo = _j[0],
+      setControlInfo = _j[1];
 
   var _k = useState(),
       movingInfo = _k[0],
@@ -2046,9 +2086,9 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           moved: true
         });
       });
-    } else if (resizingInfo) {
+    } else if (controlInfo) {
       var index = nodes.findIndex(function (it) {
-        return it.id === resizingInfo.targetId;
+        return it.id === controlInfo.targetId;
       });
       var node = nodes[index];
       var patch = void 0;
@@ -2057,7 +2097,43 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       var maxX = node.x + finalWidth;
       var maxY = node.y + finalHeight;
 
-      switch (resizingInfo.direction) {
+      switch (controlInfo.direction) {
+        case "u":
+          patch = {
+            x: node.x,
+            y: newOffsetOfCursorToSVG.y,
+            width: finalWidth,
+            height: maxY - newOffsetOfCursorToSVG.y
+          };
+          break;
+
+        case "d":
+          patch = {
+            x: node.x,
+            y: node.y,
+            width: finalWidth,
+            height: newOffsetOfCursorToSVG.y - node.y
+          };
+          break;
+
+        case "l":
+          patch = {
+            x: newOffsetOfCursorToSVG.x,
+            y: node.y,
+            width: maxX - newOffsetOfCursorToSVG.x,
+            height: finalHeight
+          };
+          break;
+
+        case "r":
+          patch = {
+            x: node.x,
+            y: node.y,
+            width: newOffsetOfCursorToSVG.x - node.x,
+            height: finalHeight
+          };
+          break;
+
         case "lu":
           patch = {
             x: newOffsetOfCursorToSVG.x,
@@ -2117,7 +2193,7 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         $set: _assign(_assign({}, node), patch)
       }, _a)), connections);
     }
-  }, [zoom, selectingInfo, movingInfo, resizingInfo, nodes, connections, onChange, moveTo]);
+  }, [zoom, selectingInfo, movingInfo, controlInfo, nodes, connections, onChange, moveTo]);
   var moveSelected = useCallback(function (x, y) {
     move(selectedNodeIds, x, y);
   }, [move, selectedNodeIds]);
@@ -2197,20 +2273,20 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
     }
   }, [moveSelected, remove, nodes, selectedConnIds]);
   var handleSVGMouseUp = useCallback(function (event) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
 
     setSelectingInfo(undefined);
     setConnectingInfo(undefined);
     setMovingInfo(undefined);
-    setResizingInfo(undefined); // Align dragging node
+    setControlInfo(undefined); // Align dragging node
 
     if (movingInfo) {
       var result = nodes;
 
       var _loop_1 = function _loop_1(t) {
-        var _g;
+        var _l;
 
-        result = update(result, (_g = {}, _g[result.findIndex(function (item) {
+        result = update(result, (_l = {}, _l[result.findIndex(function (item) {
           return item.id === t;
         })] = {
           x: {
@@ -2219,11 +2295,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
           y: {
             $apply: roundTo10
           }
-        }, _g));
+        }, _l));
       };
 
-      for (var _i = 0, _e = movingInfo.targetIds; _i < _e.length; _i++) {
-        var t = _e[_i];
+      for (var _i = 0, _j = movingInfo.targetIds; _i < _j.length; _i++) {
+        var t = _j[_i];
 
         _loop_1(t);
       }
@@ -2236,8 +2312,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       var node_1 = null;
       var position_1 = null;
 
-      for (var _f = 0, nodes_1 = nodes; _f < nodes_1.length; _f++) {
-        var internalNode = nodes_1[_f];
+      for (var _k = 0, nodes_1 = nodes; _k < nodes_1.length; _k++) {
+        var internalNode = nodes_1[_k];
         var locations = locateConnector(internalNode);
 
         for (var prop in locations) {
@@ -2283,31 +2359,79 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
       }, point)], false), connections);
     }
 
-    if (resizingInfo) {
+    if (controlInfo) {
       var index = nodes.findIndex(function (it) {
-        return it.id === resizingInfo.targetId;
+        return it.id === controlInfo.targetId;
       });
 
-      switch (resizingInfo.direction) {
-        case "lu":
+      switch (controlInfo.direction) {
+        case "u":
           onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_a = {}, _a[index] = {
             $apply: function $apply(it) {
-              var newX = roundTo10(it.x);
               var newY = roundTo10(it.y);
-              var maxX = it.width + it.x;
               var maxY = it.height + it.y;
               return _assign(_assign({}, it), {
-                x: newX,
                 y: newY,
-                width: maxX - newX,
                 height: maxY - newY
               });
             }
           }, _a)), connections);
           break;
 
-        case "ru":
+        case "d":
           onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_b = {}, _b[index] = {
+            $apply: function $apply(it) {
+              var maxY = roundTo10(it.height + it.y);
+              return _assign(_assign({}, it), {
+                height: maxY - it.y
+              });
+            }
+          }, _b)), connections);
+          break;
+
+        case "l":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_c = {}, _c[index] = {
+            $apply: function $apply(it) {
+              var newX = roundTo10(it.x);
+              var maxX = it.width + it.x;
+              return _assign(_assign({}, it), {
+                x: newX,
+                width: maxX - newX
+              });
+            }
+          }, _c)), connections);
+          break;
+
+        case "r":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_d = {}, _d[index] = {
+            $apply: function $apply(it) {
+              var maxX = roundTo10(it.width + it.x);
+              return _assign(_assign({}, it), {
+                width: maxX - it.x
+              });
+            }
+          }, _d)), connections);
+          break;
+
+        case "lu":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_e = {}, _e[index] = {
+            $apply: function $apply(it) {
+              var newX = roundTo10(it.x);
+              var newY = roundTo10(it.y);
+              var maxX = it.width + it.x;
+              var maxY = it.height + it.y;
+              return _assign(_assign({}, it), {
+                x: newX,
+                y: newY,
+                width: maxX - newX,
+                height: maxY - newY
+              });
+            }
+          }, _e)), connections);
+          break;
+
+        case "ru":
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_f = {}, _f[index] = {
             $apply: function $apply(it) {
               var newY = roundTo10(it.y);
               var maxY = it.height + it.y;
@@ -2317,11 +2441,11 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 height: maxY - newY
               });
             }
-          }, _b)), connections);
+          }, _f)), connections);
           break;
 
         case "ld":
-          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_c = {}, _c[index] = {
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_g = {}, _g[index] = {
             $apply: function $apply(it) {
               var newX = roundTo10(it.x);
               var maxX = it.width + it.x;
@@ -2331,22 +2455,22 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
                 height: roundTo10(it.height)
               });
             }
-          }, _c)), connections);
+          }, _g)), connections);
           break;
 
         case "rd":
-          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_d = {}, _d[index] = {
+          onChange === null || onChange === void 0 ? void 0 : onChange(update(nodes, (_h = {}, _h[index] = {
             $apply: function $apply(it) {
               return _assign(_assign({}, it), {
                 width: roundTo10(it.width),
                 height: roundTo10(it.height)
               });
             }
-          }, _d)), connections);
+          }, _h)), connections);
           break;
       }
     }
-  }, [movingInfo, connectingInfo, creatingInfo, resizingInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
+  }, [movingInfo, connectingInfo, creatingInfo, controlInfo, nodes, onChange, connections, onMouseUp, zoom, offsetOfCursorToSVG, defaultNodeSize.width, defaultNodeSize.height]);
   /**
    * Points of connecting line
    */
@@ -2396,14 +2520,14 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
         x: offsetOfCursorToSVG.x - defaultNodeSize.width / 2,
         y: offsetOfCursorToSVG.y - defaultNodeSize.height / 2
       }, nodes));
-    } else if (resizingInfo) {
+    } else if (controlInfo) {
       guidelines.push.apply(guidelines, calcGuidelines(nodes.find(function (item) {
-        return item.id === resizingInfo.targetId;
+        return item.id === controlInfo.targetId;
       }), nodes));
     }
 
     return guidelines;
-  }, [movingInfo, creatingInfo, resizingInfo, nodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, defaultNodeSize.width, defaultNodeSize.height]);
+  }, [movingInfo, creatingInfo, controlInfo, nodes, offsetOfCursorToSVG.x, offsetOfCursorToSVG.y, defaultNodeSize.width, defaultNodeSize.height]);
   useImperativeHandle(ref, function () {
     return {
       getData: function getData() {
@@ -2502,8 +2626,8 @@ var Flowchart = /*#__PURE__*/forwardRef(function (_a, ref) {
             sourcePosition: position
           });
         },
-        onResizerMouseDown: function onResizerMouseDown(direction) {
-          setResizingInfo({
+        onControllerMouseDown: function onControllerMouseDown(direction) {
+          setControlInfo({
             direction: direction,
             targetId: formattedNode.id
           });

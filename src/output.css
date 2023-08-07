@@ -117,8 +117,16 @@
   cursor: nw-resize
 }
 
+.cursor-n-resize {
+  cursor: n-resize
+}
+
 .cursor-sw-resize {
   cursor: sw-resize
+}
+
+.cursor-w-resize {
+  cursor: w-resize
 }
 
 .cursor-ne-resize {
@@ -127,6 +135,14 @@
 
 .cursor-se-resize {
   cursor: se-resize
+}
+
+.cursor-s-resize {
+  cursor: s-resize
+}
+
+.cursor-e-resize {
+  cursor: e-resize
 }
 
 .items-center {

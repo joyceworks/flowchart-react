@@ -6,7 +6,7 @@ import { locateConnector } from "../util";
 import G from "./G";
 import Circle from "./Circle";
 import { DecisionNode } from "./DecisionNode";
-import { Resizer } from "./Resizer";
+import { Controller } from "./Controller";
 
 interface NodeProps {
   data: NodeData;
@@ -15,7 +15,7 @@ interface NodeProps {
   onDoubleClick: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
   onMouseDown: (event: React.MouseEvent<SVGGElement, MouseEvent>) => void;
   onConnectorMouseDown: (position: ConnectorPosition) => void;
-  onResizerMouseDown: (direction: Direction) => void;
+  onControllerMouseDown: (direction: Direction) => void;
   readonly?: boolean;
 }
 
@@ -26,7 +26,7 @@ const Node = function ({
   onDoubleClick,
   onMouseDown,
   onConnectorMouseDown,
-  onResizerMouseDown,
+  onControllerMouseDown,
   readonly,
 }: NodeProps) {
   const position = useMemo(() => locateConnector(data), [data]);
@@ -48,7 +48,7 @@ const Node = function ({
                 isConnecting={isConnecting}
                 cx={position[key as ConnectorPosition].x}
                 cy={position[key as ConnectorPosition].y}
-                r={4}
+                r={3}
                 onMouseDown={(event) => {
                   event.stopPropagation();
                   onConnectorMouseDown(key as ConnectorPosition);
@@ -57,7 +57,7 @@ const Node = function ({
             );
           })}
         {isSelected && !readonly ? (
-          <Resizer onMouseDown={onResizerMouseDown} data={data} />
+          <Controller onMouseDown={onControllerMouseDown} data={data} />
         ) : (
           <></>
         )}
