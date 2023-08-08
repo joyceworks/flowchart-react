@@ -21,7 +21,7 @@ yarn add flowchart-react
 ```tsx
 import React, { useState } from "react";
 import Flowchart from "flowchart-react";
-import { ConnectionData, NodeData } from "flowchart-react/dist/schema";
+import { ConnectionData, NodeData } from "flowchart-react/schema";
 
 const App = () => {
   const [nodes, setNodes] = useState<NodeData[]>([
