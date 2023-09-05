@@ -1495,11 +1495,11 @@ function Connection(_a) {
       var destination = points[i + 1];
       var isLast = i === points.length - 2;
       var type = data.type || "success";
-      var color = colors[type];
+      var color = data.color || colors[type];
       var id = "arrow".concat(color.replace("#", ""));
       return /*#__PURE__*/jsxs(Fragment, {
         children: [/*#__PURE__*/jsx("path", {
-          stroke: colors[type],
+          stroke: color || colors[type],
           strokeWidth: 1,
           fill: "none",
           d: "M ".concat(source[0], " ").concat(source[1], " L ").concat(destination[0], " ").concat(destination[1]),

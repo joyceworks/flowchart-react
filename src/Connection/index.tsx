@@ -66,12 +66,12 @@ export function Connection({
         const destination = points[i + 1];
         const isLast = i === points.length - 2;
         const type = data.type || "success";
-        const color = colors[type];
+        const color = data.color || colors[type];
         const id = `arrow${color.replace("#", "")}`;
         return (
           <>
             <path
-              stroke={colors[type]}
+              stroke={color || colors[type]}
               strokeWidth={1}
               fill={"none"}
               d={`M ${source[0]} ${source[1]} L ${destination[0]} ${destination[1]}`}

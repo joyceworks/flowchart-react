@@ -37,6 +37,7 @@ export interface ConnectionData {
     position: ConnectorPosition;
   };
   title?: string;
+  color?: string;
 }
 
 export interface Point {

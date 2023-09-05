@@ -105,19 +105,19 @@ Array of nodes.
 
 ##### NodeData
 
-| Props              | Description         | Type                                              | Default     | Required |
-|--------------------|---------------------|:--------------------------------------------------|-------------|----------|
-| id                 | Identity            | number                                            |             | true     |
-| title              | Title of node       | string, `(node: NodeData) => string`, JSX.Element |             | true     |
-| type               | Type of node        | `start`, `end`, `operation`, `decision`           | `operation` | false    |
-| x                  | X axis              | number                                            |             | true     |
-| y                  | Y axis              | number                                            |             | true     |
-| payload            | Custom data         | `{[key: string]: unknown}`                        |             | false    |
-| width              | Node width          | number                                            | `120`       | false    |
-| height             | Node height         | number                                            | `60`        | false    |
-| connectionPosition | Connection position | `top`, `bottom`                                   | `top`       | false    |
-| containerProps     |                     | SupportedSVGShapeProps                            |             | false    |
-| textProps          |                     | SupportedSVGTextProps                             |             | false    |
+| Props              | Description         | Type                                                | Default     | Required |
+|--------------------|---------------------|:----------------------------------------------------|-------------|----------|
+| id                 | Identity            | number                                              |             | true     |
+| title              | Title of node       | string, `(node: NodeData) => string`, JSX.Element   |             | true     |
+| type               | Type of node        | `start`, `end`, `operation`, `decision`             | `operation` | false    |
+| x                  | X axis              | number                                              |             | true     |
+| y                  | Y axis              | number                                              |             | true     |
+| payload            | Custom data         | `{[key: string]: unknown}`                          |             | false    |
+| width              | Node width          | number                                              | `120`       | false    |
+| height             | Node height         | number                                              | `60`        | false    |
+| connectionPosition | Connection position | `top`, `bottom`                                     | `top`       | false    |
+| containerProps     |                     | SupportedSVGShapeProps                              |             | false    |
+| textProps          |                     | SupportedSVGTextProps                               |             | false    |
 
 ##### SupportedSVGShapeProps
 
@@ -146,12 +146,13 @@ Connections between nodes.
 
 Use `type` to describe the type of connection, `success` will draw a green line, `fail` will draw a red line.
 
-| Props       | Description         | Type                                                       | Default   | Required |
-|-------------|---------------------|:-----------------------------------------------------------|-----------|----------|
-| type        | Type of connection  | `success`, `fail`                                          | `success` | false    |
-| source      | Source info         | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
-| destination | Destination info    | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
-| title       | Title of connection | string                                                     |           | false    |
+| Props       | Description                             | Type                                                       | Default   | Required |
+|-------------|-----------------------------------------|:-----------------------------------------------------------|-----------|----------|
+| type        | Type of connection                      | `success`, `fail`                                          | `success` | false    |
+| source      | Source info                             | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
+| destination | Destination info                        | `{id: number, position: 'left', 'right', 'top', 'bottom'}` |           | true     |
+| title       | Title of connection                     | string                                                     |           | false    |
+| color       | Specify a color for the connection line | string                                                     |           | false    |
 
 #### readonly: `boolean | undefined`
 
