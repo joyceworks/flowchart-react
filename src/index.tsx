@@ -59,6 +59,7 @@ const Flowchart = forwardRef(
       style,
       defaultNodeSize = { width: 120, height: 60 },
       showToolbar,
+      // You can set connectionPosition to "bottom" to make the connection line behind the node
       connectionPosition = "top",
       className,
     }: FlowchartProps,
@@ -402,8 +403,8 @@ const Flowchart = forwardRef(
               setSelectedConnIds([...selectedConnIds]);
             }
             break;
-          case 46:
-          case 8:
+          case 46: // Delete
+          case 8: // Backspace
             remove();
             break;
           default:
